@@ -38,6 +38,14 @@ export default function Sidebar() {
   const location = useLocation();
   const [activeProfile, setActiveProfile] = useState<ProfileType>('entreprise-construction');
 
+  // Mock user data - this would normally come from your auth system
+  const user = {
+    firstName: "Jean",
+    lastName: "Dupont",
+    email: "jean.dupont@example.com",
+    avatarUrl: "https://github.com/shadcn.png"
+  };
+
   const getProfileIcon = (profile: ProfileType) => {
     switch (profile) {
       case 'promoteur':
@@ -125,22 +133,29 @@ export default function Sidebar() {
           </SelectContent>
         </Select>
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="outline-none self-end">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel>Mon Profil</DropdownMenuLabel>
-            <DropdownMenuItem>Paramètres</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Se déconnecter</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="outline-none">
+                <Avatar>
+                  <AvatarImage src={user.avatarUrl} alt={`${user.firstName} ${user.lastName}`} />
+                  <AvatarFallback>{user.firstName.charAt(0)}{user.lastName.charAt(0)}</AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel>Mon Profil</DropdownMenuLabel>
+              <DropdownMenuItem>Paramètres</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Se déconnecter</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <div className="flex flex-col text-sm">
+            <span className="font-medium">{user.firstName} {user.lastName}</span>
+            <span className="text-xs text-sidebar-foreground/70">{user.email}</span>
+          </div>
+        </div>
       </div>
       
       <nav className="flex-1 overflow-y-auto p-4">
