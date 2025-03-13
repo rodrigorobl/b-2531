@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, TrendingUp, SquareFeet, CheckCircle2, FileText, Layers } from 'lucide-react';
+import { Calendar, TrendingUp, Square, CheckCircle2, FileText, Layers } from 'lucide-react';
 
 interface ProjectInfoProps {
   info: {
@@ -34,7 +34,7 @@ export default function ProjectInfo({ info }: ProjectInfoProps) {
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center">
               <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center mr-3">
-                <SquareFeet size={16} className="text-primary" />
+                <Square size={16} className="text-primary" />
               </div>
               <div>
                 <div className="text-xs text-muted-foreground">Surface</div>

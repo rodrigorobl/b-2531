@@ -114,7 +114,7 @@ const notificationsData = [
     description: "Le CCTP du lot CVC a été mis à jour. Veuillez télécharger la dernière version.",
     timestamp: "Aujourd'hui, 09:15",
     read: false,
-    type: "info"
+    type: "info" as const
   },
   {
     id: "notif-002",
@@ -122,7 +122,7 @@ const notificationsData = [
     description: "La date limite de dépôt pour le lot Façades a été prolongée jusqu'au 30/04/2024.",
     timestamp: "Hier, 11:30",
     read: true,
-    type: "warning"
+    type: "warning" as const
   },
   {
     id: "notif-003",
@@ -130,7 +130,7 @@ const notificationsData = [
     description: "Votre offre pour le lot Ascenseurs a été acceptée.",
     timestamp: "15/03/2024",
     read: true,
-    type: "success"
+    type: "success" as const
   }
 ];
 
