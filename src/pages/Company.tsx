@@ -1,6 +1,48 @@
 
 import React from "react";
 import Sidebar from "@/components/Sidebar";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+
+// Données fictives des utilisateurs avec leurs droits
+const users = [
+  {
+    id: 1,
+    name: "Jean Dupont",
+    email: "jean.dupont@example.com",
+    role: "Administrateur",
+    permissions: {
+      tenders: true,
+      payment: true,
+      users: true,
+    }
+  },
+  {
+    id: 2,
+    name: "Marie Martin",
+    email: "marie.martin@example.com",
+    role: "Gestionnaire",
+    permissions: {
+      tenders: true,
+      payment: false,
+      users: false,
+    }
+  },
+  {
+    id: 3,
+    name: "Pierre Durand",
+    email: "pierre.durand@example.com",
+    role: "Utilisateur",
+    permissions: {
+      tenders: true,
+      payment: false,
+      users: false,
+    }
+  }
+];
 
 export default function Company() {
   return (
@@ -9,7 +51,7 @@ export default function Company() {
       <main className="flex-1 overflow-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Mon Entreprise</h1>
         
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">Informations générales</h2>
             <div className="space-y-4">
@@ -54,6 +96,49 @@ export default function Company() {
             </div>
           </div>
         </div>
+
+        {/* Nouvelle section pour les utilisateurs et leurs droits */}
+        <Card className="mb-6">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Utilisateurs et droits d'administration</CardTitle>
+            <Button size="sm" variant="outline" className="flex items-center gap-1">
+              <PlusCircle size={16} />
+              <span>Ajouter un utilisateur</span>
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Rôle</TableHead>
+                  <TableHead>Répondre aux appels d'offres</TableHead>
+                  <TableHead>Payer l'abonnement</TableHead>
+                  <TableHead>Ajouter des utilisateurs</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>
+                      <Checkbox checked={user.permissions.tenders} disabled />
+                    </TableCell>
+                    <TableCell>
+                      <Checkbox checked={user.permissions.payment} disabled />
+                    </TableCell>
+                    <TableCell>
+                      <Checkbox checked={user.permissions.users} disabled />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
