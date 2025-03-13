@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useLocation, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -18,14 +19,15 @@ interface SidebarProps {
 
 export default function Sidebar({ className }: SidebarProps) {
   const [collapsed, setCollapsed] = React.useState(false);
-
+  const location = useLocation();
+  
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Tableau de bord', href: '#', active: false },
-    { icon: Briefcase, label: 'Projets', href: '#', active: true },
+    { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard', active: location.pathname === '/dashboard' },
+    { icon: Briefcase, label: 'Projets', href: '/', active: location.pathname === '/' },
     { icon: FileText, label: 'Mes appels d\'offres', href: '#', active: false },
     { icon: MessageSquare, label: 'Messagerie', href: '#', active: false },
     { icon: User, label: 'Mon profil', href: '#', active: false },
@@ -78,8 +80,8 @@ export default function Sidebar({ className }: SidebarProps) {
         <ul className="space-y-1 px-2">
           {navItems.map((item, index) => (
             <li key={index}>
-              <a 
-                href={item.href}
+              <Link 
+                to={item.href}
                 className={cn(
                   'flex items-center px-3 py-2 rounded-md transition-all duration-200',
                   item.active 
@@ -90,7 +92,7 @@ export default function Sidebar({ className }: SidebarProps) {
               >
                 <item.icon size={collapsed ? 20 : 18} className={collapsed ? '' : 'mr-3'} />
                 {!collapsed && <span>{item.label}</span>}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
