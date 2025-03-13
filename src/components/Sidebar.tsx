@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   LayoutDashboard, 
@@ -10,18 +11,21 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Sidebar() {
+  const location = useLocation();
+
   return (
-    <aside className="sidebar">
+    <aside className="w-64 h-screen bg-sidebar text-sidebar-foreground flex flex-col border-r border-sidebar-border shadow-sm">
       
-      <div className="sidebar-header">
-        <a href="/" className="logo">
+      <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
+        <Link to="/" className="text-xl font-bold text-white">
           BTP CONNECT
-        </a>
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="user-button">
+            <button className="outline-none">
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
@@ -37,41 +41,76 @@ export default function Sidebar() {
         </DropdownMenu>
       </div>
       
-      <div className="sidebar-nav">
-        <nav className="menu">
-          <a href="/dashboard" className="menu-item">
-            <LayoutDashboard size={18} />
-            <span>Tableau de bord</span>
-          </a>
-          <a href="/projects" className="menu-item">
-            <Briefcase size={18} />
-            <span>Projets</span>
-          </a>
-          <a href="/tenders" className="menu-item">
-            <FileText size={18} />
-            <span>Mes appels d'offres</span>
-          </a>
-          <a href="/tender-search" className="menu-item">
-            <Search size={18} />
-            <span>Recherche AO</span>
-          </a>
-          <a href="/messaging" className="menu-item">
-            <MessageSquare size={18} />
-            <span>Messagerie</span>
-          </a>
-          <a href="/profile" className="menu-item">
-            <User size={18} />
-            <span>Mon profil</span>
-          </a>
-          <a href="/company" className="menu-item">
-            <Building size={18} />
-            <span>Mon entreprise</span>
-          </a>
-        </nav>
-      </div>
+      <nav className="flex-1 overflow-y-auto p-4">
+        <ul className="space-y-2">
+          <li>
+            <Link 
+              to="/dashboard" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/dashboard' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <LayoutDashboard size={18} />
+              <span>Tableau de bord</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/projects" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <Briefcase size={18} />
+              <span>Projets</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/tenders" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tenders' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <FileText size={18} />
+              <span>Mes appels d'offres</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/tender-search" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tender-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <Search size={18} />
+              <span>Recherche AO</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/messaging" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/messaging' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <MessageSquare size={18} />
+              <span>Messagerie</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/profile" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/profile' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <User size={18} />
+              <span>Mon profil</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/company" 
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/company' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+            >
+              <Building size={18} />
+              <span>Mon entreprise</span>
+            </Link>
+          </li>
+        </ul>
+      </nav>
       
-      <div className="sidebar-footer">
-        <p className="text-xs text-muted-foreground">
+      <div className="p-4 border-t border-sidebar-border">
+        <p className="text-xs text-sidebar-foreground/70">
           © 2023 BTP CONNECT
         </p>
       </div>
