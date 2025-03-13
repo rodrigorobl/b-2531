@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Messaging from "./pages/Messaging";
 import TenderOffers from "./pages/TenderOffers";
 import TenderSearch from "./pages/TenderSearch";
+import Company from "./pages/Company";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/messaging" element={<Messaging />} />
           <Route path="/tenders" element={<TenderOffers />} />
           <Route path="/tender-search" element={<TenderSearch />} />
+          <Route path="/company" element={<Company />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
