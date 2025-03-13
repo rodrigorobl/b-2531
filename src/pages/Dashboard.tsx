@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
@@ -28,7 +27,7 @@ export default function Dashboard() {
       name: 'Résidence Les Ormes',
       client: 'NEXITY',
       type: 'Logement',
-      status: 'in-progress',
+      status: 'in-progress' as const,
       progress: 65,
       deadline: '30/06/2024',
     },
@@ -37,7 +36,7 @@ export default function Dashboard() {
       name: 'Centre commercial Grand Place',
       client: 'VINCI',
       type: 'Tertiaire',
-      status: 'assigned',
+      status: 'assigned' as const,
       progress: 25,
       deadline: '15/09/2024',
     },
@@ -46,7 +45,7 @@ export default function Dashboard() {
       name: 'École Saint-Pierre',
       client: 'Mairie de Lyon',
       type: 'Public',
-      status: 'completed',
+      status: 'completed' as const,
       progress: 100,
       deadline: '01/03/2024',
     },
@@ -55,7 +54,7 @@ export default function Dashboard() {
       name: 'Entrepôt Logistique Nord',
       client: 'LOGIDEX',
       type: 'Industriel',
-      status: 'in-progress',
+      status: 'in-progress' as const,
       progress: 30,
       deadline: '10/12/2024',
     }
@@ -67,7 +66,7 @@ export default function Dashboard() {
       id: 'tender-001',
       title: 'Lot 3 - Charpente métallique',
       project: 'Résidence Les Ormes',
-      status: 'open',
+      status: 'open' as const,
       deadline: '15/05/2024',
       estimatedValue: '120 000 €',
     },
@@ -75,7 +74,7 @@ export default function Dashboard() {
       id: 'tender-002',
       title: 'Lot 5 - Électricité',
       project: 'Centre commercial Grand Place',
-      status: 'open',
+      status: 'open' as const,
       deadline: '20/05/2024',
       estimatedValue: '95 000 €',
     },
@@ -83,7 +82,7 @@ export default function Dashboard() {
       id: 'tender-003',
       title: 'Lot 2 - Gros œuvre',
       project: 'École Saint-Pierre',
-      status: 'closed',
+      status: 'closed' as const,
       deadline: '01/03/2024',
       estimatedValue: '250 000 €',
     }
@@ -96,21 +95,21 @@ export default function Dashboard() {
       title: 'Soumettre devis Lot Électricité',
       project: 'Résidence Les Ormes',
       deadline: '15/05/2024',
-      type: 'quote',
+      type: 'quote' as const,
     },
     {
       id: 'action-002',
       title: 'Télécharger CCTP mis à jour',
       project: 'Centre commercial Grand Place',
       deadline: '12/05/2024',
-      type: 'document',
+      type: 'document' as const,
     },
     {
       id: 'action-003',
       title: 'Répondre message Maître d\'œuvre',
       project: 'École Saint-Pierre',
       deadline: '10/05/2024',
-      type: 'message',
+      type: 'message' as const,
     }
   ];
 
@@ -121,28 +120,28 @@ export default function Dashboard() {
       title: 'Nouvel appel d\'offres publié',
       description: 'Lot 7 - Menuiseries intérieures sur Centre commercial Grand Place',
       timestamp: 'Il y a 2 heures',
-      type: 'tender',
+      type: 'tender' as const,
     },
     {
       id: 'activity-002',
       title: 'Nouveau message',
       description: 'Question technique sur devis Lot Électricité',
       timestamp: 'Il y a 5 heures',
-      type: 'message',
+      type: 'message' as const,
     },
     {
       id: 'activity-003',
       title: 'Statut projet modifié',
       description: 'École Saint-Pierre est maintenant marqué comme terminé',
       timestamp: 'Hier, 14:30',
-      type: 'status',
+      type: 'status' as const,
     },
     {
       id: 'activity-004',
       title: 'Document ajouté',
       description: 'Nouveau plan d\'exécution pour Résidence Les Ormes',
       timestamp: 'Hier, 10:15',
-      type: 'document',
+      type: 'document' as const,
     }
   ];
 
