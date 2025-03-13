@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { useLocation, Link } from 'react-router-dom';
@@ -27,7 +28,7 @@ export default function Sidebar({ className }: SidebarProps) {
   const navItems = [
     { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard', active: location.pathname === '/dashboard' },
     { icon: Briefcase, label: 'Projets', href: '/', active: location.pathname === '/' },
-    { icon: FileText, label: 'Mes appels d\'offres', href: '#', active: false },
+    { icon: FileText, label: 'Mes appels d\'offres', href: '/tenders', active: location.pathname === '/tenders' },
     { icon: MessageSquare, label: 'Messagerie', href: '/messaging', active: location.pathname === '/messaging' },
     { icon: User, label: 'Mon profil', href: '#', active: false },
     { icon: Building2, label: 'Mon entreprise', href: '#', active: false },
