@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Messaging from "./pages/Messaging";
 import TenderOffers from "./pages/TenderOffers";
+import TenderSearch from "./pages/TenderSearch";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/messaging" element={<Messaging />} />
           <Route path="/tenders" element={<TenderOffers />} />
+          <Route path="/tender-search" element={<TenderSearch />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

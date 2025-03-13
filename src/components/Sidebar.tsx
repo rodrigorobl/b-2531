@@ -1,117 +1,79 @@
-
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { useLocation, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Briefcase, 
   FileText, 
   MessageSquare, 
   User, 
-  Building2, 
-  Menu, 
-  ChevronLeft 
+  Building,
+  Search
 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-interface SidebarProps {
-  className?: string;
-}
-
-export default function Sidebar({ className }: SidebarProps) {
-  const [collapsed, setCollapsed] = React.useState(false);
-  const location = useLocation();
-  
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const navItems = [
-    { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard', active: location.pathname === '/dashboard' },
-    { icon: Briefcase, label: 'Projets', href: '/', active: location.pathname === '/' },
-    { icon: FileText, label: 'Mes appels d\'offres', href: '/tenders', active: location.pathname === '/tenders' },
-    { icon: MessageSquare, label: 'Messagerie', href: '/messaging', active: location.pathname === '/messaging' },
-    { icon: User, label: 'Mon profil', href: '#', active: false },
-    { icon: Building2, label: 'Mon entreprise', href: '#', active: false },
-  ];
-
+export default function Sidebar() {
   return (
-    <aside 
-      className={cn(
-        'bg-sidebar transition-all duration-300 h-screen flex flex-col',
-        collapsed ? 'w-16' : 'w-64',
-        className
-      )}
-    >
-      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-        <div className={cn('flex items-center overflow-hidden', 
-          collapsed ? 'justify-center w-full' : 'justify-start')}>
-          <div className="bg-white rounded-md w-8 h-8 flex items-center justify-center">
-            <span className="text-primary font-bold text-sm">BTP</span>
-          </div>
-          {!collapsed && (
-            <span className="ml-2 text-white font-semibold whitespace-nowrap">
-              BTP CONNECT
-            </span>
-          )}
-        </div>
-        <button 
-          onClick={toggleSidebar} 
-          className={cn(
-            "text-white/80 hover:text-white transition-all flex items-center justify-center",
-            collapsed ? 'hidden' : 'flex'
-          )}
-        >
-          <ChevronLeft size={18} />
-        </button>
+    <aside className="sidebar">
+      
+      <div className="sidebar-header">
+        <a href="/" className="logo">
+          BTP CONNECT
+        </a>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="user-button">
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel>Mon Profil</DropdownMenuLabel>
+            <DropdownMenuItem>Paramètres</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Se déconnecter</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       
-      <button 
-        onClick={toggleSidebar}
-        className={cn(
-          "absolute top-4 right-0 transform translate-x-full bg-primary p-2 rounded-r text-white md:hidden",
-          collapsed ? 'block' : 'hidden'
-        )}
-      >
-        <Menu size={18} />
-      </button>
-
-      <nav className="flex-1 py-4">
-        <ul className="space-y-1 px-2">
-          {navItems.map((item, index) => (
-            <li key={index}>
-              <Link 
-                to={item.href}
-                className={cn(
-                  'flex items-center px-3 py-2 rounded-md transition-all duration-200',
-                  item.active 
-                    ? 'bg-sidebar-accent text-white'
-                    : 'text-white/80 hover:bg-sidebar-primary hover:text-white',
-                  collapsed ? 'justify-center' : 'justify-start'
-                )}
-              >
-                <item.icon size={collapsed ? 20 : 18} className={collapsed ? '' : 'mr-3'} />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <div className="sidebar-nav">
+        <nav className="menu">
+          <a href="/dashboard" className="menu-item">
+            <LayoutDashboard size={18} />
+            <span>Tableau de bord</span>
+          </a>
+          <a href="/projects" className="menu-item">
+            <Briefcase size={18} />
+            <span>Projets</span>
+          </a>
+          <a href="/tenders" className="menu-item">
+            <FileText size={18} />
+            <span>Mes appels d'offres</span>
+          </a>
+          <a href="/tender-search" className="menu-item">
+            <Search size={18} />
+            <span>Recherche AO</span>
+          </a>
+          <a href="/messaging" className="menu-item">
+            <MessageSquare size={18} />
+            <span>Messagerie</span>
+          </a>
+          <a href="/profile" className="menu-item">
+            <User size={18} />
+            <span>Mon profil</span>
+          </a>
+          <a href="/company" className="menu-item">
+            <Building size={18} />
+            <span>Mon entreprise</span>
+          </a>
+        </nav>
+      </div>
       
-      <div className="p-4 border-t border-sidebar-border">
-        <div className={cn(
-          'flex items-center',
-          collapsed ? 'justify-center' : 'justify-start'
-        )}>
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
-            <User size={16} />
-          </div>
-          {!collapsed && (
-            <div className="ml-3 overflow-hidden">
-              <p className="text-white text-sm font-medium truncate">Martin Dupont</p>
-              <p className="text-white/70 text-xs truncate">martin@entreprise.fr</p>
-            </div>
-          )}
-        </div>
+      <div className="sidebar-footer">
+        <p className="text-xs text-muted-foreground">
+          © 2023 BTP CONNECT
+        </p>
       </div>
     </aside>
   );
