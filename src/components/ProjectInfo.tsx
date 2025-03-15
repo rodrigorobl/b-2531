@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, TrendingUp, Square, CheckCircle2, FileText, Layers, User, Building, DraftingCompass, HardHat } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UserProfileDialog from './UserProfileDialog';
 
 interface ProjectInfoProps {
   info: {
@@ -26,6 +27,20 @@ interface ProjectInfoProps {
 }
 
 export default function ProjectInfo({ info }: ProjectInfoProps) {
+  const [selectedUser, setSelectedUser] = useState<{
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    company?: {
+      name: string;
+      address: string;
+      phone: string;
+      siret?: string;
+    };
+  } | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   // Si technicalTeam n'est pas fourni, créer des données de démonstration
   const technicalTeam = info.technicalTeam || [
     { role: "Architecte", name: "Cabinet Durand & Associés", company: "Durand Architecture", contact: "contact@durand-archi.fr" },
@@ -34,6 +49,23 @@ export default function ProjectInfo({ info }: ProjectInfoProps) {
     { role: "Bureau d'études Structure", name: "Structure Concept", company: "Structure Concept SAS", contact: "info@structure-concept.fr" },
     { role: "Bureau d'études Fluides", name: "Climatherm", company: "Climatherm Ingénierie", contact: "contact@climatherm.fr" }
   ];
+
+  const handleUserClick = (member: any) => {
+    // Créer un objet utilisateur format compatible avec UserProfileDialog
+    setSelectedUser({
+      id: Math.floor(Math.random() * 1000), // ID aléatoire pour demo
+      name: member.name,
+      email: member.contact || "",
+      role: member.role,
+      company: {
+        name: member.company,
+        address: "Adresse non spécifiée",
+        phone: member.contact?.includes('@') ? "Non spécifié" : member.contact || "Non spécifié",
+        siret: "Non spécifié"
+      }
+    });
+    setDialogOpen(true);
+  };
 
   return (
     <div className="column h-full animate-fade-in">
@@ -144,7 +176,11 @@ export default function ProjectInfo({ info }: ProjectInfoProps) {
             
             <div className="space-y-4">
               {technicalTeam.map((member, index) => (
-                <div key={index} className="border rounded-md p-3">
+                <div 
+                  key={index} 
+                  className="border rounded-md p-3 cursor-pointer hover:bg-accent/50 transition-colors"
+                  onClick={() => handleUserClick(member)}
+                >
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                       {member.role.includes("Architecte") ? (
@@ -183,6 +219,12 @@ export default function ProjectInfo({ info }: ProjectInfoProps) {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <UserProfileDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+        user={selectedUser} 
+      />
     </div>
   );
 }
