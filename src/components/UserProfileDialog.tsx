@@ -2,7 +2,9 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, Phone, Mail, UserRound, BadgeCheck } from "lucide-react";
+import { Building, Phone, Mail, UserRound, BadgeCheck, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface UserProfileProps {
   open: boolean;
@@ -22,6 +24,8 @@ interface UserProfileProps {
 }
 
 export default function UserProfileDialog({ open, onOpenChange, user }: UserProfileProps) {
+  const navigate = useNavigate();
+  
   if (!user) return null;
   
   // Company data - in a real app, this would come from an API
@@ -30,6 +34,13 @@ export default function UserProfileDialog({ open, onOpenChange, user }: UserProf
     address: "123 Rue de la Construction, 75001 Paris",
     phone: "01 23 45 67 89",
     siret: "12345678900012"
+  };
+
+  const handleViewProfile = () => {
+    // Close dialog
+    onOpenChange(false);
+    // Navigate to user profile page (using a fake userId for demo)
+    navigate(`/profile/user/${user.id}`);
   };
 
   return (
@@ -43,7 +54,7 @@ export default function UserProfileDialog({ open, onOpenChange, user }: UserProf
         </DialogHeader>
         
         <div className="space-y-4 py-2">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 cursor-pointer hover:bg-accent/50 transition-colors p-2 rounded-md" onClick={handleViewProfile}>
             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
               <UserRound className="h-6 w-6 text-primary" />
             </div>
@@ -57,6 +68,7 @@ export default function UserProfileDialog({ open, onOpenChange, user }: UserProf
               <p className="text-sm text-muted-foreground">{user.role}</p>
               <p className="text-sm">{user.email}</p>
             </div>
+            <ExternalLink className="h-4 w-4 ml-auto text-muted-foreground" />
           </div>
           
           <Card>
@@ -91,6 +103,13 @@ export default function UserProfileDialog({ open, onOpenChange, user }: UserProf
               </div>
             </CardContent>
           </Card>
+          
+          <div className="flex justify-end">
+            <Button variant="outline" size="sm" onClick={handleViewProfile}>
+              Voir la page complète
+              <ExternalLink className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

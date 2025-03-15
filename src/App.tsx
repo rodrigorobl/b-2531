@@ -11,6 +11,7 @@ import TenderOffers from "./pages/TenderOffers";
 import TenderSearch from "./pages/TenderSearch";
 import Company from "./pages/Company";
 import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/tenders" element={<TenderOffers />} />
           <Route path="/tender-search" element={<TenderSearch />} />
           <Route path="/company" element={<Company />} />
+          <Route path="/profile/user/:userId" element={<UserProfile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
