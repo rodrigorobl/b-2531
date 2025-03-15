@@ -10,6 +10,7 @@ import Messaging from "./pages/Messaging";
 import TenderOffers from "./pages/TenderOffers";
 import TenderSearch from "./pages/TenderSearch";
 import Company from "./pages/Company";
+import EditCompany from "./pages/EditCompany";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/tenders" element={<TenderOffers />} />
           <Route path="/tender-search" element={<TenderSearch />} />
           <Route path="/company" element={<Company />} />
+          <Route path="/company/edit" element={<EditCompany />} />
           <Route path="/profile/user/:userId" element={<UserProfile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

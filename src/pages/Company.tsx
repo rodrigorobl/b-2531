@@ -81,10 +81,7 @@ export default function Company() {
   };
 
   const handleEditCompany = () => {
-    toast({
-      title: "Éditer la page entreprise",
-      description: "Cette fonctionnalité vous permettrait de modifier les informations de votre entreprise."
-    });
+    navigate("/company/edit");
   };
 
   return (
