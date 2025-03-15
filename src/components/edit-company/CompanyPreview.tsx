@@ -30,7 +30,7 @@ export default function CompanyPreview() {
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle>Aperçu</CardTitle>
