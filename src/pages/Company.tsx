@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ExternalLink } from "lucide-react";
+import UserProfileDialog from "@/components/UserProfileDialog";
 
 // Données fictives des utilisateurs avec leurs droits
 const users = [
@@ -18,6 +19,12 @@ const users = [
       tenders: true,
       payment: true,
       users: true,
+    },
+    company: {
+      name: "Construction Dupont",
+      address: "123 Rue de la Construction, 75001 Paris",
+      phone: "01 23 45 67 89",
+      siret: "12345678900012"
     }
   },
   {
@@ -29,6 +36,12 @@ const users = [
       tenders: true,
       payment: false,
       users: false,
+    },
+    company: {
+      name: "Martin & Associés",
+      address: "45 Avenue des Fleurs, 69002 Lyon",
+      phone: "04 56 78 90 12",
+      siret: "98765432100012"
     }
   },
   {
@@ -40,11 +53,25 @@ const users = [
       tenders: true,
       payment: false,
       users: false,
+    },
+    company: {
+      name: "Durand Construction",
+      address: "8 Rue de la République, 33000 Bordeaux",
+      phone: "05 12 34 56 78",
+      siret: "45678912300045"
     }
   }
 ];
 
 export default function Company() {
+  const [selectedUser, setSelectedUser] = useState<(typeof users)[0] | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  const handleUserClick = (user: typeof users[0]) => {
+    setSelectedUser(user);
+    setDialogOpen(true);
+  };
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -97,7 +124,7 @@ export default function Company() {
           </div>
         </div>
 
-        {/* Nouvelle section pour les utilisateurs et leurs droits */}
+        {/* Section pour les utilisateurs et leurs droits */}
         <Card className="mb-6">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Utilisateurs et droits d'administration</CardTitle>
@@ -120,8 +147,15 @@ export default function Company() {
               </TableHeader>
               <TableBody>
                 {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableRow 
+                    key={user.id} 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleUserClick(user)}
+                  >
+                    <TableCell className="font-medium flex items-center gap-1">
+                      {user.name}
+                      <ExternalLink size={14} className="text-muted-foreground" />
+                    </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.role}</TableCell>
                     <TableCell>
@@ -139,6 +173,13 @@ export default function Company() {
             </Table>
           </CardContent>
         </Card>
+        
+        {/* Dialog pour afficher les informations de l'entreprise */}
+        <UserProfileDialog 
+          open={dialogOpen} 
+          onOpenChange={setDialogOpen} 
+          user={selectedUser} 
+        />
       </main>
     </div>
   );
