@@ -1,24 +1,25 @@
-
 import React, { useState } from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { LayoutGrid, LayoutList, MapPin, Calendar, Star, Building, ArrowRight, Eye } from 'lucide-react';
+import { LayoutGrid, LayoutList, MapPin, Calendar, Star, Building, ArrowRight, Eye, Map } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TenderSearchResultsProps {
   tenders: TenderSearchResult[];
   onSelectTender: (tenderId: string) => void;
   selectedTenderId: string | null;
+  viewMode: 'grid' | 'list' | 'map';
+  onViewModeChange: (mode: 'grid' | 'list' | 'map') => void;
 }
 
 export default function TenderSearchResults({ 
   tenders, 
   onSelectTender, 
-  selectedTenderId 
+  selectedTenderId,
+  viewMode,
+  onViewModeChange
 }: TenderSearchResultsProps) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'open':
@@ -42,16 +43,23 @@ export default function TenderSearchResults({
           <Button 
             variant={viewMode === 'grid' ? 'default' : 'outline'} 
             size="sm" 
-            onClick={() => setViewMode('grid')}
+            onClick={() => onViewModeChange('grid')}
           >
             <LayoutGrid size={16} />
           </Button>
           <Button 
             variant={viewMode === 'list' ? 'default' : 'outline'} 
             size="sm" 
-            onClick={() => setViewMode('list')}
+            onClick={() => onViewModeChange('list')}
           >
             <LayoutList size={16} />
+          </Button>
+          <Button 
+            variant={viewMode === 'map' ? 'default' : 'outline'} 
+            size="sm" 
+            onClick={() => onViewModeChange('map')}
+          >
+            <Map size={16} />
           </Button>
         </div>
       </div>
@@ -132,7 +140,7 @@ export default function TenderSearchResults({
             </div>
           ))}
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
         <div className="space-y-2">
           {tenders.map((tender) => (
             <div
@@ -186,7 +194,7 @@ export default function TenderSearchResults({
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

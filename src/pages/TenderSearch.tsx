@@ -4,6 +4,7 @@ import Sidebar from '@/components/Sidebar';
 import TenderSearchFilters from '@/components/tenders/TenderSearchFilters';
 import TenderSearchResults from '@/components/tenders/TenderSearchResults';
 import TenderSearchDetails from '@/components/tenders/TenderSearchDetails';
+import TenderMap from '@/components/tenders/TenderMap';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ export default function TenderSearch() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [selectedTender, setSelectedTender] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
   
   // Sample data
   const tenders: TenderSearchResult[] = [
@@ -184,12 +186,22 @@ export default function TenderSearch() {
               {/* Left column: Filters */}
               <TenderSearchFilters />
               
-              {/* Middle column: Results */}
-              <TenderSearchResults 
-                tenders={filteredTenders}
-                onSelectTender={handleTenderSelect}
-                selectedTenderId={selectedTender}
-              />
+              {/* Middle column: Results or Map */}
+              {viewMode === 'map' ? (
+                <TenderMap 
+                  tenders={filteredTenders}
+                  onSelectTender={handleTenderSelect}
+                  selectedTenderId={selectedTender}
+                />
+              ) : (
+                <TenderSearchResults 
+                  tenders={filteredTenders}
+                  onSelectTender={handleTenderSelect}
+                  selectedTenderId={selectedTender}
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
+                />
+              )}
               
               {/* Right column: Details */}
               <TenderSearchDetails
