@@ -1,14 +1,14 @@
-
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ExternalLink } from "lucide-react";
+import { PlusCircle, ExternalLink, Eye, Edit } from "lucide-react";
 import UserProfileDialog from "@/components/UserProfileDialog";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
-// Données fictives des utilisateurs avec leurs droits
 const users = [
   {
     id: 1,
@@ -66,17 +66,51 @@ const users = [
 export default function Company() {
   const [selectedUser, setSelectedUser] = useState<(typeof users)[0] | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const navigate = useNavigate();
   
   const handleUserClick = (user: typeof users[0]) => {
     setSelectedUser(user);
     setDialogOpen(true);
   };
 
+  const handleViewAsVisitor = () => {
+    toast({
+      title: "Affichage en tant que visiteur",
+      description: "Cette fonctionnalité vous permettrait de voir votre page comme un visiteur externe."
+    });
+  };
+
+  const handleEditCompany = () => {
+    toast({
+      title: "Éditer la page entreprise",
+      description: "Cette fonctionnalité vous permettrait de modifier les informations de votre entreprise."
+    });
+  };
+
   return (
     <div className="flex h-screen">
       <Sidebar />
       <main className="flex-1 overflow-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Mon Entreprise</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Mon Entreprise</h1>
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={handleViewAsVisitor}
+              className="flex items-center gap-2"
+            >
+              <Eye size={16} />
+              Voir en tant que visiteur
+            </Button>
+            <Button 
+              onClick={handleEditCompany}
+              className="flex items-center gap-2"
+            >
+              <Edit size={16} />
+              Éditer la page entreprise
+            </Button>
+          </div>
+        </div>
         
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
@@ -124,7 +158,6 @@ export default function Company() {
           </div>
         </div>
 
-        {/* Section pour les utilisateurs et leurs droits */}
         <Card className="mb-6">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Utilisateurs et droits d'administration</CardTitle>
@@ -174,7 +207,6 @@ export default function Company() {
           </CardContent>
         </Card>
         
-        {/* Dialog pour afficher les informations de l'entreprise */}
         <UserProfileDialog 
           open={dialogOpen} 
           onOpenChange={setDialogOpen} 
