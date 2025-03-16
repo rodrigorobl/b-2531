@@ -1,9 +1,18 @@
+
 import React, { useState } from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { LayoutGrid, LayoutList, MapPin, Calendar, Star, Building, ArrowRight, Eye, Map } from 'lucide-react';
+import { LayoutGrid, LayoutList, MapPin, Calendar, Star, Building, ArrowRight, Eye, Map, Filter, ArrowDown, ArrowUp, List, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from '@/components/ui/dropdown-menu';
 
 interface TenderSearchResultsProps {
   tenders: TenderSearchResult[];
@@ -20,6 +29,9 @@ export default function TenderSearchResults({
   viewMode,
   onViewModeChange
 }: TenderSearchResultsProps) {
+  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'location'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'open':
@@ -39,29 +51,93 @@ export default function TenderSearchResults({
         <div className="text-sm text-muted-foreground">
           {tenders.length} appels d'offres trouvés
         </div>
-        <div className="flex gap-2">
-          <Button 
-            variant={viewMode === 'grid' ? 'default' : 'outline'} 
-            size="sm" 
-            onClick={() => onViewModeChange('grid')}
-          >
-            <LayoutGrid size={16} />
-          </Button>
-          <Button 
-            variant={viewMode === 'list' ? 'default' : 'outline'} 
-            size="sm" 
-            onClick={() => onViewModeChange('list')}
-          >
-            <LayoutList size={16} />
-          </Button>
-          <Button 
-            variant={viewMode === 'map' ? 'default' : 'outline'} 
-            size="sm" 
-            onClick={() => onViewModeChange('map')}
-          >
-            <Map size={16} />
-          </Button>
-        </div>
+        
+        {viewMode === 'map' ? (
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                  <Filter size={14} />
+                  <span>Filtrer</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Type de projet</DropdownMenuLabel>
+                <DropdownMenuItem>Commercial</DropdownMenuItem>
+                <DropdownMenuItem>Logement</DropdownMenuItem>
+                <DropdownMenuItem>Tertiaire</DropdownMenuItem>
+                <DropdownMenuItem>Public</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Statut</DropdownMenuLabel>
+                <DropdownMenuItem>En cours</DropdownMenuItem>
+                <DropdownMenuItem>Clôturés</DropdownMenuItem>
+                <DropdownMenuItem>Attribués</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                  {sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+                  <span>Trier</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => { setSortBy('date'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                  <Calendar size={14} className="mr-2" />
+                  Date {sortBy === 'date' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setSortBy('budget'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                  <span className="mr-2">€</span>
+                  Budget {sortBy === 'budget' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setSortBy('location'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                  <MapPin size={14} className="mr-2" />
+                  Localisation {sortBy === 'location' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                  <Settings size={14} />
+                  <span>Options</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem>Afficher tous les lots</DropdownMenuItem>
+                <DropdownMenuItem>Projets favoris uniquement</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Exporter les résultats</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Button 
+              variant={viewMode === 'grid' ? 'default' : 'outline'} 
+              size="sm" 
+              onClick={() => onViewModeChange('grid')}
+            >
+              <LayoutGrid size={16} />
+            </Button>
+            <Button 
+              variant={viewMode === 'list' ? 'default' : 'outline'} 
+              size="sm" 
+              onClick={() => onViewModeChange('list')}
+            >
+              <LayoutList size={16} />
+            </Button>
+            <Button 
+              variant={viewMode === 'map' ? 'default' : 'outline'} 
+              size="sm" 
+              onClick={() => onViewModeChange('map')}
+            >
+              <Map size={16} />
+            </Button>
+          </div>
+        )}
       </div>
 
       {tenders.length === 0 ? (
