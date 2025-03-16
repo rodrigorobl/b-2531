@@ -1,88 +1,72 @@
 
 import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
-import { Calendar, Bell, Users, Lightning } from 'lucide-react';
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Zap, Calendar, Bell, Eye } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
 
 interface TenderPublishOptionsProps {
-  form: UseFormReturn<TenderFormValues>;
+  onPublish: () => void;
 }
 
-const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ form }) => {
-  const [publishLater, setPublishLater] = React.useState(false);
-  
+const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ onPublish }) => {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">Options de publication</h2>
-      
-      <div className="space-y-4">
-        <div className="flex flex-col space-y-2">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Mode de publication</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup defaultValue="immediate" className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="immediate" id="immediate" />
+              <Label htmlFor="immediate" className="flex items-center">
+                <Zap className="mr-2 h-4 w-4 text-yellow-500" />
+                <span>Publier immédiatement</span>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="scheduled" id="scheduled" />
+              <Label htmlFor="scheduled" className="flex items-center">
+                <Calendar className="mr-2 h-4 w-4 text-blue-500" />
+                <span>Planifier la publication</span>
+              </Label>
+            </div>
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Notifications et relances</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2 text-primary" />
-              <Label htmlFor="publish-later" className="font-medium">Planifier la publication</Label>
-            </div>
-            <Switch 
-              id="publish-later"
-              checked={publishLater}
-              onCheckedChange={setPublishLater}
-            />
+            <Label htmlFor="auto-reminders" className="flex items-center">
+              <Bell className="mr-2 h-4 w-4 text-violet-500" />
+              <span>Activer les relances automatiques</span>
+            </Label>
+            <Switch id="auto-reminders" />
           </div>
-          {publishLater && (
-            <div className="pl-6 mt-2">
-              <Input
-                type="date"
-                className="w-full"
-              />
-            </div>
-          )}
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Bell className="h-4 w-4 mr-2 text-primary" />
-            <Label htmlFor="auto-reminders" className="font-medium">Relances automatiques</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="target-notifications" className="flex items-center">
+              <Eye className="mr-2 h-4 w-4 text-green-500" />
+              <span>Notifications aux entreprises ciblées</span>
+            </Label>
+            <Switch id="target-notifications" />
           </div>
-          <Switch id="auto-reminders" />
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Users className="h-4 w-4 mr-2 text-primary" />
-            <Label htmlFor="notifications" className="font-medium">Notifier les entreprises ciblées</Label>
-          </div>
-          <Switch id="notifications" defaultChecked />
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Lightning className="h-4 w-4 mr-2 text-primary" />
-            <Label htmlFor="ai-suggestions" className="font-medium">Suggestions d'entreprises par IA</Label>
-          </div>
-          <Switch id="ai-suggestions" defaultChecked />
-        </div>
-      </div>
-      
-      <div className="pt-4 mt-4 border-t">
-        <h3 className="font-medium mb-2">Après la publication</h3>
-        <ul className="space-y-2 text-sm">
-          <li className="flex items-start text-muted-foreground">
-            <span className="mr-2">•</span>
-            Les entreprises correspondant à vos critères seront notifiées
-          </li>
-          <li className="flex items-start text-muted-foreground">
-            <span className="mr-2">•</span>
-            Vous recevrez un récapitulatif par email
-          </li>
-          <li className="flex items-start text-muted-foreground">
-            <span className="mr-2">•</span>
-            L'IA analysera les réponses pour vous aider dans votre choix
-          </li>
-        </ul>
-      </div>
+        </CardContent>
+      </Card>
+
+      <Button
+        onClick={onPublish}
+        className="w-full"
+        size="lg"
+      >
+        Publier l'appel d'offres
+      </Button>
     </div>
   );
 };
