@@ -1,14 +1,17 @@
 
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Building, Phone, Mail, UserRound, BadgeCheck, FileText, Clock, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Building, Phone, Mail, UserRound, BadgeCheck, FileText, Clock, Calendar, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Sidebar from '../components/Sidebar';
+import { Button } from "@/components/ui/button";
 
 export default function UserProfile() {
   const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
+  const [profileType, setProfileType] = useState<'promoteur' | 'maitre-oeuvre' | 'entreprise-construction' | 'entreprise-services' | 'industriel'>('promoteur');
   
   // Dans une application réelle, vous récupéreriez les données de l'utilisateur via une API
   // Ici nous utilisons des données fictives pour la démonstration
@@ -49,8 +52,20 @@ export default function UserProfile() {
       
       <div className="flex-1 flex flex-col">
         <div className="border-b">
-          <div className="container flex h-16 items-center">
+          <div className="container flex h-16 items-center justify-between">
             <h1 className="text-lg font-medium">Profil Utilisateur</h1>
+            
+            {profileType === 'promoteur' && (
+              <Button 
+                variant="default" 
+                size="sm" 
+                className="whitespace-nowrap"
+                onClick={() => navigate('/create-tender')}
+              >
+                <Plus size={16} className="mr-1" />
+                Lancer un Appel d'Offres
+              </Button>
+            )}
           </div>
         </div>
         
