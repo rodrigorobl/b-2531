@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, MailOpen } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
@@ -176,24 +175,28 @@ export default function Dashboard() {
               value={kpiData.projectsInProgress} 
               icon={<Briefcase />}
               color="bg-primary/10 text-primary"
+              linkTo="/projects"
             />
             <DashboardKPI 
               title="Appels d'offres ouverts" 
               value={kpiData.openTenders} 
               icon={<FileText />}
               color="bg-status-pending/10 text-status-pending"
+              linkTo="/tenders"
             />
             <DashboardKPI 
               title="Offres en attente" 
               value={kpiData.pendingOffers} 
               icon={<CheckCircle2 />}
               color="bg-status-assigned/10 text-status-assigned"
+              linkTo="/tenders"
             />
             <DashboardKPI 
               title="Messages non lus" 
               value={kpiData.unreadMessages} 
               icon={<MessageSquare />}
               color="bg-status-in-progress/10 text-status-in-progress"
+              linkTo="/messaging?filter=unread"
             />
           </div>
         </header>
