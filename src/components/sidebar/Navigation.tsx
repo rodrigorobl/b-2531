@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, Plus } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
-import { Button } from "@/components/ui/button";
 
 interface NavigationProps {
   activeProfile: ProfileType;
@@ -54,14 +53,6 @@ export const Navigation: React.FC<NavigationProps> = ({
             <MessageSquare size={18} />
             <span>Messagerie</span>
           </Link>
-        </li>
-        <li>
-          {activeProfile === 'promoteur' && (
-            <Button variant="default" size="sm" className="w-full">
-              <Plus size={16} className="mr-1" />
-              Lancer un Appel d'Offres
-            </Button>
-          )}
         </li>
         <li>
           <Link to="/profile" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/profile' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>

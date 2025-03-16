@@ -1,9 +1,12 @@
 
 import React from 'react';
 import StatusBadge from './StatusBadge';
-import { Calendar, MapPin, Building, Clock } from 'lucide-react';
+import { Calendar, MapPin, Building, Clock, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ProjectMap from './ProjectMap';
+import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
+import Sidebar from './Sidebar';
 
 interface ProjectHeaderProps {
   project: {
@@ -26,6 +29,12 @@ interface ProjectHeaderProps {
 
 export default function ProjectHeader({ project }: ProjectHeaderProps) {
   const [showMap, setShowMap] = React.useState(false);
+  const isPromoterProfile = React.useMemo(() => {
+    // Get the activeProfile from Sidebar component state
+    // This is a simplified check for the demo, in a real app, you'd use context or Redux
+    const sidebarElement = document.querySelector('aside');
+    return sidebarElement?.textContent?.includes('Promoteur') || false;
+  }, []);
   
   return (
     <div className="glass-panel rounded-lg p-5 mb-6 animate-fade-in">
@@ -59,17 +68,26 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
           </div>
         </div>
         
-        <div className="flex items-center">
-          <div className="mr-3">
-            <div className="text-sm font-medium">Maître d'ouvrage</div>
-            <div className="text-base font-semibold">{project.owner.name}</div>
-          </div>
-          <div className="w-12 h-12 rounded overflow-hidden border border-muted flex items-center justify-center bg-white">
-            {project.owner.logo ? (
-              <img src={project.owner.logo} alt={project.owner.name} className="w-full h-full object-contain" />
-            ) : (
-              <Building className="text-muted-foreground" />
-            )}
+        <div className="flex items-center gap-3">
+          {isPromoterProfile && (
+            <Button variant="default" size="sm" className="whitespace-nowrap">
+              <Plus size={16} className="mr-1" />
+              Lancer un Appel d'Offres
+            </Button>
+          )}
+          
+          <div className="flex items-center">
+            <div className="mr-3">
+              <div className="text-sm font-medium">Maître d'ouvrage</div>
+              <div className="text-base font-semibold">{project.owner.name}</div>
+            </div>
+            <div className="w-12 h-12 rounded overflow-hidden border border-muted flex items-center justify-center bg-white">
+              {project.owner.logo ? (
+                <img src={project.owner.logo} alt={project.owner.name} className="w-full h-full object-contain" />
+              ) : (
+                <Building className="text-muted-foreground" />
+              )}
+            </div>
           </div>
         </div>
       </div>
