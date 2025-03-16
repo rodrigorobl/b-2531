@@ -1,8 +1,11 @@
+
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, MailOpen } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import StatusBadge from '@/components/StatusBadge';
 import DashboardKPI from '@/components/DashboardKPI';
 import ProjectsList from '@/components/ProjectsList';
@@ -152,7 +155,16 @@ export default function Dashboard() {
       <main className="flex-1 px-6 py-8">
         {/* Header */}
         <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Bonjour, Martin</h1>
+          <div className="flex justify-between items-center mb-2">
+            <h1 className="text-3xl font-bold">Bonjour, Martin</h1>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/messaging?filter=unread" className="flex items-center gap-2">
+                <MailOpen size={16} />
+                <span>Messages non lus</span>
+                <Badge variant="secondary">{kpiData.unreadMessages}</Badge>
+              </Link>
+            </Button>
+          </div>
           <p className="text-muted-foreground">
             Voici un aperçu de vos projets et appels d'offres en cours.
           </p>

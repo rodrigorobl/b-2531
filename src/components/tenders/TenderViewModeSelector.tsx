@@ -69,7 +69,7 @@ export default function TenderViewModeSelector({
         <LayoutList size={16} />
       </Button>
       <Button 
-        variant={viewMode === 'map' ? 'default' : 'outline'} 
+        variant="outline"
         size="sm" 
         onClick={() => onViewModeChange('map')}
       >
