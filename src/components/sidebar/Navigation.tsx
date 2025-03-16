@@ -8,7 +8,8 @@ import {
   MessageSquare, 
   User, 
   Building,
-  Search
+  Search,
+  MailOpen
 } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 
@@ -87,6 +88,15 @@ export const Navigation: React.FC<NavigationProps> = ({ activeProfile }) => {
         </li>
         <li>
           <Link 
+            to="/messaging?filter=unread" 
+            className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/messaging' && location.search.includes('filter=unread') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+          >
+            <MailOpen size={18} />
+            <span>Messages non lus</span>
+          </Link>
+        </li>
+        <li>
+          <Link 
             to="/profile" 
             className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/profile' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
           >
@@ -107,3 +117,4 @@ export const Navigation: React.FC<NavigationProps> = ({ activeProfile }) => {
     </nav>
   );
 };
+
