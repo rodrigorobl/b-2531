@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ProfileSelector, ProfileType } from './sidebar/ProfileSelector';
 import { UserProfile } from './sidebar/UserProfile';
 import { Navigation } from './sidebar/Navigation';
 
 export default function Sidebar() {
   const [activeProfile, setActiveProfile] = useState<ProfileType>('entreprise-construction');
+  const navigate = useNavigate();
 
   // Mock user data - this would normally come from your auth system
   const user = {
@@ -18,6 +19,25 @@ export default function Sidebar() {
 
   const handleProfileChange = (value: ProfileType) => {
     setActiveProfile(value);
+    
+    // Redirect to the corresponding dashboard when profile changes
+    switch (value) {
+      case 'promoteur':
+        navigate('/dashboard-promoteur');
+        break;
+      case 'maitre-oeuvre':
+        navigate('/dashboard-bet');
+        break;
+      case 'entreprise-construction':
+        navigate('/dashboard-construction');
+        break;
+      case 'entreprise-services':
+        navigate('/dashboard-services');
+        break;
+      case 'industriel':
+        navigate('/dashboard-industry');
+        break;
+    }
   };
 
   return (

@@ -7,17 +7,50 @@ import { ProfileType, getProfileName } from './ProfileSelector';
 interface NavigationProps {
   activeProfile: ProfileType;
 }
+
 export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
   const location = useLocation();
+  
+  // Get the dashboard route based on the active profile
+  const getDashboardRoute = () => {
+    switch (activeProfile) {
+      case 'promoteur':
+        return '/dashboard-promoteur';
+      case 'maitre-oeuvre':
+        return '/dashboard-bet';
+      case 'entreprise-construction':
+        return '/dashboard-construction';
+      case 'entreprise-services':
+        return '/dashboard-services';
+      case 'industriel':
+        return '/dashboard-industry';
+      default:
+        return '/dashboard';
+    }
+  };
+  
+  // Check if the current location is one of the dashboard routes
+  const isActiveDashboard = () => {
+    const dashboardRoutes = [
+      '/dashboard',
+      '/dashboard-promoteur',
+      '/dashboard-bet',
+      '/dashboard-construction',
+      '/dashboard-services',
+      '/dashboard-industry'
+    ];
+    return dashboardRoutes.includes(location.pathname);
+  };
+  
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
         {getProfileName(activeProfile)}
       </div>
       <ul className="space-y-2">
         <li>
-          <Link to="/dashboard" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/dashboard' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+          <Link to={getDashboardRoute()} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${isActiveDashboard() ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <LayoutDashboard size={18} />
             <span>Tableau de bord</span>
           </Link>
