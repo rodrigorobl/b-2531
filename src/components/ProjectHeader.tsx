@@ -1,11 +1,10 @@
-
 import React from 'react';
 import StatusBadge from './StatusBadge';
 import { Calendar, MapPin, Building, Clock, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ProjectMap from './ProjectMap';
 import { Button } from '@/components/ui/button';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
 interface ProjectHeaderProps {
@@ -29,6 +28,7 @@ interface ProjectHeaderProps {
 
 export default function ProjectHeader({ project }: ProjectHeaderProps) {
   const [showMap, setShowMap] = React.useState(false);
+  const navigate = useNavigate();
   const isPromoterProfile = React.useMemo(() => {
     // Get the activeProfile from Sidebar component state
     // This is a simplified check for the demo, in a real app, you'd use context or Redux
@@ -70,7 +70,12 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
         
         <div className="flex items-center gap-3">
           {isPromoterProfile && (
-            <Button variant="default" size="sm" className="whitespace-nowrap">
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="whitespace-nowrap"
+              onClick={() => navigate('/create-tender')}
+            >
               <Plus size={16} className="mr-1" />
               Lancer un Appel d'Offres
             </Button>
