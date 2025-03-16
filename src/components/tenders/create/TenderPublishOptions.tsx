@@ -1,17 +1,43 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Zap, Calendar, Bell, Eye } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
+import { UseFormReturn } from 'react-hook-form';
+import { TenderFormValues } from '@/pages/CreateTender';
+import { useToast } from '@/hooks/use-toast';
 
 interface TenderPublishOptionsProps {
-  onPublish: () => void;
+  onPublish?: () => void;
+  form?: UseFormReturn<TenderFormValues>;
 }
 
-const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ onPublish }) => {
+const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ onPublish, form }) => {
+  const [publishMode, setPublishMode] = useState('immediate');
+  const { toast } = useToast();
+  
+  const handlePublish = () => {
+    if (onPublish) {
+      onPublish();
+    } else if (form) {
+      // If we have a form but no onPublish handler, we can trigger form submission
+      toast({
+        title: "Publication en cours",
+        description: "Votre appel d'offres est en cours de publication.",
+      });
+      form.handleSubmit((data) => {
+        console.log("Publication de l'appel d'offres:", data);
+        toast({
+          title: "Publication réussie",
+          description: "Votre appel d'offres a été publié avec succès.",
+        });
+      })();
+    }
+  };
+  
   return (
     <div className="space-y-6">
       <Card>
@@ -19,7 +45,12 @@ const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ onPublish }
           <CardTitle className="text-lg">Mode de publication</CardTitle>
         </CardHeader>
         <CardContent>
-          <RadioGroup defaultValue="immediate" className="space-y-4">
+          <RadioGroup 
+            defaultValue="immediate" 
+            className="space-y-4"
+            value={publishMode}
+            onValueChange={setPublishMode}
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="immediate" id="immediate" />
               <Label htmlFor="immediate" className="flex items-center">
@@ -35,6 +66,17 @@ const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ onPublish }
               </Label>
             </div>
           </RadioGroup>
+          
+          {publishMode === 'scheduled' && (
+            <div className="mt-4 p-3 border rounded-md">
+              <Label htmlFor="publish-date" className="block mb-2">Date de publication</Label>
+              <input 
+                type="datetime-local" 
+                id="publish-date" 
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -61,7 +103,7 @@ const TenderPublishOptions: React.FC<TenderPublishOptionsProps> = ({ onPublish }
       </Card>
 
       <Button
-        onClick={onPublish}
+        onClick={handlePublish}
         className="w-full"
         size="lg"
       >
