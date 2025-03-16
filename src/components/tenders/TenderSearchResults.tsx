@@ -13,6 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TenderSearchResultsProps {
   tenders: TenderSearchResult[];
@@ -54,6 +61,32 @@ export default function TenderSearchResults({
         
         {viewMode === 'map' ? (
           <div className="flex items-center gap-2">
+            <Select defaultValue="grid">
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Mode d'affichage" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="grid" onClick={() => onViewModeChange('grid')}>
+                  <div className="flex items-center gap-2">
+                    <LayoutGrid size={16} />
+                    <span>Affichage grille</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="list" onClick={() => onViewModeChange('list')}>
+                  <div className="flex items-center gap-2">
+                    <LayoutList size={16} />
+                    <span>Affichage liste</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="map" onClick={() => onViewModeChange('map')}>
+                  <div className="flex items-center gap-2">
+                    <Map size={16} />
+                    <span>Affichage carte</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center gap-1">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import TenderSearchFilters from '@/components/tenders/TenderSearchFilters';
@@ -37,7 +36,6 @@ export default function TenderSearch() {
   const [selectedTender, setSelectedTender] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
   
-  // Sample data
   const tenders: TenderSearchResult[] = [
     {
       id: "search-001",
@@ -132,10 +130,8 @@ export default function TenderSearch() {
   ];
 
   const filteredTenders = tenders.filter(tender => {
-    // Filter by selected tab (status)
     if (selectedTab !== 'all' && tender.status !== selectedTab) return false;
     
-    // Filter by search query
     if (searchQuery && 
         !tender.projectName.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !tender.projectType.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -183,10 +179,8 @@ export default function TenderSearch() {
             </TabsList>
             
             <div className="flex h-[calc(100vh-230px)]">
-              {/* Left column: Filters */}
               <TenderSearchFilters />
               
-              {/* Middle column: Results or Map */}
               {viewMode === 'map' ? (
                 <TenderMap 
                   tenders={filteredTenders}
@@ -203,7 +197,6 @@ export default function TenderSearch() {
                 />
               )}
               
-              {/* Right column: Details */}
               <TenderSearchDetails
                 tender={tenders.find(t => t.id === selectedTender)}
               />
