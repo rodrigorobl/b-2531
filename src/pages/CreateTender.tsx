@@ -117,7 +117,7 @@ export default function CreateTender() {
               {/* Step 1: Type selection */}
               {currentStep === 1 && <>
                   {/* Left column */}
-                  <Card className="md:col-span-1">
+                  <Card className="md:col-span-3">
                     <CardContent className="p-6">
                       <h2 className="text-xl font-semibold mb-4">Paramètres de l'appel d'offres</h2>
                       <div className="space-y-6">
@@ -128,7 +128,7 @@ export default function CreateTender() {
                   </Card>
                   
                   {/* Middle column */}
-                  <Card className="md:col-span-1">
+                  <Card className="md:col-span-3">
                     <CardContent className="p-6">
                       <h2 className="text-xl font-semibold mb-4">Informations générales</h2>
                       <div className="space-y-4">
