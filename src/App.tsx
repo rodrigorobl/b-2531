@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import CreateTender from "./pages/CreateTender";
 import CompanyDirectory from "./pages/CompanyDirectory";
+import ProjectsList from "./pages/ProjectsList";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
             <Route path="/tender-management" element={<Index />} />
             <Route path="/create-tender" element={<CreateTender />} />
+            <Route path="/projects" element={<ProjectsList />} />
             <Route path="/company" element={<Company />} />
             <Route path="/company/edit" element={<EditCompany />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
