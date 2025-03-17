@@ -1,5 +1,6 @@
 
 export type ProjectStatus = 'En cours' | 'Clôturé' | 'Attribué';
+export type TenderStatus = 'open' | 'closed' | 'assigned';
 
 export interface ProjectSummary {
   id: string;
@@ -7,26 +8,28 @@ export interface ProjectSummary {
   projectType: string;
   description: string;
   location: string;
-  budget: number | null;
+  budget: number;
   status: ProjectStatus;
-  startDate: string | null;
-  endDate: string | null;
+  startDate?: string;
+  endDate?: string;
   tendersCount: number;
   tendersAssigned: number;
   progressPercentage: number;
   clientName: string;
 }
 
+export interface ProjectTender {
+  id: string;
+  name: string;
+  type: string;
+  status: TenderStatus;
+  quotesReceived: number;
+  deadline: string;
+  lotsTotal: number;
+  lotsAssigned: number;
+  progress: number;
+}
+
 export interface ProjectDetail extends ProjectSummary {
-  tenders: {
-    id: string;
-    name: string;
-    type: string;
-    status: 'open' | 'closed' | 'assigned';
-    quotesReceived: number;
-    deadline: string;
-    lotsTotal: number;
-    lotsAssigned: number;
-    progress: number;
-  }[];
+  tenders: ProjectTender[];
 }
