@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, DraftingCompass } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, DraftingCompass, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -16,7 +16,7 @@ export default function DashboardBET() {
     projectsManaged: 7,
     activeTenders: 10,
     pendingValidations: 5,
-    clientMeetings: 3
+    quotesToAnalyze: 8
   };
 
   // Sample projects data for BET
@@ -125,7 +125,7 @@ export default function DashboardBET() {
             <DashboardKPI title="Projets supervisés" value={kpiData.projectsManaged} icon={<DraftingCompass />} color="bg-primary/10 text-primary" linkTo="/projects" />
             <DashboardKPI title="AO en cours" value={kpiData.activeTenders} icon={<FileText />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-management" />
             <DashboardKPI title="Validations en attente" value={kpiData.pendingValidations} icon={<CheckCircle2 />} color="bg-status-assigned/10 text-status-assigned" linkTo="/documents?filter=pending" />
-            <DashboardKPI title="Réunions à venir" value={kpiData.clientMeetings} icon={<Calendar />} color="bg-status-in-progress/10 text-status-in-progress" linkTo="/calendar" />
+            <DashboardKPI title="Devis à analyser" value={kpiData.quotesToAnalyze} icon={<ClipboardCheck />} color="bg-status-in-progress/10 text-status-in-progress" linkTo="/quotes-to-analyze" />
           </div>
         </header>
         
