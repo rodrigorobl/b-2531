@@ -182,11 +182,13 @@ export default function TenderSearch() {
               <TenderSearchFilters />
               
               {viewMode === 'map' ? (
-                <TenderMap 
-                  tenders={filteredTenders}
-                  onSelectTender={handleTenderSelect}
-                  selectedTenderId={selectedTender}
-                />
+                <div className="flex-1 mr-4">
+                  <TenderMap 
+                    tenders={filteredTenders}
+                    onSelectTender={handleTenderSelect}
+                    selectedTenderId={selectedTender}
+                  />
+                </div>
               ) : (
                 <TenderSearchResults 
                   tenders={filteredTenders}

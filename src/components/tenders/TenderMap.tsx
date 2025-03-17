@@ -4,8 +4,7 @@ import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapIcon, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-maps/api';
 
 interface TenderMapProps {
   tenders: TenderSearchResult[];
@@ -13,17 +12,46 @@ interface TenderMapProps {
   onSelectTender: (tenderId: string) => void;
 }
 
+interface ProjectLocation {
+  id: string;
+  nom: string;
+  localisation: string;
+  type_projet: string;
+  statut: string;
+  budget_estime: number;
+  entreprises: {
+    id: string;
+    nom: string;
+    ville: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+  };
+}
+
 export default function TenderMap({ tenders, selectedTenderId, onSelectTender }: TenderMapProps) {
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [projectLocations, setProjectLocations] = useState<any[]>([]);
-  const mapContainer = React.useRef<HTMLDivElement>(null);
-  const map = React.useRef<mapboxgl.Map | null>(null);
+  const [projectLocations, setProjectLocations] = useState<ProjectLocation[]>([]);
+  const [activeMarker, setActiveMarker] = useState<string | null>(null);
   
-  // À remplacer par votre token Mapbox réel
-  const mapboxToken = "pk.eyJ1IjoibG92YWJsZS1idHAiLCJhIjoiY2x6dzFsdHVsMDkyYjJrcXppbG5heHp1cCJ9.OdWBcNOJ3dFe0yCu8lTwVQ";
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: 'AIzaSyBb7ikdBNJYSpoXkzOFBQlThyfMt9mJa68',
+  });
+
+  // Styles for the Google Map container
+  const mapContainerStyle = {
+    width: '100%',
+    height: '100%',
+  };
   
+  // Default center (France)
+  const center = {
+    lat: 46.6033,
+    lng: 2.3522,
+  };
+  
+  // Récupérer les données des projets et leurs localisations depuis Supabase
   useEffect(() => {
-    // Récupérer les données des projets et leurs localisations depuis Supabase
     const fetchProjectLocations = async () => {
       try {
         const { data, error } = await supabase
@@ -47,7 +75,7 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
         if (error) throw error;
         
         if (data && data.length > 0) {
-          setProjectLocations(data);
+          setProjectLocations(data as ProjectLocation[]);
         }
       } catch (error) {
         console.error('Erreur lors de la récupération des localisations:', error);
@@ -56,103 +84,14 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
     
     fetchProjectLocations();
   }, []);
-  
+
+  // Set active marker when selected tender changes
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken) return;
-    
-    if (!map.current) {
-      mapboxgl.accessToken = mapboxToken;
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [2.3522, 46.6033], // Centre de la France
-        zoom: 5
-      });
-      
-      map.current.on('load', () => {
-        setMapLoaded(true);
-      });
-      
-      // Ajouter les contrôles de navigation
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    if (selectedTenderId) {
+      setActiveMarker(selectedTenderId);
     }
-    
-    return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-      }
-    };
-  }, [mapboxToken]);
+  }, [selectedTenderId]);
   
-  // Ajouter les marqueurs des projets une fois que la carte est chargée
-  useEffect(() => {
-    if (mapLoaded && map.current && projectLocations.length > 0) {
-      // Supprimer les marqueurs existants
-      const markers = document.querySelectorAll('.mapboxgl-marker');
-      markers.forEach(marker => marker.remove());
-      
-      const bounds = new mapboxgl.LngLatBounds();
-      
-      projectLocations.forEach(project => {
-        if (project.entreprises && project.entreprises.coordinates) {
-          const coordinates = project.entreprises.coordinates;
-          
-          // Créer un élément DOM pour le marqueur
-          const el = document.createElement('div');
-          el.className = 'project-marker';
-          el.style.backgroundColor = getStatusColor(project.statut);
-          el.style.width = '20px';
-          el.style.height = '20px';
-          el.style.borderRadius = '50%';
-          el.style.border = '2px solid white';
-          el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-          el.style.cursor = 'pointer';
-          
-          // Créer une popup avec les informations du projet
-          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-            <div style="padding: 5px;">
-              <strong>${project.nom}</strong><br/>
-              <span>${project.type_projet}</span><br/>
-              <span>Budget: ${formatBudget(project.budget_estime)}</span><br/>
-              <span style="color: ${getStatusColor(project.statut)}">
-                ${getStatusLabel(project.statut)}
-              </span>
-            </div>
-          `);
-          
-          // Ajouter le marqueur à la carte
-          new mapboxgl.Marker(el)
-            .setLngLat([coordinates.lng, coordinates.lat])
-            .setPopup(popup)
-            .addTo(map.current!);
-          
-          // Étendre les limites pour inclure ce marqueur
-          bounds.extend([coordinates.lng, coordinates.lat]);
-          
-          // Ajouter un gestionnaire d'événements au marqueur
-          el.addEventListener('click', () => {
-            // Trouver le tender correspondant au projet et le sélectionner
-            const matchingTender = tenders.find(t => t.projectName === project.nom);
-            if (matchingTender) {
-              onSelectTender(matchingTender.id);
-            }
-          });
-        }
-      });
-      
-      // Ajuster la vue pour afficher tous les marqueurs
-      if (!bounds.isEmpty()) {
-        map.current.fitBounds(bounds, {
-          padding: 50,
-          maxZoom: 12
-        });
-      }
-    }
-  }, [mapLoaded, projectLocations, tenders, onSelectTender]);
-  
-  // Fonctions utilitaires
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'En cours': return '#3b82f6'; // blue
@@ -178,8 +117,21 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
       maximumFractionDigits: 0
     }).format(budget);
   };
-  
-  if (!mapboxToken || mapboxToken === "pk.eyJ1IjoibG92YWJsZS1idHAiLCJhIjoiY2x6dzFsdHVsMDkyYjJrcXppbG5heHp1cCJ9.OdWBcNOJ3dFe0yCu8lTwVQ") {
+
+  const handleMarkerClick = (projectId: string) => {
+    setActiveMarker(projectId);
+    
+    // Find the matching tender and select it
+    const matchingTender = tenders.find(t => t.projectName === 
+      projectLocations.find(p => p.id === projectId)?.nom);
+    
+    if (matchingTender) {
+      onSelectTender(matchingTender.id);
+    }
+  };
+
+  // If API key is not valid or Google Maps failed to load
+  if (loadError) {
     return (
       <div className="w-full h-full">
         <Card className="h-full border-dashed flex items-center justify-center">
@@ -187,9 +139,25 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
             <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
               <AlertTriangle className="h-6 w-6 text-amber-600" />
             </div>
-            <h3 className="text-lg font-medium">Token Mapbox requis</h3>
+            <h3 className="text-lg font-medium">Erreur de chargement</h3>
             <p className="text-sm text-muted-foreground mt-2">
-              Veuillez utiliser votre propre token Mapbox pour afficher la carte des appels d'offres.
+              Impossible de charger la carte Google Maps. Veuillez vérifier votre connexion internet ou la clé API.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-full">
+        <Card className="h-full border-dashed flex items-center justify-center">
+          <CardContent className="p-6 text-center">
+            <div className="w-12 h-12 rounded-full border-2 border-primary/30 border-t-primary animate-spin mx-auto mb-4"></div>
+            <h3 className="text-lg font-medium">Chargement de la carte</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Veuillez patienter pendant le chargement de la carte Google Maps.
             </p>
           </CardContent>
         </Card>
@@ -199,7 +167,59 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
   
   return (
     <div className="w-full h-full relative">
-      <div ref={mapContainer} className="w-full h-full rounded-md overflow-hidden" />
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={5}
+        center={center}
+        options={{
+          fullscreenControl: true,
+          mapTypeControl: false,
+          streetViewControl: false,
+          zoomControl: true,
+        }}
+      >
+        {projectLocations.map((project) => {
+          if (project.entreprises && project.entreprises.coordinates) {
+            const coordinates = project.entreprises.coordinates;
+            
+            return (
+              <Marker
+                key={project.id}
+                position={{
+                  lat: coordinates.lat,
+                  lng: coordinates.lng
+                }}
+                onClick={() => handleMarkerClick(project.id)}
+                icon={{
+                  path: window.google.maps.SymbolPath.CIRCLE,
+                  scale: 10,
+                  fillColor: getStatusColor(project.statut),
+                  fillOpacity: 1,
+                  strokeColor: 'white',
+                  strokeWeight: 2,
+                }}
+              >
+                {activeMarker === project.id && (
+                  <InfoWindow
+                    onCloseClick={() => setActiveMarker(null)}
+                  >
+                    <div style={{ padding: '5px', maxWidth: '200px' }}>
+                      <strong>{project.nom}</strong><br/>
+                      <span>{project.type_projet}</span><br/>
+                      <span>Budget: {formatBudget(project.budget_estime)}</span><br/>
+                      <span style={{ color: getStatusColor(project.statut) }}>
+                        {getStatusLabel(project.statut)}
+                      </span>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            );
+          }
+          return null;
+        })}
+      </GoogleMap>
+      
       {projectLocations.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80">
           <div className="text-center p-6">

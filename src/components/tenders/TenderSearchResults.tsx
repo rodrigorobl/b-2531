@@ -5,7 +5,6 @@ import TenderViewModeSelector from './TenderViewModeSelector';
 import TenderFilterSortMenu from './TenderFilterSortMenu';
 import TenderGridView from './TenderGridView';
 import TenderListView from './TenderListView';
-import TenderMap from './TenderMap';
 
 interface TenderSearchResultsProps {
   tenders: TenderSearchResult[];
@@ -61,13 +60,7 @@ export default function TenderSearchResults({
           selectedTenderId={selectedTenderId} 
           onSelectTender={onSelectTender} 
         />
-      ) : (
-        <TenderMap 
-          tenders={tenders} 
-          selectedTenderId={selectedTenderId} 
-          onSelectTender={onSelectTender} 
-        />
-      )}
+      ) : null}
     </div>
   );
 }

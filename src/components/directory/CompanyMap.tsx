@@ -1,10 +1,9 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { useEffect, useState } from 'react';
 import { Company } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 
 interface CompanyMapProps {
   companies: Company[];
@@ -32,15 +31,26 @@ export default function CompanyMap({
   selectedCompany,
   setSelectedCompany
 }: CompanyMapProps) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [supabaseCompanies, setSupabaseCompanies] = useState<SupabaseCompany[]>([]);
+  const [activeInfoWindow, setActiveInfoWindow] = useState<string | null>(null);
 
-  // Token Mapbox pour la démonstration
-  const mapboxToken = "pk.eyJ1IjoibG92YWJsZS1idHAiLCJhIjoiY2x6dzFsdHVsMDkyYjJrcXppbG5heHp1cCJ9.OdWBcNOJ3dFe0yCu8lTwVQ";
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: 'AIzaSyBb7ikdBNJYSpoXkzOFBQlThyfMt9mJa68',
+  });
+
+  // Map container style
+  const mapContainerStyle = {
+    width: '100%',
+    height: '100%',
+  };
+
+  // Default center (France)
+  const center = {
+    lat: 46.6033,
+    lng: 2.3522,
+  };
   
   // Fonction pour obtenir la couleur du marqueur en fonction de la catégorie
   const getMarkerColor = (category: string) => {
@@ -130,109 +140,22 @@ export default function CompanyMap({
     }));
   };
 
-  useEffect(() => {
-    if (!mapContainer.current) return;
-    
-    // Initialize map
-    mapboxgl.accessToken = mapboxToken;
-    
-    if (!map.current) {
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [2.3522, 46.6033], // Centre de la France
-        zoom: 5
-      });
-      
-      // Add navigation controls
-      map.current.addControl(
-        new mapboxgl.NavigationControl(),
-        'top-right'
-      );
+  // Handle marker click
+  const handleMarkerClick = (companyId: string) => {
+    setActiveInfoWindow(companyId);
+    const company = mapSupabaseToCompanies().find(c => c.id === companyId);
+    if (company) {
+      setSelectedCompany(company);
     }
-  }, []);
-  
-  // Afficher les marqueurs des entreprises une fois que la carte est chargée
+  };
+
+  // Update active info window when selected company changes
   useEffect(() => {
-    if (!map.current || loading) return;
-    
-    const mappedCompanies = mapSupabaseToCompanies();
-    
-    map.current.on('load', () => {
-      // Clear existing markers
-      Object.values(markersRef.current).forEach((marker) => marker.remove());
-      markersRef.current = {};
-      
-      // Add markers for each company
-      mappedCompanies.forEach((company) => {
-        if (company.coordinates) {
-          const { lng, lat } = company.coordinates;
-          
-          // Create a DOM element for the marker
-          const el = document.createElement('div');
-          el.className = 'company-marker';
-          el.style.backgroundColor = getMarkerColor(company.category);
-          el.style.width = '24px';
-          el.style.height = '24px';
-          el.style.borderRadius = '50%';
-          el.style.border = '2px solid white';
-          el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-          el.style.cursor = 'pointer';
-          
-          // Create and add the marker
-          const marker = new mapboxgl.Marker(el)
-            .setLngLat([lng, lat])
-            .setPopup(
-              new mapboxgl.Popup({ offset: 25 })
-                .setHTML(`
-                  <strong>${company.name}</strong><br/>
-                  ${company.specialty}<br/>
-                  <span style="font-size: 12px; color: #666;">${company.location}</span>
-                `)
-            )
-            .addTo(map.current!);
-          
-          // Add click handler
-          el.addEventListener('click', () => {
-            setSelectedCompany(company);
-          });
-          
-          // Store the marker reference
-          markersRef.current[company.id] = marker;
-        }
-      });
-      
-      // If there are companies, fit the map to show all markers
-      if (mappedCompanies.length > 0 && mappedCompanies.some(c => c.coordinates)) {
-        const bounds = new mapboxgl.LngLatBounds();
-        mappedCompanies.forEach(company => {
-          if (company.coordinates) {
-            bounds.extend([company.coordinates.lng, company.coordinates.lat]);
-          }
-        });
-        map.current!.fitBounds(bounds, { padding: 50 });
-      }
-    });
-  }, [loading, supabaseCompanies, setSelectedCompany]);
-  
-  // Center map on selected company
-  useEffect(() => {
-    if (selectedCompany && map.current && selectedCompany.coordinates) {
-      const { lng, lat } = selectedCompany.coordinates;
-      map.current.flyTo({
-        center: [lng, lat],
-        zoom: 14,
-        duration: 1000
-      });
-      
-      // Open popup for selected company
-      const marker = markersRef.current[selectedCompany.id];
-      if (marker) {
-        marker.togglePopup();
-      }
+    if (selectedCompany) {
+      setActiveInfoWindow(selectedCompany.id);
     }
   }, [selectedCompany]);
-  
+
   if (error) {
     return (
       <div className="relative w-full h-full flex items-center justify-center">
@@ -244,43 +167,109 @@ export default function CompanyMap({
       </div>
     );
   }
+
+  if (loadError) {
+    return (
+      <div className="relative w-full h-full flex items-center justify-center">
+        <div className="text-center p-6">
+          <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium">Erreur de chargement de la carte</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Impossible de charger Google Maps. Veuillez vérifier votre connexion ou la clé API.
+          </p>
+        </div>
+      </div>
+    );
+  }
   
+  if (!isLoaded || loading) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Chargement de la carte...</span>
+      </div>
+    );
+  }
+
+  const mappedCompanies = mapSupabaseToCompanies();
+  
+  // Calculate bounds for the map to fit all markers
+  const getBounds = () => {
+    const bounds = new window.google.maps.LatLngBounds();
+    mappedCompanies.forEach(company => {
+      if (company.coordinates) {
+        bounds.extend({
+          lat: company.coordinates.lat,
+          lng: company.coordinates.lng
+        });
+      }
+    });
+    return bounds;
+  };
+
   return (
     <div className="relative w-full h-full">
-      {/* Adding styles directly to head instead of using jsx prop */}
-      <style>
-        {`
-          .mapboxgl-popup-content {
-            padding: 15px;
-            border-radius: 8px;
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={center}
+        zoom={5}
+        onLoad={(map) => {
+          if (mappedCompanies.length > 0) {
+            map.fitBounds(getBounds());
           }
-        `}
-      </style>
-      <div ref={mapContainer} className="absolute inset-0" />
+        }}
+        options={{
+          fullscreenControl: true,
+          mapTypeControl: false,
+          streetViewControl: false,
+          zoomControl: true,
+        }}
+      >
+        {mappedCompanies.map((company) => {
+          if (company.coordinates) {
+            return (
+              <Marker
+                key={company.id}
+                position={{
+                  lat: company.coordinates.lat,
+                  lng: company.coordinates.lng
+                }}
+                onClick={() => handleMarkerClick(company.id)}
+                icon={{
+                  path: window.google.maps.SymbolPath.CIRCLE,
+                  scale: 10,
+                  fillColor: getMarkerColor(company.category),
+                  fillOpacity: 1,
+                  strokeColor: 'white',
+                  strokeWeight: 2,
+                }}
+              >
+                {activeInfoWindow === company.id && (
+                  <InfoWindow
+                    onCloseClick={() => setActiveInfoWindow(null)}
+                  >
+                    <div style={{ padding: '5px', maxWidth: '200px' }}>
+                      <strong>{company.name}</strong><br/>
+                      <span>{company.specialty}</span><br/>
+                      <span style={{ fontSize: '12px', color: '#666' }}>{company.location}</span>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            );
+          }
+          return null;
+        })}
+      </GoogleMap>
       
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2">Chargement de la carte...</span>
-        </div>
-      )}
-      
-      {!mapboxToken && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-          <div className="bg-card p-4 rounded-lg shadow-lg max-w-md text-center">
-            <h3 className="font-medium mb-2">Configuration requise</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Pour afficher la carte, vous devez obtenir un token Mapbox et le remplacer 
-              dans le fichier CompanyMap.tsx.
+      {mappedCompanies.length === 0 && !loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+          <div className="text-center p-6">
+            <AlertTriangle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium">Aucune entreprise</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Aucune entreprise avec des coordonnées géographiques n'a été trouvée.
             </p>
-            <a 
-              href="https://account.mapbox.com/auth/signup/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline text-sm"
-            >
-              Obtenir un token Mapbox
-            </a>
           </div>
         </div>
       )}
