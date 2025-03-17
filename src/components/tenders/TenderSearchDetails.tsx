@@ -146,10 +146,7 @@ export default function TenderSearchDetails({
               <div className="grid grid-cols-2 gap-2">
                 
                 <Button variant="outline" size="sm" className="w-full gap-1" asChild>
-                  <Link to={`/tender-specifications?project=${tender.id}`}>
-                    <ExternalLink size={14} />
-                    
-                  </Link>
+                  
                 </Button>
               </div>
             </div>
