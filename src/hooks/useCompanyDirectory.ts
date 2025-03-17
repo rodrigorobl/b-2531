@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { Company, CompanyCategory } from '@/types/directory';
+import { Company, CompanyCategory, mapSupabaseCategory } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
