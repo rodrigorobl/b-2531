@@ -24,7 +24,7 @@ interface InfoTabsProps {
       contact?: string;
     }>;
   };
-  onUserSelect: (member: any) => void;
+  onUserSelect?: (member: any) => void;
 }
 
 export function InfoTabs({ info, onUserSelect }: InfoTabsProps) {
