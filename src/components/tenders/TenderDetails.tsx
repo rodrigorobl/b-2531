@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tender } from '@/pages/TenderOffers';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 interface TenderDetailsProps {
   tender?: Tender;
 }
@@ -16,16 +14,8 @@ export default function TenderDetails({
   tender
 }: TenderDetailsProps) {
   if (!tender) {
-    return (
-      <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
-        <div className="text-center p-6 text-muted-foreground">
-          <FileText className="mx-auto mb-2 opacity-20" size={40} />
-          <p>Sélectionnez un appel d'offres pour voir les détails</p>
-        </div>
-      </div>
-    );
+    return;
   }
-  
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'open':
@@ -38,7 +28,6 @@ export default function TenderDetails({
         return 'Inconnu';
     }
   };
-  
   const getParticipationStatusLabel = (status: string) => {
     switch (status) {
       case 'to-submit':
@@ -53,9 +42,7 @@ export default function TenderDetails({
         return 'Inconnu';
     }
   };
-  
-  return (
-    <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
+  return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <h3 className="font-medium truncate">{tender.projectName}</h3>
@@ -114,11 +101,9 @@ export default function TenderDetails({
                   <h4 className="text-xs font-medium">Lots concernés</h4>
                 </div>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {tender.lots.map((lot, index) => (
-                    <Badge key={index} variant="outline" className="font-normal">
+                  {tender.lots.map((lot, index) => <Badge key={index} variant="outline" className="font-normal">
                       {lot}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                 </div>
               </div>
               
@@ -144,14 +129,12 @@ export default function TenderDetails({
               </Card>
               
               <div className="grid grid-cols-1 gap-2">
-                {tender.status === 'open' && (
-                  <Button className="w-full gap-1" asChild>
+                {tender.status === 'open' && <Button className="w-full gap-1" asChild>
                     <Link to={`/tender-specifications?project=${tender.id}`}>
                       <ExternalLink size={14} />
                       <span>Accéder à l'Appel d'Offres</span>
                     </Link>
-                  </Button>
-                )}
+                  </Button>}
                 <Button variant="outline" size="sm" className="w-full gap-1">
                   <FileDown size={14} />
                   <span>Télécharger DCE</span>
@@ -187,6 +170,5 @@ export default function TenderDetails({
           </TabsContent>
         </div>
       </Tabs>
-    </div>
-  );
+    </div>;
 }
