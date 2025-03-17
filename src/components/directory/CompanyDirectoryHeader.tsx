@@ -37,8 +37,15 @@ export default function CompanyDirectoryHeader({
     if (value === 'all') {
       setSelectedCategory(null);
     } else {
-      setSelectedCategory(value as CompanyCategory);
+      // Type casting is safe here as we control the possible values
+      const validCategory = isValidCategory(value) ? value as CompanyCategory : null;
+      setSelectedCategory(validCategory);
     }
+  };
+  
+  // Helper function to validate category
+  const isValidCategory = (category: string): boolean => {
+    return categories.some(c => c.id === category);
   };
   
   return (

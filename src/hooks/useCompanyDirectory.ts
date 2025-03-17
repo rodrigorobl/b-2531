@@ -29,19 +29,10 @@ export default function useCompanyDirectory({
         .from('entreprises')
         .select('*');
 
+      // Only apply category filter if a valid category is selected
       if (selectedCategory) {
-        // Map our internal category to Supabase's format
-        const supabaseCategory = (() => {
-          switch (selectedCategory) {
-            case 'architecte': return 'Architecte';
-            case 'moe_bet': return 'MOE_BET';
-            case 'construction': return 'Construction';
-            case 'service': return 'Service';
-            case 'industriel': return 'Industriel';
-            case 'fournisseur': return 'Fournisseur';
-            default: return null;
-          }
-        })();
+        // Safely map our internal category to Supabase's format
+        const supabaseCategory = getSafeSupabaseCategory(selectedCategory);
         
         if (supabaseCategory) {
           console.log("Filtering by category:", supabaseCategory);
@@ -82,7 +73,7 @@ export default function useCompanyDirectory({
             id: company.id,
             name: company.nom || 'Entreprise',
             logo: company.logo || 'https://github.com/shadcn.png',
-            category: mapSupabaseCategory(company.categorie_principale),
+            category: safeCategoryMapping(company.categorie_principale),
             specialty: company.specialite || 'Non spécifié',
             location: company.ville || 'Non spécifié',
             address: company.adresse || '',
@@ -113,6 +104,34 @@ export default function useCompanyDirectory({
       setLoading(false);
     }
   }, [selectedCategory]);
+
+  // Helper function to safely map Supabase category to our internal format
+  const safeCategoryMapping = (supabaseCategory: string): CompanyCategory => {
+    try {
+      return mapSupabaseCategory(supabaseCategory);
+    } catch (error) {
+      console.warn("Invalid category mapping:", supabaseCategory, error);
+      return 'construction'; // Default fallback
+    }
+  };
+
+  // Helper function to safely get Supabase category format
+  const getSafeSupabaseCategory = (category: CompanyCategory): string | null => {
+    try {
+      switch (category) {
+        case 'architecte': return 'Architecte';
+        case 'moe_bet': return 'MOE_BET';
+        case 'construction': return 'Construction';
+        case 'service': return 'Service';
+        case 'industriel': return 'Industriel';
+        case 'fournisseur': return 'Fournisseur';
+        default: return null;
+      }
+    } catch (error) {
+      console.warn("Error in category conversion:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetchCompanies();
