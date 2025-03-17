@@ -13,12 +13,7 @@ export default function TenderDetails({
   tender
 }: TenderDetailsProps) {
   if (!tender) {
-    return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
-        <div className="text-center p-6 text-muted-foreground">
-          <FileText className="mx-auto mb-2 opacity-20" size={40} />
-          <p>Sélectionnez un appel d'offres pour voir les détails</p>
-        </div>
-      </div>;
+    return;
   }
   const getStatusLabel = (status: string) => {
     switch (status) {
