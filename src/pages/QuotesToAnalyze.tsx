@@ -1,12 +1,11 @@
-
 import React, { useState } from 'react';
-import Layout from '@/components/Layout';
+import { Link } from 'react-router-dom';
+import { Layout } from '@/components/Layout';
 import { ArrowUpDown, Calendar, FileText, User, Building, Clock, Check, X, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 
 // Mock data for quotes to analyze
 const MOCK_QUOTES = [
