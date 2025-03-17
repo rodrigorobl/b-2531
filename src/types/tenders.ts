@@ -18,4 +18,11 @@ export interface TenderSearchResult {
   isFavorite: boolean;
   createdAt: string;
   description: string;
+  progress?: number;
+  lotsTotal?: number;
+  lotsAssigned?: number;
+  quotesReceived?: number;
+  actualQuotesReceived?: number;
+  quoteQuality?: 'poor' | 'medium' | 'good';
+  budgetRespect?: 'under' | 'on-target' | 'over';
 }

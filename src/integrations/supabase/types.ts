@@ -11,34 +11,55 @@ export type Database = {
     Tables: {
       appels_offres: {
         Row: {
+          budget: number | null
           date_limite: string
           dce_url: string | null
           description: string
           entreprise_attribuee_id: string | null
           id: string
           lot: string
+          lots_assigned: number | null
+          lots_total: number | null
+          nom_projet: string
+          progress: number | null
           projet_id: string
+          quotes_received: number | null
           statut: Database["public"]["Enums"]["appel_offre_statut"] | null
+          type_appel_offre: string
         }
         Insert: {
+          budget?: number | null
           date_limite: string
           dce_url?: string | null
           description: string
           entreprise_attribuee_id?: string | null
           id?: string
           lot: string
+          lots_assigned?: number | null
+          lots_total?: number | null
+          nom_projet?: string
+          progress?: number | null
           projet_id: string
+          quotes_received?: number | null
           statut?: Database["public"]["Enums"]["appel_offre_statut"] | null
+          type_appel_offre?: string
         }
         Update: {
+          budget?: number | null
           date_limite?: string
           dce_url?: string | null
           description?: string
           entreprise_attribuee_id?: string | null
           id?: string
           lot?: string
+          lots_assigned?: number | null
+          lots_total?: number | null
+          nom_projet?: string
+          progress?: number | null
           projet_id?: string
+          quotes_received?: number | null
           statut?: Database["public"]["Enums"]["appel_offre_statut"] | null
+          type_appel_offre?: string
         }
         Relationships: [
           {
@@ -133,6 +154,13 @@ export type Database = {
             columns: ["appel_offre_id"]
             isOneToOne: false
             referencedRelation: "appels_offres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devis_appel_offre_id_fkey"
+            columns: ["appel_offre_id"]
+            isOneToOne: false
+            referencedRelation: "tender_management_summary"
             referencedColumns: ["id"]
           },
           {
@@ -356,7 +384,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      tender_management_summary: {
+        Row: {
+          actual_quotes_received: number | null
+          assigned_company_name: string | null
+          budget: number | null
+          deadline: string | null
+          id: string | null
+          location: string | null
+          lots_assigned: number | null
+          lots_total: number | null
+          progress_percentage: number | null
+          project_name: string | null
+          project_type: string | null
+          quotes_received: number | null
+          status: Database["public"]["Enums"]["appel_offre_statut"] | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

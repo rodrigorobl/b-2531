@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { 
@@ -30,7 +30,8 @@ import {
   Plus,
   Filter,
   ArrowUpDown,
-  Search
+  Search,
+  Loader2
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
@@ -43,137 +44,21 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Link } from 'react-router-dom';
-
-// Types
-interface TenderManagementItem {
-  id: string;
-  projectName: string;
-  projectType: 'Conception' | 'Réalisation' | 'Services';
-  status: 'open' | 'closed' | 'assigned';
-  deadline: string;
-  quotesReceived: number;
-  budget: string;
-  progress: number;
-  lotsTotal: number;
-  lotsAssigned: number;
-  quoteQuality: 'poor' | 'medium' | 'good';
-  budgetRespect: 'under' | 'on-target' | 'over';
-  location: string;
-}
+import { useTenderManagement } from '@/hooks/useTenderManagement';
+import { TenderSearchResult } from '@/types/tenders';
 
 export default function TenderManagementPromoter() {
   const navigate = useNavigate();
+  const { tenders, isLoading, error, stats } = useTenderManagement();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortField, setSortField] = useState('deadline');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  // Statistics
-  const stats = {
-    activeTenders: 12,
-    assignedLots: 27,
-    receivedQuotes: 45,
-    averageQuotes: 3.8
-  };
-
-  // Mock data for tenders
-  const tenders: TenderManagementItem[] = [
-    {
-      id: 'tender-001',
-      projectName: 'Éco-quartier Les Oliviers',
-      projectType: 'Réalisation',
-      status: 'open',
-      deadline: '31/07/2024',
-      quotesReceived: 8,
-      budget: '12 500 000 €',
-      progress: 35,
-      lotsTotal: 14,
-      lotsAssigned: 5,
-      quoteQuality: 'good',
-      budgetRespect: 'under',
-      location: 'Montpellier'
-    },
-    {
-      id: 'tender-002',
-      projectName: 'Tour Numérique Toulouse',
-      projectType: 'Conception',
-      status: 'open',
-      deadline: '15/08/2024',
-      quotesReceived: 6,
-      budget: '28 000 000 €',
-      progress: 25,
-      lotsTotal: 20,
-      lotsAssigned: 5,
-      quoteQuality: 'medium',
-      budgetRespect: 'on-target',
-      location: 'Toulouse'
-    },
-    {
-      id: 'tender-003',
-      projectName: 'Centre Commercial Méditerranée',
-      projectType: 'Réalisation',
-      status: 'assigned',
-      deadline: '10/06/2024',
-      quotesReceived: 12,
-      budget: '18 500 000 €',
-      progress: 80,
-      lotsTotal: 12,
-      lotsAssigned: 10,
-      quoteQuality: 'good',
-      budgetRespect: 'over',
-      location: 'Perpignan'
-    },
-    {
-      id: 'tender-004',
-      projectName: 'Campus Universitaire Vert',
-      projectType: 'Conception',
-      status: 'closed',
-      deadline: '05/05/2024',
-      quotesReceived: 4,
-      budget: '35 000 000 €',
-      progress: 60,
-      lotsTotal: 18,
-      lotsAssigned: 11,
-      quoteQuality: 'medium',
-      budgetRespect: 'on-target',
-      location: 'Nîmes'
-    },
-    {
-      id: 'tender-005',
-      projectName: 'Complexe Hospitalier Sud Occitanie',
-      projectType: 'Réalisation',
-      status: 'open',
-      deadline: '20/09/2024',
-      quotesReceived: 3,
-      budget: '45 000 000 €',
-      progress: 15,
-      lotsTotal: 25,
-      lotsAssigned: 4,
-      quoteQuality: 'poor',
-      budgetRespect: 'under',
-      location: 'Carcassonne'
-    },
-    {
-      id: 'tender-006',
-      projectName: 'Résidence Seniors Les Lavandes',
-      projectType: 'Réalisation',
-      status: 'assigned',
-      deadline: '15/04/2024',
-      quotesReceived: 10,
-      budget: '9 800 000 €',
-      progress: 90,
-      lotsTotal: 10,
-      lotsAssigned: 9,
-      quoteQuality: 'good',
-      budgetRespect: 'under',
-      location: 'Albi'
-    }
-  ];
-
   // Filter tenders based on search and status
   const filteredTenders = tenders.filter(tender => {
     const matchesSearch = tender.projectName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           tender.location.toLowerCase().includes(searchQuery.toLowerCase());
+                           (tender.location && tender.location.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesStatus = statusFilter === 'all' || tender.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -186,9 +71,13 @@ export default function TenderManagementPromoter() {
       const dateB = new Date(b.deadline.split('/').reverse().join('-'));
       return sortDirection === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
     } else if (sortField === 'progress') {
-      return sortDirection === 'asc' ? a.progress - b.progress : b.progress - a.progress;
+      const progressA = a.progress || 0;
+      const progressB = b.progress || 0;
+      return sortDirection === 'asc' ? progressA - progressB : progressB - progressA;
     } else if (sortField === 'quotesReceived') {
-      return sortDirection === 'asc' ? a.quotesReceived - b.quotesReceived : b.quotesReceived - a.quotesReceived;
+      const quotesA = a.actualQuotesReceived || 0;
+      const quotesB = b.actualQuotesReceived || 0;
+      return sortDirection === 'asc' ? quotesA - quotesB : quotesB - quotesA;
     } else {
       // Sort by project name as default
       return sortDirection === 'asc' 
@@ -367,119 +256,131 @@ export default function TenderManagementPromoter() {
             
             <TabsContent value="all" className="m-0">
               <div className="rounded-md border bg-card">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[250px]">
-                        <div 
-                          className="flex items-center gap-1 cursor-pointer"
-                          onClick={() => handleSort('projectName')}
-                        >
-                          Projet 
-                          <ArrowUpDown size={14} />
-                        </div>
-                      </TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>
-                        <div 
-                          className="flex items-center gap-1 cursor-pointer"
-                          onClick={() => handleSort('deadline')}
-                        >
-                          Date limite 
-                          <ArrowUpDown size={14} />
-                        </div>
-                      </TableHead>
-                      <TableHead>
-                        <div 
-                          className="flex items-center gap-1 cursor-pointer"
-                          onClick={() => handleSort('quotesReceived')}
-                        >
-                          Devis reçus 
-                          <ArrowUpDown size={14} />
-                        </div>
-                      </TableHead>
-                      <TableHead>Budget</TableHead>
-                      <TableHead>
-                        <div 
-                          className="flex items-center gap-1 cursor-pointer"
-                          onClick={() => handleSort('progress')}
-                        >
-                          Avancement 
-                          <ArrowUpDown size={14} />
-                        </div>
-                      </TableHead>
-                      <TableHead>Qualité</TableHead>
-                      <TableHead>Budget</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedTenders.length === 0 ? (
+                {isLoading ? (
+                  <div className="flex justify-center items-center h-60">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                ) : error ? (
+                  <div className="text-center py-10 text-muted-foreground">
+                    <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-2" />
+                    <p>Une erreur est survenue lors du chargement des appels d'offres.</p>
+                    <p className="text-xs text-destructive mt-1">{error}</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={10} className="text-center py-10 text-muted-foreground">
-                          Aucun appel d'offres correspondant à vos critères
-                        </TableCell>
+                        <TableHead className="w-[250px]">
+                          <div 
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => handleSort('projectName')}
+                          >
+                            Projet 
+                            <ArrowUpDown size={14} />
+                          </div>
+                        </TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Statut</TableHead>
+                        <TableHead>
+                          <div 
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => handleSort('deadline')}
+                          >
+                            Date limite 
+                            <ArrowUpDown size={14} />
+                          </div>
+                        </TableHead>
+                        <TableHead>
+                          <div 
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => handleSort('quotesReceived')}
+                          >
+                            Devis reçus 
+                            <ArrowUpDown size={14} />
+                          </div>
+                        </TableHead>
+                        <TableHead>Budget</TableHead>
+                        <TableHead>
+                          <div 
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => handleSort('progress')}
+                          >
+                            Avancement 
+                            <ArrowUpDown size={14} />
+                          </div>
+                        </TableHead>
+                        <TableHead>Qualité</TableHead>
+                        <TableHead>Budget</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
-                    ) : (
-                      sortedTenders.map((tender) => (
-                        <TableRow key={tender.id}>
-                          <TableCell>
-                            <div className="font-medium">{tender.projectName}</div>
-                            <div className="text-xs text-muted-foreground">{tender.location}</div>
-                          </TableCell>
-                          <TableCell>{tender.projectType}</TableCell>
-                          <TableCell>{getStatusBadge(tender.status)}</TableCell>
-                          <TableCell>{tender.deadline}</TableCell>
-                          <TableCell>
-                            <div className="font-medium">{tender.quotesReceived}</div>
-                            <div className="text-xs text-muted-foreground">devis</div>
-                          </TableCell>
-                          <TableCell>{tender.budget}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <Progress value={tender.progress} className="h-2" />
-                              <div className="text-xs text-muted-foreground">
-                                {tender.lotsAssigned}/{tender.lotsTotal} lots ({tender.progress}%)
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{getQuoteQualityIndicator(tender.quoteQuality)}</TableCell>
-                          <TableCell>{getBudgetRespectIndicator(tender.budgetRespect)}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex gap-2 justify-end">
-                              <Link 
-                                to={`/tender-detail/${tender.id}`}
-                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
-                              >
-                                <Eye size={14} />
-                                <span>Détails</span>
-                              </Link>
-                              
-                              <Button size="sm" variant="outline" className="gap-1">
-                                <FileDown size={14} />
-                                <span>DCE</span>
-                              </Button>
-                            </div>
+                    </TableHeader>
+                    <TableBody>
+                      {sortedTenders.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={10} className="text-center py-10 text-muted-foreground">
+                            Aucun appel d'offres correspondant à vos critères
                           </TableCell>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                      ) : (
+                        sortedTenders.map((tender) => (
+                          <TableRow key={tender.id}>
+                            <TableCell>
+                              <div className="font-medium">{tender.projectName}</div>
+                              <div className="text-xs text-muted-foreground">{tender.location}</div>
+                            </TableCell>
+                            <TableCell>{tender.projectType}</TableCell>
+                            <TableCell>{getStatusBadge(tender.status)}</TableCell>
+                            <TableCell>{tender.deadline}</TableCell>
+                            <TableCell>
+                              <div className="font-medium">{tender.actualQuotesReceived || 0}</div>
+                              <div className="text-xs text-muted-foreground">devis</div>
+                            </TableCell>
+                            <TableCell>{tender.budget}</TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <Progress value={tender.progress || 0} className="h-2" />
+                                <div className="text-xs text-muted-foreground">
+                                  {tender.lotsAssigned || 0}/{tender.lotsTotal || 0} lots ({tender.progress || 0}%)
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{tender.quoteQuality && getQuoteQualityIndicator(tender.quoteQuality)}</TableCell>
+                            <TableCell>{tender.budgetRespect && getBudgetRespectIndicator(tender.budgetRespect)}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex gap-2 justify-end">
+                                <Link 
+                                  to={`/tender-detail/${tender.id}`}
+                                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
+                                >
+                                  <Eye size={14} />
+                                  <span>Détails</span>
+                                </Link>
+                                
+                                <Button size="sm" variant="outline" className="gap-1">
+                                  <FileDown size={14} />
+                                  <span>DCE</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                )}
               </div>
             </TabsContent>
             
             <TabsContent value="open" className="m-0">
-              {/* Contenu identique filtré par status "open" */}
+              {/* Content will be filtered by the tab selection */}
             </TabsContent>
             
             <TabsContent value="closed" className="m-0">
-              {/* Contenu identique filtré par status "closed" */}
+              {/* Content will be filtered by the tab selection */}
             </TabsContent>
             
             <TabsContent value="assigned" className="m-0">
-              {/* Contenu identique filtré par status "assigned" */}
+              {/* Content will be filtered by the tab selection */}
             </TabsContent>
           </Tabs>
         </div>
