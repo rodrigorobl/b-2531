@@ -14,6 +14,11 @@ import Company from '@/pages/Company';
 import TenderSearch from '@/pages/TenderSearch';
 import TenderManagementPromoter from '@/pages/TenderManagementPromoter';
 import ProjectManagement from '@/pages/ProjectManagement';
+import DashboardPromoter from '@/pages/dashboards/DashboardPromoter';
+import DashboardBET from '@/pages/dashboards/DashboardBET';
+import DashboardConstruction from '@/pages/dashboards/DashboardConstruction';
+import DashboardServices from '@/pages/dashboards/DashboardServices';
+import DashboardIndustry from '@/pages/dashboards/DashboardIndustry';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +28,26 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: "/dashboard-promoteur",
+    element: <DashboardPromoter />,
+  },
+  {
+    path: "/dashboard-bet",
+    element: <DashboardBET />,
+  },
+  {
+    path: "/dashboard-construction",
+    element: <DashboardConstruction />,
+  },
+  {
+    path: "/dashboard-services",
+    element: <DashboardServices />,
+  },
+  {
+    path: "/dashboard-industry",
+    element: <DashboardIndustry />,
   },
   {
     path: "/project-detail/:id",
