@@ -1,6 +1,7 @@
 
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ProjectDetail, TenderStatus } from '@/types/projects';
+import { ProjectDetail, TenderStatus, ProjectTender } from '@/types/projects';
 import { useProjectBase } from './useProjectBase';
 import { mapStatus } from '@/utils/tenderStatusUtils';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +10,37 @@ export function useProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isLoading, setIsLoading, error, setError, toast, getLocalDemoProjects } = useProjectBase();
+  
+  // Add new state variables needed by ProjectDetailContainer
+  const [project, setProject] = useState<ProjectDetail | null>(null);
+  const [tenders, setTenders] = useState<ProjectTender[]>([]);
+  const [quotes, setQuotes] = useState<Record<string, any>>({});
+  const [selectedTenderId, setSelectedTenderId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  // Fetch project details when the component mounts
+  useEffect(() => {
+    if (id) {
+      fetchProjectDetails(id).then(projectData => {
+        if (projectData) {
+          setProject(projectData);
+          setTenders(projectData.tenders);
+          
+          // Initialize quotes object with empty arrays for each tender
+          const quotesObj: Record<string, any> = {};
+          projectData.tenders.forEach(tender => {
+            quotesObj[tender.id] = [];
+          });
+          setQuotes(quotesObj);
+          
+          // Set the first tender as selected if there are tenders
+          if (projectData.tenders.length > 0 && !selectedTenderId) {
+            setSelectedTenderId(projectData.tenders[0].id);
+          }
+        }
+      });
+    }
+  }, [id]);
   
   const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
     setIsLoading(true);
@@ -135,6 +167,13 @@ export function useProjectDetail() {
 
   return {
     projectId: id,
+    project,
+    tenders,
+    quotes,
+    selectedTenderId,
+    setSelectedTenderId,
+    activeTab,
+    setActiveTab,
     isLoading,
     error,
     navigate,
