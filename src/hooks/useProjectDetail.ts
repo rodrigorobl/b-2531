@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 export function useProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { isLoading, setIsLoading, error, setError, toast, getLocalDemoProjects } = useProjectBase();
+  const { isLoading, setIsLoading, error, setError, toast } = useProjectBase();
   
   // Use the correct ProjectData type that matches what the component expects
   const [project, setProject] = useState<ProjectData | null>(null);
@@ -79,31 +79,17 @@ export function useProjectDetail() {
   const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
     setIsLoading(true);
     try {
-      // For demo projects, return local data
+      // Remove the demo projects handling code
+      // For demo projects, redirect to projects page with a toast message
       if (projectId.startsWith('demo-')) {
-        const demoProjects = getLocalDemoProjects();
-        const demoProject = demoProjects.find(p => p.id === projectId);
-        
-        if (demoProject) {
-          const projectDetail: ProjectDetail = {
-            ...demoProject,
-            tenders: Array.from({ length: demoProject.tendersCount }).map((_, i) => ({
-              id: `tender-${projectId}-${i}`,
-              name: `Lot ${i + 1}`,
-              description: `Description du lot ${i + 1}`,
-              type: i % 2 === 0 ? 'Réalisation' : 'Conception',
-              status: i < demoProject.tendersAssigned ? 'assigned' : 'open',
-              quotesReceived: Math.floor(Math.random() * 5),
-              deadline: new Date(new Date().getTime() + (30 + i * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              lotsTotal: Math.floor(Math.random() * 5) + 1,
-              lotsAssigned: i < demoProject.tendersAssigned ? 1 : 0,
-              progress: i < demoProject.tendersAssigned ? 50 : 0
-            }))
-          };
-          
-          setIsLoading(false);
-          return projectDetail;
-        }
+        toast({
+          title: "Information",
+          description: "Les projets de démonstration ne sont pas accessibles.",
+          variant: "default",
+        });
+        navigate('/project-management');
+        setIsLoading(false);
+        return null;
       }
       
       console.log("Fetching detailed project data from Supabase for ID:", projectId);

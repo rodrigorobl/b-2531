@@ -6,7 +6,7 @@ import { useProjectBase } from './useProjectBase';
 
 export function useProjectList() {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
-  const { isLoading, setIsLoading, error, setError, toast, showDemoProjects } = useProjectBase();
+  const { isLoading, setIsLoading, error, setError, toast } = useProjectBase();
 
   useEffect(() => {
     fetchProjects();
@@ -84,17 +84,26 @@ export function useProjectList() {
         setProjects(projectsList);
         console.log("Successfully loaded projects from database:", projectsList);
       } else {
-        // If no projects were found, use demo projects as fallback
-        console.log("No projects found in database, using demo projects instead");
-        const demoProjects = showDemoProjects("Aucun projet trouvé dans la base de données. Affichage des projets de démonstration.");
-        setProjects(demoProjects);
+        // If no projects were found, return an empty array instead of demo projects
+        console.log("No projects found in database, returning empty array");
+        setProjects([]);
+        toast({
+          title: "Information",
+          description: "Aucun projet trouvé dans la base de données.",
+          variant: "default",
+        });
       }
       
       setError(null);
     } catch (err: any) {
       console.error('Error in fetchProjects():', err);
-      const demoProjects = showDemoProjects("Erreur lors du chargement des projets. Affichage des projets de démonstration.");
-      setProjects(demoProjects);
+      setError(err.message);
+      setProjects([]); // Return empty array instead of demo projects
+      toast({
+        title: "Erreur",
+        description: "Erreur lors du chargement des projets.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
