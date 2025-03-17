@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -39,7 +38,6 @@ import {
 } from "@/components/ui/pagination";
 import { Link } from 'react-router-dom';
 
-// Types
 interface Lot {
   id: string;
   name: string;
@@ -110,7 +108,6 @@ export default function ProjectsList() {
     }
   ]);
 
-  // Helper function to get project type label
   const getProjectTypeLabel = (type: string) => {
     switch (type) {
       case 'conception': return 'Conception';
@@ -120,7 +117,6 @@ export default function ProjectsList() {
     }
   };
 
-  // Helper function to get status badge
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'in-progress':
@@ -134,7 +130,6 @@ export default function ProjectsList() {
     }
   };
 
-  // Helper function to get lot status badge
   const getLotStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -292,7 +287,7 @@ export default function ProjectsList() {
                       <div className="text-sm">
                         <span className="text-muted-foreground">Budget:</span> {project.estimatedBudget}
                       </div>
-                      <Link to={`/project/${project.id}`} className="flex items-center text-primary text-sm hover:underline">
+                      <Link to={`/tender/${project.id}`} className="flex items-center text-primary text-sm hover:underline">
                         Détails
                         <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>
@@ -347,7 +342,7 @@ export default function ProjectsList() {
                         </TableCell>
                         <TableCell>{project.estimatedBudget}</TableCell>
                         <TableCell className="text-right">
-                          <Link to={`/project/${project.id}`} className="text-primary text-sm hover:underline">
+                          <Link to={`/tender/${project.id}`} className="text-primary text-sm hover:underline">
                             Détails
                           </Link>
                         </TableCell>
@@ -385,3 +380,4 @@ export default function ProjectsList() {
     </Layout>
   );
 }
+
