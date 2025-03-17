@@ -26,6 +26,8 @@ import CompanyDirectory from "./pages/CompanyDirectory";
 import ProjectsList from "./pages/ProjectsList";
 import LotAnalysis from "./pages/LotAnalysis";
 import TenderList from "./pages/TenderList";
+import QuotesToAnalyze from "./pages/QuotesToAnalyze";
+import QuoteDetail from "./pages/QuoteDetail";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +60,9 @@ const App = () => (
             <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
             <Route path="/directory" element={<CompanyDirectory />} />
+            {/* New routes for quotes to analyze feature */}
+            <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
+            <Route path="/quote/:quoteId" element={<QuoteDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

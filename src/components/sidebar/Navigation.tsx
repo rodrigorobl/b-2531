@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, BookOpen, List } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, BookOpen, List, ClipboardCheck } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 interface NavigationProps {
   activeProfile: ProfileType;
@@ -33,6 +34,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
   };
+  
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
         {getProfileName(activeProfile)}
@@ -81,6 +83,15 @@ export const Navigation: React.FC<NavigationProps> = ({
         {(activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre') && <li>
             
           </li>}
+        {/* Add new menu item for "Devis à analyser" for MOE and BET profiles */}
+        {(activeProfile === 'maitre-oeuvre') && (
+          <li>
+            <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+              <ClipboardCheck size={18} />
+              <span>Devis à analyser</span>
+            </Link>
+          </li>
+        )}
         <li>
           <Link to="/directory" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <BookOpen size={18} />
