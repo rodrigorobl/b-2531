@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Plus, ChevronRight, Save, Clock, MapPin, FileText, Upload, Calendar, Building, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Plus, ChevronRight, Save, Clock, MapPin, FileText, Upload, Calendar, Building, ArrowLeft, ArrowRight, Users } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Sidebar from "@/components/Sidebar";
@@ -14,6 +15,8 @@ import DesignTenderForm from "@/components/tenders/create/DesignTenderForm";
 import ConstructionTenderForm from "@/components/tenders/create/ConstructionTenderForm";
 import ServiceTenderForm from "@/components/tenders/create/ServiceTenderForm";
 import TenderPublishOptions from "@/components/tenders/create/TenderPublishOptions";
+import TenderCompanyInvitation from "@/components/tenders/create/TenderCompanyInvitation";
+
 export type TenderType = 'design' | 'construction' | 'service';
 export type TenderPrivacy = 'open' | 'restricted' | 'closed';
 
@@ -38,13 +41,21 @@ const tenderSchema = z.object({
   documents: z.array(z.object({
     name: z.string(),
     size: z.number()
+  })).optional(),
+  invitedCompanies: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    selected: z.boolean().optional()
   })).optional()
 });
+
 export type TenderFormValues = z.infer<typeof tenderSchema>;
+
 export default function CreateTender() {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 7;
   const navigate = useNavigate();
+  
   const form = useForm<TenderFormValues>({
     resolver: zodResolver(tenderSchema),
     defaultValues: {
@@ -54,32 +65,39 @@ export default function CreateTender() {
       description: "",
       location: "",
       budget: "",
-      documents: []
+      documents: [],
+      invitedCompanies: []
     }
   });
+  
   const watchType = form.watch("type") as TenderType;
+  
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
   };
+  
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
+  
   const handleSaveDraft = () => {
     // In a real app, this would save the current state to a database
     console.log("Saved as draft:", form.getValues());
     // Show success toast
     window.alert("Brouillon enregistré avec succès!");
   };
+  
   const onSubmit = (data: TenderFormValues) => {
     console.log("Form submitted:", data);
     // In a real app, this would submit the data to the server
     // and redirect to the tender details page
     navigate("/tender-management");
   };
+  
   return <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar />
       
@@ -115,117 +133,88 @@ export default function CreateTender() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Step 1: Type selection */}
-              {currentStep === 1 && <>
-                  {/* Left column */}
-                  <Card className="md:col-span-3">
-                    <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold mb-4">Paramètres de l'appel d'offres</h2>
-                      <div className="space-y-6">
-                        <TenderTypeSelector form={form} />
-                        <TenderPrivacySelector form={form} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  {/* Middle column */}
-                  <Card className="md:col-span-3">
-                    <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold mb-4">Informations générales</h2>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label htmlFor="title" className="text-sm font-medium">Titre de l'appel d'offres</label>
-                          <input id="title" {...form.register("title")} className="w-full p-2 border rounded-md" placeholder="Ex: Construction d'un immeuble de bureaux" />
-                          {form.formState.errors.title && <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>}
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label htmlFor="description" className="text-sm font-medium">Description</label>
-                          <textarea id="description" {...form.register("description")} className="w-full p-2 border rounded-md min-h-[120px]" placeholder="Décrivez votre projet en quelques lignes..." />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  {/* Right column - AI suggestions */}
-                  
-                </>}
+              {currentStep === 1 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Type d'appel d'offres</h2>
+                    <TenderTypeSelector form={form} />
+                  </CardContent>
+                </Card>
+              }
               
-              {/* Step 2: Tender Content */}
-              {currentStep === 2 && <>
-                  {/* Left column - always visible */}
-                  <Card className="md:col-span-1">
-                    <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold mb-4">Informations générales</h2>
-                      <div className="space-y-4">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
-                            <Building size={16} className="text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Type d'appel d'offres</p>
-                            <p className="text-sm">
-                              {watchType === 'design' && 'Conception'}
-                              {watchType === 'construction' && 'Réalisation'}
-                              {watchType === 'service' && 'Services'}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
-                            <MapPin size={16} className="text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Localisation</p>
-                            <input type="text" {...form.register("location")} className="w-full p-2 border rounded-md text-sm" placeholder="Adresse du projet" />
-                            {form.formState.errors.location && <p className="text-xs text-red-500">{form.formState.errors.location.message}</p>}
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
-                            <Calendar size={16} className="text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Date limite</p>
-                            <input type="date" {...form.register("deadline", {
-                          setValueAs: v => v ? new Date(v) : undefined
-                        })} className="w-full p-2 border rounded-md text-sm" />
-                            {form.formState.errors.deadline && <p className="text-xs text-red-500">{form.formState.errors.deadline.message}</p>}
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
-                            <FileText size={16} className="text-primary" />
-                          </div>
-                          <div className="w-full">
-                            <p className="text-sm font-medium">Budget estimatif</p>
-                            <input type="text" {...form.register("budget")} className="w-full p-2 border rounded-md text-sm" placeholder="Ex: 150 000 €" />
-                          </div>
-                        </div>
+              {/* Step 2: Privacy selection */}
+              {currentStep === 2 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Confidentialité de l'appel d'offres</h2>
+                    <TenderPrivacySelector form={form} />
+                  </CardContent>
+                </Card>
+              }
+              
+              {/* Step 3: General information */}
+              {currentStep === 3 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Informations générales</h2>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="title" className="text-sm font-medium">Titre de l'appel d'offres</label>
+                        <input id="title" {...form.register("title")} className="w-full p-2 border rounded-md" placeholder="Ex: Construction d'un immeuble de bureaux" />
+                        {form.formState.errors.title && <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>}
                       </div>
-                    </CardContent>
-                  </Card>
-                  
-                  {/* Middle column - Dynamic based on tender type */}
-                  <Card className="md:col-span-2">
-                    <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold mb-4">
-                        {watchType === 'design' && 'Détails de l\'appel d\'offres de Conception'}
-                        {watchType === 'construction' && 'Détails de l\'appel d\'offres de Réalisation'}
-                        {watchType === 'service' && 'Détails de l\'appel d\'offres de Services'}
-                      </h2>
                       
-                      {watchType === 'design' && <DesignTenderForm form={form} />}
-                      {watchType === 'construction' && <ConstructionTenderForm form={form} />}
-                      {watchType === 'service' && <ServiceTenderForm form={form} />}
-                    </CardContent>
-                  </Card>
-                </>}
+                      <div className="space-y-2">
+                        <label htmlFor="description" className="text-sm font-medium">Description</label>
+                        <textarea id="description" {...form.register("description")} className="w-full p-2 border rounded-md min-h-[120px]" placeholder="Décrivez votre projet en quelques lignes..." />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label htmlFor="location" className="text-sm font-medium">Localisation</label>
+                          <input type="text" id="location" {...form.register("location")} className="w-full p-2 border rounded-md" placeholder="Adresse du projet" />
+                          {form.formState.errors.location && <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>}
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <label htmlFor="budget" className="text-sm font-medium">Budget estimatif</label>
+                          <input type="text" id="budget" {...form.register("budget")} className="w-full p-2 border rounded-md" placeholder="Ex: 150 000 €" />
+                          {form.formState.errors.budget && <p className="text-sm text-red-500">{form.formState.errors.budget.message}</p>}
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <label htmlFor="deadline" className="text-sm font-medium">Date limite</label>
+                          <input type="date" id="deadline" {...form.register("deadline", {
+                            setValueAs: v => v ? new Date(v) : undefined
+                          })} className="w-full p-2 border rounded-md" />
+                          {form.formState.errors.deadline && <p className="text-sm text-red-500">{form.formState.errors.deadline.message}</p>}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              }
               
-              {/* Step 3: Documents upload */}
-              {currentStep === 3 && <Card className="md:col-span-3">
+              {/* Step 4: Tender details based on type */}
+              {currentStep === 4 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">
+                      {watchType === 'design' && 'Détails de l\'appel d\'offres de Conception'}
+                      {watchType === 'construction' && 'Détails de l\'appel d\'offres de Réalisation'}
+                      {watchType === 'service' && 'Détails de l\'appel d\'offres de Services'}
+                    </h2>
+                    
+                    {watchType === 'design' && <DesignTenderForm form={form} />}
+                    {watchType === 'construction' && <ConstructionTenderForm form={form} />}
+                    {watchType === 'service' && <ServiceTenderForm form={form} />}
+                  </CardContent>
+                </Card>
+              }
+              
+              {/* Step 5: Documents upload */}
+              {currentStep === 5 && 
+                <Card className="md:col-span-3">
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Documents</h2>
                     <p className="text-muted-foreground mb-4">
@@ -252,10 +241,21 @@ export default function CreateTender() {
                       </p>
                     </div>
                   </CardContent>
-                </Card>}
+                </Card>
+              }
               
-              {/* Step 4: Publication options */}
-              {currentStep === 4 && <>
+              {/* Step 6: Company invitation */}
+              {currentStep === 6 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Invitation des entreprises</h2>
+                    <TenderCompanyInvitation form={form} />
+                  </CardContent>
+                </Card>
+              }
+              
+              {/* Step 7: Publication options */}
+              {currentStep === 7 && <>
                   <Card className="md:col-span-2">
                     <CardContent className="p-6">
                       <h2 className="text-xl font-semibold mb-4">Prévisualisation de l'appel d'offres</h2>
@@ -298,6 +298,21 @@ export default function CreateTender() {
                         <div>
                           <h4 className="font-medium mb-1">Documents</h4>
                           <p className="text-sm text-muted-foreground">Aucun document joint.</p>
+                        </div>
+
+                        <div>
+                          <h4 className="font-medium mb-1">Entreprises invitées</h4>
+                          {form.getValues("invitedCompanies")?.length ? (
+                            <ul className="text-sm list-disc pl-5">
+                              {form.getValues("invitedCompanies")
+                                ?.filter(company => company.selected)
+                                .map(company => (
+                                  <li key={company.id}>{company.name}</li>
+                                ))}
+                            </ul>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">Aucune entreprise invitée.</p>
+                          )}
                         </div>
                       </div>
                     </CardContent>

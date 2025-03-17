@@ -17,9 +17,12 @@ const TenderFormNav: React.FC<TenderFormNavProps> = ({
   // Create an array of step labels
   const steps = [
     { id: 1, label: "Type d'AO" },
-    { id: 2, label: "Contenu" },
-    { id: 3, label: "Documents" },
-    { id: 4, label: "Publication" },
+    { id: 2, label: "Confidentialité" },
+    { id: 3, label: "Informations" },
+    { id: 4, label: "Détails" },
+    { id: 5, label: "Documents" },
+    { id: 6, label: "Invitations" },
+    { id: 7, label: "Publication" },
   ];
   
   return (
