@@ -19,6 +19,7 @@ import DashboardBET from '@/pages/dashboards/DashboardBET';
 import DashboardConstruction from '@/pages/dashboards/DashboardConstruction';
 import DashboardServices from '@/pages/dashboards/DashboardServices';
 import DashboardIndustry from '@/pages/dashboards/DashboardIndustry';
+import CreateTender from '@/pages/CreateTender';
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
   {
     path: "/tender-management",
     element: <TenderManagementPromoter />
+  },
+  {
+    path: "/create-tender",
+    element: <CreateTender />
   },
 ]);
 
