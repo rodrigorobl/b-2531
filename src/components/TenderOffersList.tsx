@@ -88,9 +88,9 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
       )}
       
       <div className="pt-3 text-center">
-        <a href="/tenders" className="text-primary text-sm hover:underline">
+        <Link to="/tenders" className="text-primary text-sm hover:underline">
           Voir tous les appels d'offres
-        </a>
+        </Link>
       </div>
     </div>
   );

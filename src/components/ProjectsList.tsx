@@ -42,7 +42,7 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
           
           <div className="flex justify-between items-center mt-3">
             <span className="text-xs text-muted-foreground">Échéance: {project.deadline}</span>
-            <Link to={`/projects/${project.id}`} className="text-primary text-sm flex items-center hover:underline">
+            <Link to={`/project-detail/${project.id}`} className="text-primary text-sm flex items-center hover:underline">
               <span>Voir la fiche du projet</span>
               <ArrowRight size={14} className="ml-1" />
             </Link>
