@@ -10,9 +10,8 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowUpDown, FileText, Eye } from 'lucide-react';
+import { ArrowUpDown, FileText, Upload } from 'lucide-react';
 import { Tender, ParticipationStatus } from '@/pages/TenderOffers';
-import { Link } from 'react-router-dom';
 
 interface TenderTableProps {
   tenders: Tender[];
@@ -79,15 +78,12 @@ export default function TenderTable({ tenders, onSelectTender, selectedTenderId 
                 <TableCell>{tender.deadline}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Link 
-                      to={`/tender-detail/${tender.id}`}
-                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Eye size={14} />
-                      <span>Voir la fiche du projet</span>
-                    </Link>
-                    
+                    {(tender.status === 'open' && tender.participationStatus === 'to-submit') && (
+                      <Button size="sm" className="gap-1">
+                        <Upload size={14} />
+                        <span>Déposer un devis</span>
+                      </Button>
+                    )}
                     <Button size="sm" variant="outline" className="gap-1">
                       <FileText size={14} />
                       <span>DCE</span>

@@ -1,117 +1,57 @@
 
-import React from 'react';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom";
-import './App.css';
-import Dashboard from '@/pages/Dashboard';
-import ProjectDetail from '@/pages/ProjectDetail';
-import TenderOffers from '@/pages/TenderOffers';
-import TenderDetail from '@/pages/TenderDetail';
-import Messaging from '@/pages/Messaging';
-import Company from '@/pages/Company';
-import TenderSearch from '@/pages/TenderSearch';
-import TenderManagementPromoter from '@/pages/TenderManagementPromoter';
-import ProjectManagement from '@/pages/ProjectManagement';
-import DashboardPromoter from '@/pages/dashboards/DashboardPromoter';
-import DashboardBET from '@/pages/dashboards/DashboardBET';
-import DashboardConstruction from '@/pages/dashboards/DashboardConstruction';
-import DashboardServices from '@/pages/dashboards/DashboardServices';
-import DashboardIndustry from '@/pages/dashboards/DashboardIndustry';
-import CreateTender from '@/pages/CreateTender';
-import CompanyDirectory from '@/pages/CompanyDirectory';
-import NotFound from '@/pages/NotFound';
-import MyTenders from '@/pages/MyTenders';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
+import DashboardPromoteur from "./pages/DashboardPromoteur";
+import DashboardBET from "./pages/DashboardBET";
+import DashboardConstruction from "./pages/DashboardConstruction";
+import DashboardServices from "./pages/DashboardServices";
+import DashboardIndustry from "./pages/DashboardIndustry";
+import Messaging from "./pages/Messaging";
+import TenderOffers from "./pages/TenderOffers";
+import TenderSearch from "./pages/TenderSearch";
+import Company from "./pages/Company";
+import EditCompany from "./pages/EditCompany";
+import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
+import CreateTender from "./pages/CreateTender";
+import CompanyDirectory from "./pages/CompanyDirectory";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Navigate to="/dashboard-promoteur" replace />,
-  },
-  {
-    path: "/dashboard",
-    element: <Navigate to="/dashboard-promoteur" replace />,
-  },
-  {
-    path: "/dashboard-promoteur",
-    element: <DashboardPromoter />,
-  },
-  {
-    path: "/dashboard-bet",
-    element: <DashboardBET />,
-  },
-  {
-    path: "/dashboard-construction",
-    element: <DashboardConstruction />,
-  },
-  {
-    path: "/dashboard-services",
-    element: <DashboardServices />,
-  },
-  {
-    path: "/dashboard-industry",
-    element: <DashboardIndustry />,
-  },
-  {
-    path: "/project-detail/:id",
-    element: <ProjectDetail />
-  },
-  {
-    path: "/project-management",
-    element: <ProjectManagement />
-  },
-  {
-    path: "/tender-offers",
-    element: <TenderOffers />
-  },
-  {
-    path: "/tender-detail/:id",
-    element: <TenderDetail />
-  },
-  {
-    path: "/messaging",
-    element: <Messaging />
-  },
-  {
-    path: "/company",
-    element: <Company />
-  },
-  {
-    path: "/directory",
-    element: <CompanyDirectory />
-  },
-  {
-    path: "/tender-search",
-    element: <TenderSearch />
-  },
-  {
-    path: "/tender-management",
-    element: <TenderManagementPromoter />
-  },
-  {
-    path: "/create-tender",
-    element: <CreateTender />
-  },
-  {
-    path: "/my-tenders",
-    element: <MyTenders />
-  },
-  {
-    path: "*",
-    element: <NotFound />
-  },
-]);
+const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard-promoteur" element={<DashboardPromoteur />} />
+          <Route path="/dashboard-bet" element={<DashboardBET />} />
+          <Route path="/dashboard-construction" element={<DashboardConstruction />} />
+          <Route path="/dashboard-services" element={<DashboardServices />} />
+          <Route path="/dashboard-industry" element={<DashboardIndustry />} />
+          <Route path="/messaging" element={<Messaging />} />
+          <Route path="/tenders" element={<TenderOffers />} />
+          <Route path="/tender-search" element={<TenderSearch />} />
+          <Route path="/tender-management" element={<Index />} />
+          <Route path="/create-tender" element={<CreateTender />} />
+          <Route path="/company" element={<Company />} />
+          <Route path="/company/edit" element={<EditCompany />} />
+          <Route path="/profile/user/:userId" element={<UserProfile />} />
+          <Route path="/directory" element={<CompanyDirectory />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

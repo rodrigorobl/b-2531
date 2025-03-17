@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/types/tenderFormTypes';
+import { TenderFormValues } from '@/pages/CreateTender';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Building, PenTool, Briefcase } from 'lucide-react';

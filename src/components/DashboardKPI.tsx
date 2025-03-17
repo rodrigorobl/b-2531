@@ -13,8 +13,8 @@ interface DashboardKPIProps {
 
 export default function DashboardKPI({ title, value, icon, color, linkTo }: DashboardKPIProps) {
   return (
-    <Link to={linkTo} className="block w-full">
-      <Card className="transition-shadow hover:shadow-md w-full">
+    <Link to={linkTo} className="block">
+      <Card className="transition-shadow hover:shadow-md">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>

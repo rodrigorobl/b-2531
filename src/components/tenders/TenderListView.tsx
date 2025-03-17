@@ -1,11 +1,10 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { TenderSearchResult } from '@/types/tenders';
+import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
 import { Building, MapPin, Calendar, Star, Eye } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
-import { Link } from 'react-router-dom';
 
 interface TenderListViewProps {
   tenders: TenderSearchResult[];
@@ -72,10 +71,10 @@ export default function TenderListView({
             <div className="text-sm font-medium">
               {tender.budget}
             </div>
-            <Link to={`/tender-detail/${tender.id}`} className="text-primary text-sm flex items-center hover:underline" onClick={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="sm" className="text-primary">
               <Eye size={14} className="mr-1" />
-              <span>Voir la fiche du projet</span>
-            </Link>
+              <span>Détails</span>
+            </Button>
           </div>
         </div>
       ))}

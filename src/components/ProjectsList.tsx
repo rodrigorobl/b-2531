@@ -3,7 +3,6 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/StatusBadge';
-import { Link } from 'react-router-dom';
 
 interface Project {
   id: string;
@@ -42,10 +41,10 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
           
           <div className="flex justify-between items-center mt-3">
             <span className="text-xs text-muted-foreground">Échéance: {project.deadline}</span>
-            <Link to={`/project-detail/${project.id}`} className="text-primary text-sm flex items-center hover:underline">
-              <span>Voir la fiche du projet</span>
+            <a href={`/projects/${project.id}`} className="text-primary text-sm flex items-center hover:underline">
+              <span>Détails</span>
               <ArrowRight size={14} className="ml-1" />
-            </Link>
+            </a>
           </div>
         </div>
       ))}
@@ -57,9 +56,9 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
       )}
       
       <div className="pt-3 text-center">
-        <Link to="/projects" className="text-primary text-sm hover:underline">
+        <a href="/projects" className="text-primary text-sm hover:underline">
           Voir tous les projets
-        </Link>
+        </a>
       </div>
     </div>
   );

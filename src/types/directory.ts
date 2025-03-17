@@ -1,12 +1,11 @@
 
 export type ViewMode = 'list' | 'map';
 
-// Update category types to match Supabase enum values
 export type CompanyCategory = 
   | 'architecte' 
-  | 'moe_bet' 
+  | 'bureau-etudes' 
   | 'construction' 
-  | 'service' 
+  | 'services' 
   | 'industriel' 
   | 'fournisseur';
 
@@ -36,24 +35,3 @@ export interface Company {
   };
   certifications: string[];
 }
-
-// Add utility function to map Supabase category to our internal category
-export const mapSupabaseCategory = (category: string): CompanyCategory => {
-  // Convert from Supabase's "entreprise_categorie" format to our internal format
-  switch (category) {
-    case 'Architecte':
-      return 'architecte';
-    case 'MOE_BET':
-      return 'moe_bet';
-    case 'Construction':
-      return 'construction';
-    case 'Service':
-      return 'service';
-    case 'Industriel':
-      return 'industriel';
-    case 'Fournisseur':
-      return 'fournisseur';
-    default:
-      return 'construction'; // Fallback to construction if unknown
-  }
-};

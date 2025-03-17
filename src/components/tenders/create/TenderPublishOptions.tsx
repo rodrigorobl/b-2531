@@ -7,7 +7,7 @@ import { Zap, Calendar, Bell, Eye } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/types/tenderFormTypes';
+import { TenderFormValues } from '@/pages/CreateTender';
 import { useToast } from '@/hooks/use-toast';
 
 interface TenderPublishOptionsProps {

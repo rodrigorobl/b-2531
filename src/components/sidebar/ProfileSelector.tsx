@@ -68,31 +68,31 @@ export const ProfileSelector: React.FC<ProfileSelectorProps> = ({ activeProfile,
       <SelectContent>
         <SelectItem value="promoteur">
           <div className="flex items-center gap-2">
-            {getProfileIcon('promoteur')}
+            <TrendingUp size={16} />
             <span>Promoteur</span>
           </div>
         </SelectItem>
         <SelectItem value="maitre-oeuvre">
           <div className="flex items-center gap-2">
-            {getProfileIcon('maitre-oeuvre')}
+            <DraftingCompass size={16} />
             <span>Maître d'Œuvre/BET</span>
           </div>
         </SelectItem>
         <SelectItem value="entreprise-construction">
           <div className="flex items-center gap-2">
-            {getProfileIcon('entreprise-construction')}
+            <Hammer size={16} />
             <span>Entreprise de construction</span>
           </div>
         </SelectItem>
         <SelectItem value="entreprise-services">
           <div className="flex items-center gap-2">
-            {getProfileIcon('entreprise-services')}
+            <Briefcase size={16} />
             <span>Entreprise de services</span>
           </div>
         </SelectItem>
         <SelectItem value="industriel">
           <div className="flex items-center gap-2">
-            {getProfileIcon('industriel')}
+            <Factory size={16} />
             <span>Industriel</span>
           </div>
         </SelectItem>

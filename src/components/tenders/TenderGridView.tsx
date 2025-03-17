@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { TenderSearchResult } from '@/types/tenders';
+import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Building, MapPin, Calendar, Star, Eye, ArrowRight } from 'lucide-react';

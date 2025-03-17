@@ -25,27 +25,19 @@ export default function CompanyDirectoryHeader({
 }: CompanyDirectoryHeaderProps) {
   const categories = [
     { id: 'architecte', label: 'Architectes' },
-    { id: 'moe_bet', label: 'MOE & BET' },
-    { id: 'construction', label: 'Construction' },
-    { id: 'service', label: 'Services' },
+    { id: 'bureau-etudes', label: 'MOE & BET' },
+    { id: 'construction', label: 'Entreprises de construction' },
+    { id: 'services', label: 'Entreprises de services' },
     { id: 'industriel', label: 'Industriels' },
     { id: 'fournisseur', label: 'Fournisseurs' }
   ];
   
   const handleCategoryChange = (value: string) => {
-    console.log("Category changed to:", value);
     if (value === 'all') {
       setSelectedCategory(null);
     } else {
-      // Type casting is safe here as we control the possible values
-      const validCategory = isValidCategory(value) ? value as CompanyCategory : null;
-      setSelectedCategory(validCategory);
+      setSelectedCategory(value as CompanyCategory);
     }
-  };
-  
-  // Helper function to validate category
-  const isValidCategory = (category: string): boolean => {
-    return categories.some(c => c.id === category);
   };
   
   return (
