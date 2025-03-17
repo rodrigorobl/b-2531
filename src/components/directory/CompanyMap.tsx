@@ -1,39 +1,28 @@
 
 import React, { useEffect, useState } from 'react';
-import { Company } from '@/types/directory';
+import { Company, CompanyCategory, mapSupabaseCategory } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 
 interface CompanyMapProps {
-  companies: Company[];
+  companies: Company[]; // This will be ignored as we fetch directly
   selectedCompany: Company | null;
   setSelectedCompany: (company: Company | null) => void;
-}
-
-// Define a type that matches what we expect from Supabase
-interface SupabaseCompany {
-  id: string;
-  nom: string;
-  categorie_principale: string;
-  specialite: string;
-  ville: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  } | null;
-  note_moyenne: number;
-  nombre_avis: number;
+  searchQuery?: string;
+  selectedCategory?: CompanyCategory | null;
 }
 
 export default function CompanyMap({
-  companies,
+  companies: ignoredCompanies, // Renamed to indicate we don't use this prop
   selectedCompany,
-  setSelectedCompany
+  setSelectedCompany,
+  searchQuery = '',
+  selectedCategory = null
 }: CompanyMapProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [supabaseCompanies, setSupabaseCompanies] = useState<SupabaseCompany[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [activeInfoWindow, setActiveInfoWindow] = useState<string | null>(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -55,59 +44,94 @@ export default function CompanyMap({
   // Fonction pour obtenir la couleur du marqueur en fonction de la catégorie
   const getMarkerColor = (category: string) => {
     switch (category) {
-      case 'Architecte': return '#f59e0b';
-      case 'MOE_BET': return '#3b82f6';
-      case 'Construction': return '#10b981';
-      case 'Service': return '#8b5cf6';
-      case 'Industriel': return '#ef4444';
-      case 'Fournisseur': return '#6b7280';
+      case 'architecte': return '#f59e0b';
+      case 'moe_bet': return '#3b82f6';
+      case 'construction': return '#10b981';
+      case 'service': return '#8b5cf6';
+      case 'industriel': return '#ef4444';
+      case 'fournisseur': return '#6b7280';
       default: return '#6b7280';
     }
   };
 
-  // Récupérer les entreprises depuis Supabase
+  // Fetch companies from Supabase
   useEffect(() => {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        console.log("Fetching companies for map from Supabase...");
+        let query = supabase
           .from('entreprises')
-          .select('id, nom, categorie_principale, specialite, ville, coordinates, note_moyenne, nombre_avis')
+          .select('*')
           .order('nom');
+
+        // Apply category filter if selected
+        if (selectedCategory) {
+          // Convert our internal category back to Supabase format
+          let supabaseCategory;
+          switch (selectedCategory) {
+            case 'architecte': supabaseCategory = 'Architecte'; break;
+            case 'moe_bet': supabaseCategory = 'MOE_BET'; break;
+            case 'construction': supabaseCategory = 'Construction'; break;
+            case 'service': supabaseCategory = 'Service'; break;
+            case 'industriel': supabaseCategory = 'Industriel'; break;
+            case 'fournisseur': supabaseCategory = 'Fournisseur'; break;
+            default: supabaseCategory = null;
+          }
+          
+          if (supabaseCategory) {
+            query = query.eq('categorie_principale', supabaseCategory);
+          }
+        }
+        
+        const { data, error } = await query;
         
         if (error) throw error;
         
         if (data) {
-          // Filter out companies without coordinates and safely type cast
-          const companiesWithCoordinates = data
+          console.log("Companies data for map retrieved:", data);
+          
+          // Transform data to match our Company interface and filter for companies with coordinates
+          const transformedCompanies = data
             .filter(company => company.coordinates !== null)
             .map(company => {
-              // Ensure coordinates are properly typed
-              let safeCompany = {...company} as unknown as SupabaseCompany;
-              
-              // Ensure coordinates have proper structure
+              // Handle coordinates
+              let coordinates = { lat: 48.8566, lng: 2.3522 }; // Default to Paris
               if (company.coordinates && typeof company.coordinates === 'object') {
                 const coords = company.coordinates as any;
                 if (coords.lat !== undefined && coords.lng !== undefined) {
-                  safeCompany.coordinates = {
+                  coordinates = {
                     lat: Number(coords.lat),
                     lng: Number(coords.lng)
                   };
-                } else {
-                  safeCompany.coordinates = null;
                 }
-              } else {
-                safeCompany.coordinates = null;
               }
               
-              return safeCompany;
-            })
-            .filter(company => company.coordinates !== null);
-            
-          setSupabaseCompanies(companiesWithCoordinates);
+              return {
+                id: company.id,
+                name: company.nom,
+                logo: company.logo || 'https://github.com/shadcn.png',
+                category: mapSupabaseCategory(company.categorie_principale),
+                specialty: company.specialite,
+                location: company.ville || 'Non spécifié',
+                address: company.adresse || '',
+                rating: company.note_moyenne || 0,
+                reviewCount: company.nombre_avis || 0,
+                description: `Entreprise spécialisée en ${company.specialite}`,
+                coordinates,
+                contact: {
+                  phone: company.telephone || '01 23 45 67 89',
+                  email: company.email || 'contact@example.com',
+                  website: company.site_web || 'www.example.com'
+                },
+                certifications: []
+              };
+            });
+          
+          setCompanies(transformedCompanies);
         }
       } catch (err) {
-        console.error('Erreur lors de la récupération des entreprises:', err);
+        console.error('Erreur lors de la récupération des entreprises pour la carte:', err);
         setError('Impossible de charger les données des entreprises');
       } finally {
         setLoading(false);
@@ -115,35 +139,24 @@ export default function CompanyMap({
     };
     
     fetchCompanies();
-  }, []);
-
-  // Mapper les entreprises Supabase au format Company pour l'interface
-  const mapSupabaseToCompanies = (): Company[] => {
-    return supabaseCompanies.map(company => ({
-      id: company.id,
-      name: company.nom,
-      logo: 'https://github.com/shadcn.png', // Logo par défaut
-      category: company.categorie_principale.toLowerCase() as any,
-      specialty: company.specialite,
-      location: company.ville || 'Non spécifié',
-      address: '', // Adresse complète non disponible
-      rating: company.note_moyenne,
-      reviewCount: company.nombre_avis,
-      description: `Entreprise spécialisée en ${company.specialite}`,
-      coordinates: company.coordinates || { lat: 48.8566, lng: 2.3522 }, // Default to Paris if no coordinates
-      contact: {
-        phone: '01 23 45 67 89', // Données par défaut
-        email: 'contact@example.com',
-        website: 'www.example.com'
-      },
-      certifications: []
-    }));
-  };
+  }, [selectedCategory]); // Re-fetch when category changes
+  
+  // Apply search filter on the client side
+  const filteredCompanies = companies.filter(company => {
+    if (!searchQuery) return true;
+    
+    const query = searchQuery.toLowerCase();
+    return (
+      company.name.toLowerCase().includes(query) ||
+      company.specialty.toLowerCase().includes(query) ||
+      company.location.toLowerCase().includes(query)
+    );
+  });
 
   // Handle marker click
   const handleMarkerClick = (companyId: string) => {
     setActiveInfoWindow(companyId);
-    const company = mapSupabaseToCompanies().find(c => c.id === companyId);
+    const company = companies.find(c => c.id === companyId);
     if (company) {
       setSelectedCompany(company);
     }
@@ -190,13 +203,11 @@ export default function CompanyMap({
       </div>
     );
   }
-
-  const mappedCompanies = mapSupabaseToCompanies();
   
   // Calculate bounds for the map to fit all markers
   const getBounds = () => {
     const bounds = new window.google.maps.LatLngBounds();
-    mappedCompanies.forEach(company => {
+    filteredCompanies.forEach(company => {
       if (company.coordinates) {
         bounds.extend({
           lat: company.coordinates.lat,
@@ -214,7 +225,7 @@ export default function CompanyMap({
         center={center}
         zoom={5}
         onLoad={(map) => {
-          if (mappedCompanies.length > 0) {
+          if (filteredCompanies.length > 0) {
             map.fitBounds(getBounds());
           }
         }}
@@ -225,7 +236,7 @@ export default function CompanyMap({
           zoomControl: true,
         }}
       >
-        {mappedCompanies.map((company) => {
+        {filteredCompanies.map((company) => {
           if (company.coordinates) {
             return (
               <Marker
@@ -262,7 +273,7 @@ export default function CompanyMap({
         })}
       </GoogleMap>
       
-      {mappedCompanies.length === 0 && !loading && (
+      {filteredCompanies.length === 0 && !loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80">
           <div className="text-center p-6">
             <AlertTriangle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />

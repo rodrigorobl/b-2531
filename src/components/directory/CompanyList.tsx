@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Company } from '@/types/directory';
+import { Company, CompanyCategory, mapSupabaseCategory } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, Loader2, MapPin, Phone, Mail, Globe, Star, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,76 +12,90 @@ interface CompanyListProps {
   companies: Company[];
   selectedCompany: Company | null;
   setSelectedCompany: (company: Company | null) => void;
-}
-
-interface SupabaseCompany {
-  id: string;
-  nom: string;
-  categorie_principale: string;
-  specialite: string;
-  ville: string;
-  telephone: string | null;
-  email: string | null;
-  site_web: string | null;
-  note_moyenne: number;
-  nombre_avis: number;
-  coordinates: {
-    lat: number;
-    lng: number;
-  } | null;
+  searchQuery?: string;
+  selectedCategory?: CompanyCategory | null;
 }
 
 export default function CompanyList({
-  companies,
+  companies: ignoredCompanies,
   selectedCompany,
-  setSelectedCompany
+  setSelectedCompany,
+  searchQuery = '',
+  selectedCategory = null
 }: CompanyListProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [supabaseCompanies, setSupabaseCompanies] = useState<SupabaseCompany[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [showDetail, setShowDetail] = useState(false);
   
   useEffect(() => {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        console.log("Fetching companies from Supabase...");
+        let query = supabase
           .from('entreprises')
           .select('*')
           .order('nom');
+
+        if (selectedCategory) {
+          let supabaseCategory;
+          switch (selectedCategory) {
+            case 'architecte': supabaseCategory = 'Architecte'; break;
+            case 'moe_bet': supabaseCategory = 'MOE_BET'; break;
+            case 'construction': supabaseCategory = 'Construction'; break;
+            case 'service': supabaseCategory = 'Service'; break;
+            case 'industriel': supabaseCategory = 'Industriel'; break;
+            case 'fournisseur': supabaseCategory = 'Fournisseur'; break;
+            default: supabaseCategory = null;
+          }
+          
+          if (supabaseCategory) {
+            query = query.eq('categorie_principale', supabaseCategory);
+          }
+        }
+        
+        const { data, error } = await query;
         
         if (error) throw error;
         
         if (data) {
-          const processedCompanies = data.map(company => {
-            const typedCompany: SupabaseCompany = {
-              id: company.id,
-              nom: company.nom,
-              categorie_principale: company.categorie_principale,
-              specialite: company.specialite,
-              ville: company.ville || null,
-              telephone: company.telephone || null,
-              email: company.email || null,
-              site_web: company.site_web || null,
-              note_moyenne: company.note_moyenne || 0,
-              nombre_avis: company.nombre_avis || 0,
-              coordinates: null
-            };
-            
+          console.log("Companies data retrieved:", data);
+          
+          const transformedCompanies = data.map(company => {
+            let coordinates = { lat: 48.8566, lng: 2.3522 };
             if (company.coordinates && typeof company.coordinates === 'object') {
               const coords = company.coordinates as any;
               if (coords.lat !== undefined && coords.lng !== undefined) {
-                typedCompany.coordinates = {
+                coordinates = {
                   lat: Number(coords.lat),
                   lng: Number(coords.lng)
                 };
               }
             }
             
-            return typedCompany;
+            return {
+              id: company.id,
+              name: company.nom,
+              logo: company.logo || 'https://github.com/shadcn.png',
+              category: mapSupabaseCategory(company.categorie_principale),
+              specialty: company.specialite,
+              location: company.ville || 'Non spécifié',
+              address: company.adresse || '',
+              rating: company.note_moyenne || 0,
+              reviewCount: company.nombre_avis || 0,
+              description: `Entreprise spécialisée en ${company.specialite}`,
+              coordinates,
+              contact: {
+                phone: company.telephone || '01 23 45 67 89',
+                email: company.email || 'contact@example.com',
+                website: company.site_web || 'www.example.com'
+              },
+              certifications: []
+            };
           });
           
-          setSupabaseCompanies(processedCompanies);
+          setCompanies(transformedCompanies);
         }
       } catch (err) {
         console.error('Erreur lors de la récupération des entreprises:', err);
@@ -93,29 +107,18 @@ export default function CompanyList({
     };
     
     fetchCompanies();
-  }, []);
-
-  const mapSupabaseToCompanies = (): Company[] => {
-    return supabaseCompanies.map(company => ({
-      id: company.id,
-      name: company.nom,
-      logo: 'https://github.com/shadcn.png',
-      category: company.categorie_principale.toLowerCase() as any,
-      specialty: company.specialite,
-      location: company.ville || 'Non spécifié',
-      address: '',
-      rating: company.note_moyenne,
-      reviewCount: company.nombre_avis,
-      description: `Entreprise spécialisée en ${company.specialite}`,
-      coordinates: company.coordinates || { lat: 48.8566, lng: 2.3522 },
-      contact: {
-        phone: company.telephone || '01 23 45 67 89',
-        email: company.email || 'contact@example.com',
-        website: company.site_web || 'www.example.com'
-      },
-      certifications: []
-    }));
-  };
+  }, [selectedCategory]);
+  
+  const filteredCompanies = companies.filter(company => {
+    if (!searchQuery) return true;
+    
+    const query = searchQuery.toLowerCase();
+    return (
+      company.name.toLowerCase().includes(query) ||
+      company.specialty.toLowerCase().includes(query) ||
+      company.location.toLowerCase().includes(query)
+    );
+  });
 
   const getCategoryLabel = (category: string) => {
     switch (category) {
@@ -146,8 +149,6 @@ export default function CompanyList({
     setShowDetail(true);
   };
 
-  const displayCompanies = mapSupabaseToCompanies();
-
   if (loading) {
     return (
       <div className="p-4 flex items-center justify-center h-full">
@@ -173,17 +174,17 @@ export default function CompanyList({
     <div className="p-4">
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-lg font-medium">
-          {displayCompanies.length} entreprise{displayCompanies.length !== 1 ? 's' : ''} trouvée{displayCompanies.length !== 1 ? 's' : ''}
+          {filteredCompanies.length} entreprise{filteredCompanies.length !== 1 ? 's' : ''} trouvée{filteredCompanies.length !== 1 ? 's' : ''}
         </h2>
       </div>
       
       <div className="space-y-4">
-        {displayCompanies.length === 0 ? (
+        {filteredCompanies.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             Aucune entreprise ne correspond à vos critères
           </div>
         ) : (
-          displayCompanies.map((company) => (
+          filteredCompanies.map((company) => (
             <Card key={company.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row p-4">

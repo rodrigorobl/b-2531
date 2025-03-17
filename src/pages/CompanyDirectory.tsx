@@ -1,12 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import CompanyDirectoryHeader from '@/components/directory/CompanyDirectoryHeader';
 import CompanyFilters from '@/components/directory/CompanyFilters';
 import CompanyList from '@/components/directory/CompanyList';
 import CompanyMap from '@/components/directory/CompanyMap';
 import { ViewMode, CompanyCategory, Company } from '@/types/directory';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function CompanyDirectory() {
@@ -14,84 +13,10 @@ export default function CompanyDirectory() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CompanyCategory | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(true);
   
-  // Récupérer les entreprises depuis Supabase
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('entreprises')
-          .select('*')
-          .order('nom');
-        
-        if (error) throw error;
-        
-        if (data) {
-          // Transformer les données au format Company
-          const transformedCompanies: Company[] = data.map(company => {
-            // Safely handle coordinates
-            let coordinates = { lat: 48.8566, lng: 2.3522 }; // Default to Paris
-            
-            if (company.coordinates && typeof company.coordinates === 'object') {
-              // Check if coordinates has lat and lng properties
-              const coords = company.coordinates as any;
-              if (coords.lat !== undefined && coords.lng !== undefined) {
-                coordinates = {
-                  lat: Number(coords.lat),
-                  lng: Number(coords.lng)
-                };
-              }
-            }
-            
-            return {
-              id: company.id,
-              name: company.nom,
-              logo: company.logo || 'https://github.com/shadcn.png', // Logo par défaut
-              category: company.categorie_principale.toLowerCase() as CompanyCategory,
-              specialty: company.specialite,
-              location: company.ville || 'Non spécifié',
-              address: company.adresse || '',
-              rating: company.note_moyenne,
-              reviewCount: company.nombre_avis,
-              description: `Entreprise spécialisée en ${company.specialite}`,
-              coordinates: coordinates,
-              contact: {
-                phone: company.telephone || '01 23 45 67 89',
-                email: company.email || 'contact@example.com',
-                website: company.site_web || 'www.example.com'
-              },
-              certifications: []
-            };
-          });
-          
-          setCompanies(transformedCompanies);
-        }
-      } catch (err) {
-        console.error('Erreur lors de la récupération des entreprises:', err);
-        toast.error('Impossible de charger les données des entreprises');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchCompanies();
-  }, []);
-
-  // Filter companies based on search query and selected category
-  const filteredCompanies = companies.filter(company => {
-    const matchesSearch = searchQuery === '' || 
-      company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      company.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      company.location.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = selectedCategory === null || company.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
+  // We don't need to directly fetch companies here, as the child components
+  // (CompanyList and CompanyMap) will handle their own data fetching
+  
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -119,9 +44,11 @@ export default function CompanyDirectory() {
             {/* Liste des entreprises (colonne centrale) */}
             <div className={`${viewMode === 'map' ? 'w-1/2' : 'w-full'} overflow-y-auto`}>
               <CompanyList 
-                companies={filteredCompanies} 
+                companies={[]} // Pass empty array as we'll fetch directly in the component
                 selectedCompany={selectedCompany}
                 setSelectedCompany={setSelectedCompany}
+                searchQuery={searchQuery}
+                selectedCategory={selectedCategory}
               />
             </div>
             
@@ -129,9 +56,11 @@ export default function CompanyDirectory() {
             {viewMode === 'map' && (
               <div className="w-1/2 border-l border-border overflow-hidden">
                 <CompanyMap 
-                  companies={filteredCompanies}
+                  companies={[]} // Pass empty array as we'll fetch directly in the component
                   selectedCompany={selectedCompany}
                   setSelectedCompany={setSelectedCompany}
+                  searchQuery={searchQuery}
+                  selectedCategory={selectedCategory}
                 />
               </div>
             )}
