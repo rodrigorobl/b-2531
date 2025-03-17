@@ -29,7 +29,11 @@ const dummyCompanies = [
 const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompanies, setSelectedCompanies] = useState<{id: string, name: string, selected?: boolean}[]>(
-    form.getValues("invitedCompanies") || []
+    // Ensure that we only use valid companies with id and name defined
+    (form.getValues("invitedCompanies") || []).filter(
+      (company): company is {id: string, name: string, selected?: boolean} => 
+        typeof company.id === 'string' && typeof company.name === 'string'
+    )
   );
 
   // Filtrer les entreprises en fonction du terme de recherche
