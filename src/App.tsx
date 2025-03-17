@@ -49,7 +49,7 @@ const App = () => (
             <Route path="/tender-search" element={<TenderSearch />} />
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
             <Route path="/tender/:projectId/lot/:lotId" element={<LotAnalysis />} />
-            <Route path="/tender-management" element={<Index />} />
+            <Route path="/tender-specifications" element={<Index />} />
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/create-tender" element={<CreateTender />} />
             <Route path="/projects" element={<ProjectsList />} />

@@ -94,7 +94,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             </li>
           </>}
         {(activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre') && <li>
-            <Link to="/tender-management" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tender-management' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+            <Link to="/tender-specifications" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tender-specifications' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
               <FileText size={18} />
               <span>Gestion des AO</span>
             </Link>
