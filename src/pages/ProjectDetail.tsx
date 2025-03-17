@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Sidebar from '@/components/Sidebar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { ProjectLoading } from '@/components/project-detail/ProjectLoading';
@@ -51,6 +49,8 @@ export default function ProjectDetail() {
       
       setIsLoading(true);
       try {
+        console.log("Fetching project with ID:", id);
+        
         // Fetch project details
         const { data: projectData, error: projectError } = await supabase
           .from('projets')
@@ -61,13 +61,19 @@ export default function ProjectDetail() {
           .eq('id', id)
           .maybeSingle();
         
-        if (projectError) throw projectError;
+        if (projectError) {
+          console.error("Error fetching project:", projectError);
+          throw projectError;
+        }
         
         if (!projectData) {
+          console.error("Project not found with ID:", id);
           setError("Projet non trouvé");
           setIsLoading(false);
           return;
         }
+        
+        console.log("Project data fetched:", projectData);
         
         // Fetch tenders for this project
         const { data: tendersData, error: tendersError } = await supabase
@@ -75,7 +81,12 @@ export default function ProjectDetail() {
           .select('*')
           .eq('projet_id', id);
         
-        if (tendersError) throw tendersError;
+        if (tendersError) {
+          console.error("Error fetching tenders:", tendersError);
+          throw tendersError;
+        }
+        
+        console.log("Tenders fetched:", tendersData.length);
           
         // Calculate overall project progress
         const projectProgress = calculateProjectProgress(tendersData);
