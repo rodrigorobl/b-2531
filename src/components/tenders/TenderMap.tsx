@@ -167,7 +167,7 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={{ lat: 46.227638, lng: 2.213749 }} // Centre de la France
-            zoom: 5,
+            zoom={5}
             onLoad={onMapLoad}
             options={{
               zoomControl: true,
