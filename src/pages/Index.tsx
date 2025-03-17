@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -5,6 +6,7 @@ import ProjectHeader from '@/components/ProjectHeader';
 import ProjectInfo from '@/components/ProjectInfo';
 import TenderOffers from '@/components/TenderOffers';
 import Communication from '@/components/Communication';
+import ProjectMap from '@/components/ProjectMap';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
@@ -194,15 +196,22 @@ export default function Index() {
         <ProjectHeader project={projectData} />
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          <div className="md:col-span-4 h-full overflow-auto">
+          {/* Informations générales sur 50% de la largeur */}
+          <div className="md:col-span-6 h-full overflow-auto">
             <ProjectInfo info={projectInfo} />
+            
+            {/* Carte Google Maps */}
+            <div className="mt-4">
+              <h2 className="column-header mb-4">Localisation du projet</h2>
+              <ProjectMap location={projectData.location} />
+            </div>
           </div>
           
-          <div className="md:col-span-4 h-full overflow-auto">
+          <div className="md:col-span-3 h-full overflow-auto">
             <TenderOffers offers={offerData} />
           </div>
           
-          <div className="md:col-span-4 h-full overflow-auto">
+          <div className="md:col-span-3 h-full overflow-auto">
             <Communication 
               messages={messagesData} 
               notifications={notificationsData} 
