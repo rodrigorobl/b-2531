@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileDown, CheckCircle, Download, AlertCircle, Upload, DollarSign, Calendar, Hash, Info } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-
 interface Offer {
   id: string;
   lot: string;
@@ -17,11 +15,9 @@ interface Offer {
   submissionDate?: string;
   quoteIndex?: string;
 }
-
 interface TenderOffersProps {
   offers: Offer[];
 }
-
 export default function TenderOffers({
   offers
 }: TenderOffersProps) {
@@ -33,8 +29,9 @@ export default function TenderOffers({
   const prepareOfferData = (offer: Offer) => {
     return {
       ...offer,
-      amount: offer.amount || Math.floor(Math.random() * 50000) + 10000, // Valeur aléatoire si non définie
-      submissionDate: offer.submissionDate || (offer.status === 'submitted' ? '10/05/2024' : ''), 
+      amount: offer.amount || Math.floor(Math.random() * 50000) + 10000,
+      // Valeur aléatoire si non définie
+      submissionDate: offer.submissionDate || (offer.status === 'submitted' ? '10/05/2024' : ''),
       quoteIndex: offer.quoteIndex || `QT-${offer.id.substring(offer.id.length - 3)}`
     };
   };
@@ -43,25 +40,15 @@ export default function TenderOffers({
   const enrichedPendingOffers = pendingOffers.map(prepareOfferData);
   const enrichedSubmittedOffers = submittedOffers.map(prepareOfferData);
   const enrichedCompletedOffers = completedOffers.map(prepareOfferData);
-
-  return (
-    <div className="h-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
+  return <div className="h-full animate-fade-in" style={{
+    animationDelay: '0.1s'
+  }}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Mes offres</h2>
       </div>
       
       <Tabs defaultValue="pending" className="w-full">
-        <TabsList className="w-full mb-4 grid grid-cols-3">
-          <TabsTrigger value="pending" className="data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent rounded-none">
-            En attente ({enrichedPendingOffers.length})
-          </TabsTrigger>
-          <TabsTrigger value="submitted" className="data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent rounded-none">
-            Soumis ({enrichedSubmittedOffers.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed" className="data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent rounded-none">
-            Terminés ({enrichedCompletedOffers.length})
-          </TabsTrigger>
-        </TabsList>
+        
         
         <div className="column-content">
           <TabsContent value="pending" className="m-0 h-full">
@@ -77,31 +64,29 @@ export default function TenderOffers({
           </TabsContent>
         </div>
       </Tabs>
-    </div>
-  );
+    </div>;
 }
-
 interface OffersTableProps {
-  offers: (Offer & { amount?: number; submissionDate?: string; quoteIndex?: string })[];
+  offers: (Offer & {
+    amount?: number;
+    submissionDate?: string;
+    quoteIndex?: string;
+  })[];
   type: 'pending' | 'submitted' | 'completed';
 }
-
-function OffersTable({ offers, type }: OffersTableProps) {
+function OffersTable({
+  offers,
+  type
+}: OffersTableProps) {
   if (offers.length === 0) {
     return <EmptyState message={`Aucun ${type === 'pending' ? 'appel d\'offres en attente' : type === 'submitted' ? 'devis soumis' : 'appel d\'offres terminé'}`} />;
   }
-  
-  return (
-    <Table>
+  return <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Lot</TableHead>
           <TableHead>Montant du devis</TableHead>
-          {type === 'pending' ? (
-            <TableHead>Date du devis</TableHead>
-          ) : (
-            <TableHead>Date du devis</TableHead>
-          )}
+          {type === 'pending' ? <TableHead>Date du devis</TableHead> : <TableHead>Date du devis</TableHead>}
           {type !== 'pending' && <TableHead>Indice du devis</TableHead>}
           {type === 'submitted' && <TableHead>Conformité</TableHead>}
           {type === 'completed' && <TableHead>Statut</TableHead>}
@@ -109,8 +94,7 @@ function OffersTable({ offers, type }: OffersTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {offers.map(offer => (
-          <TableRow key={offer.id}>
+        {offers.map(offer => <TableRow key={offer.id}>
             <TableCell>
               <div>
                 <div className="font-medium">Lot {offer.lot}</div>
@@ -126,66 +110,38 @@ function OffersTable({ offers, type }: OffersTableProps) {
               {type === 'pending' ? offer.deadline : offer.submissionDate || '-'}
             </TableCell>
             
-            {type !== 'pending' && (
-              <TableCell>{offer.quoteIndex || '-'}</TableCell>
-            )}
+            {type !== 'pending' && <TableCell>{offer.quoteIndex || '-'}</TableCell>}
             
-            {type === 'submitted' && offer.isCompliant !== undefined && (
-              <TableCell>
-                <Badge className={`${
-                  offer.isCompliant 
-                    ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                    : 'bg-red-100 text-red-500 hover:bg-red-200'
-                } border-0`}>
-                  {offer.isCompliant ? (
-                    <><CheckCircle size={12} className="mr-1" /> Conforme</>
-                  ) : (
-                    <><AlertCircle size={12} className="mr-1" /> Non conforme</>
-                  )}
+            {type === 'submitted' && offer.isCompliant !== undefined && <TableCell>
+                <Badge className={`${offer.isCompliant ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-500 hover:bg-red-200'} border-0`}>
+                  {offer.isCompliant ? <><CheckCircle size={12} className="mr-1" /> Conforme</> : <><AlertCircle size={12} className="mr-1" /> Non conforme</>}
                 </Badge>
-              </TableCell>
-            )}
+              </TableCell>}
             
-            {type === 'completed' && (
-              <TableCell>
-                <Badge className={`${
-                  offer.status === 'approved' 
-                    ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                    : 'bg-red-100 text-red-500 hover:bg-red-200'
-                } border-0`}>
+            {type === 'completed' && <TableCell>
+                <Badge className={`${offer.status === 'approved' ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-500 hover:bg-red-200'} border-0`}>
                   {offer.status === 'approved' ? 'Accepté' : 'Refusé'}
                 </Badge>
-              </TableCell>
-            )}
+              </TableCell>}
             
             <TableCell>
               <div className="flex items-center gap-2">
-                {type === 'pending' && (
-                  <Button size="sm" className="h-8 bg-primary text-white">
-                    <Upload size={14} className="mr-1" />
-                    Déposer
-                  </Button>
-                )}
+                {type === 'pending'}
                 
-                {type !== 'pending' && (
-                  <Button size="sm" className="h-8" variant="outline">
+                {type !== 'pending' && <Button size="sm" className="h-8" variant="outline">
                     <FileDown size={14} className="mr-1" />
                     Voir devis
-                  </Button>
-                )}
+                  </Button>}
                 
                 <Button size="sm" variant="ghost" className="h-8">
                   Détails
                 </Button>
               </div>
             </TableCell>
-          </TableRow>
-        ))}
+          </TableRow>)}
       </TableBody>
-    </Table>
-  );
+    </Table>;
 }
-
 function EmptyState({
   message
 }: {
