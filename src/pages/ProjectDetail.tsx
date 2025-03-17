@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Sidebar from '@/components/Sidebar';
 import { 
@@ -28,6 +27,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatBudget, formatDate } from '@/utils/tenderFormatUtils';
 import { useToast } from '@/hooks/use-toast';
+import { ProjectLoading } from '@/components/project-detail/ProjectLoading';
+import { ProjectError } from '@/components/project-detail/ProjectError';
 
 // Define types for project and tender data
 interface ProjectData {
@@ -80,6 +81,7 @@ export default function ProjectDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTenderId, setSelectedTenderId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [error, setError] = useState<string | null>(null);
   
   // Check if user is promoter
   useEffect(() => {
@@ -97,7 +99,11 @@ export default function ProjectDetail() {
   // Fetch project data
   useEffect(() => {
     async function fetchProjectData() {
-      if (!id) return;
+      if (!id) {
+        setError("Identifiant de projet non fourni");
+        setIsLoading(false);
+        return;
+      }
       
       setIsLoading(true);
       try {
@@ -109,9 +115,15 @@ export default function ProjectDetail() {
             entreprises:maitre_ouvrage_id(nom)
           `)
           .eq('id', id)
-          .single();
+          .maybeSingle();
         
         if (projectError) throw projectError;
+        
+        if (!projectData) {
+          setError("Projet non trouvé");
+          setIsLoading(false);
+          return;
+        }
         
         // Fetch tenders for this project
         const { data: tendersData, error: tendersError } = await supabase
@@ -162,6 +174,7 @@ export default function ProjectDetail() {
         }
       } catch (error) {
         console.error('Error fetching project data:', error);
+        setError("Erreur lors du chargement des données du projet");
         toast({
           title: "Erreur",
           description: "Impossible de charger les données du projet",
@@ -230,35 +243,11 @@ export default function ProjectDetail() {
   };
   
   if (isLoading) {
-    return (
-      <div className="flex h-screen bg-background">
-        <Sidebar />
-        <div className="flex-1 p-8 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Chargement des données du projet...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <ProjectLoading />;
   }
   
-  if (!project) {
-    return (
-      <div className="flex h-screen bg-background">
-        <Sidebar />
-        <div className="flex-1 p-8 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Projet non trouvé</h2>
-            <p className="text-muted-foreground mb-4">Le projet que vous recherchez n'existe pas ou vous n'avez pas les permissions nécessaires.</p>
-            <Button onClick={() => navigate('/project-management')}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour à la liste des projets
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+  if (error || !project) {
+    return <ProjectError error={error || "Projet non trouvé"} />;
   }
   
   return (

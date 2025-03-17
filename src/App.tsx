@@ -4,6 +4,8 @@ import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
+  Route,
+  Routes,
 } from "react-router-dom";
 import './App.css';
 import Dashboard from '@/pages/Dashboard';
@@ -21,6 +23,7 @@ import DashboardConstruction from '@/pages/dashboards/DashboardConstruction';
 import DashboardServices from '@/pages/dashboards/DashboardServices';
 import DashboardIndustry from '@/pages/dashboards/DashboardIndustry';
 import CreateTender from '@/pages/CreateTender';
+import NotFound from '@/pages/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -86,6 +89,10 @@ const router = createBrowserRouter([
   {
     path: "/create-tender",
     element: <CreateTender />
+  },
+  {
+    path: "*",
+    element: <NotFound />
   },
 ]);
 
