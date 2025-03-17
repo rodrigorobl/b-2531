@@ -23,6 +23,7 @@ import DashboardConstruction from '@/pages/dashboards/DashboardConstruction';
 import DashboardServices from '@/pages/dashboards/DashboardServices';
 import DashboardIndustry from '@/pages/dashboards/DashboardIndustry';
 import CreateTender from '@/pages/CreateTender';
+import CompanyDirectory from '@/pages/CompanyDirectory';
 import NotFound from '@/pages/NotFound';
 
 const router = createBrowserRouter([
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
   {
     path: "/company",
     element: <Company />
+  },
+  {
+    path: "/directory",
+    element: <CompanyDirectory />
   },
   {
     path: "/tender-search",
