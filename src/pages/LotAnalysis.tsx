@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
+import { CheckCircle, ArrowLeft } from 'lucide-react';
 
 // Components
 import { LotAnalysisHeader } from '@/components/lots/LotAnalysisHeader';
@@ -110,6 +111,8 @@ export default function LotAnalysis() {
   const [showCommentDialog, setShowCommentDialog] = useState(false);
   const [commentBidId, setCommentBidId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [bidToAssign, setBidToAssign] = useState<string | null>(null);
 
   // Filter and sort the bids
   const filteredBids = lot.bids.filter(bid => {
@@ -154,6 +157,11 @@ export default function LotAnalysis() {
     toast.success('Lot attribué avec succès', {
       description: 'Le lot a été attribué à l\'entreprise sélectionnée.'
     });
+    setShowAssignDialog(false);
+  };
+  const openAssignDialog = (bidId: string) => {
+    setBidToAssign(bidId);
+    setShowAssignDialog(true);
   };
   const openCommentDialog = (bidId: string) => {
     setCommentBidId(bidId);
@@ -198,10 +206,29 @@ export default function LotAnalysis() {
     return new Date(dateString).toLocaleDateString('fr-FR');
   };
 
-  // Get the selected bids data
+  const goBack = () => {
+    navigate(-1);
+  };
+
   const selectedBidsData = selectedBids.map(bidId => lot.bids.find(b => b.id === bidId)).filter((bid): bid is Bid => bid !== undefined);
+  
   return <Layout>
       <div className="container mx-auto py-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Button variant="outline" size="sm" onClick={goBack}>
+            <ArrowLeft className="mr-1 h-4 w-4" /> Retour
+          </Button>
+          
+          {lot.status !== 'assigned' && (
+            <Button 
+              className="ml-auto bg-primary hover:bg-primary/90 text-white font-semibold"
+              onClick={() => setShowAssignDialog(true)}
+            >
+              <CheckCircle className="mr-2 h-5 w-5" /> Attribuer le lot
+            </Button>
+          )}
+        </div>
+        
         <LotAnalysisHeader lotName={lot.name} projectName={lot.projectName} projectId={lot.projectId} onDownloadSummary={downloadSummary} />
         
         <LotAnalysisStats estimatedBudget={lot.estimatedBudget} bidsCount={lot.bids.length} compliantBidsCount={lot.bids.filter(bid => bid.compliant).length} status={lot.status} selectedCompanyName={lot.bids.find(bid => bid.selected)?.companyName} formatPrice={formatPrice} />
@@ -245,7 +272,18 @@ export default function LotAnalysis() {
           <TabsContent value="table" className="space-y-4">
             <Card>
               <CardContent className="p-0">
-                <LotAnalysisTable bids={sortedBids} selectedBids={selectedBids} isAssigned={lot.status === 'assigned'} onToggleBidSelection={toggleBidSelection} onOpenCommentDialog={openCommentDialog} onSelectWinningBid={selectWinningBid} formatPrice={formatPrice} formatDate={formatDate} getSolvencyBadge={getSolvencyBadge} getAdministrativeScoreBadge={getAdministrativeScoreBadge} />
+                <LotAnalysisTable 
+                  bids={sortedBids} 
+                  selectedBids={selectedBids} 
+                  isAssigned={lot.status === 'assigned'} 
+                  onToggleBidSelection={toggleBidSelection} 
+                  onOpenCommentDialog={openCommentDialog} 
+                  onSelectWinningBid={openAssignDialog} 
+                  formatPrice={formatPrice} 
+                  formatDate={formatDate} 
+                  getSolvencyBadge={getSolvencyBadge} 
+                  getAdministrativeScoreBadge={getAdministrativeScoreBadge} 
+                />
               </CardContent>
             </Card>
             
@@ -283,6 +321,46 @@ export default function LotAnalysis() {
             <div className="flex justify-end mt-4">
               <Button onClick={addComment}>Enregistrer</Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Assign Lot Dialog */}
+      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmer l'attribution du lot</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            {bidToAssign ? (
+              <>
+                <p className="mb-4">
+                  Vous êtes sur le point d'attribuer ce lot à l'entreprise:
+                </p>
+                <div className="bg-muted p-4 rounded-md mb-4">
+                  <p className="font-semibold">{lot.bids.find(bid => bid.id === bidToAssign)?.companyName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Montant: {formatPrice(lot.bids.find(bid => bid.id === bidToAssign)?.amount || 0)}
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Cette action est définitive. Le lot sera marqué comme attribué et les autres offres seront refusées automatiquement.
+                </p>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setShowAssignDialog(false)}>Annuler</Button>
+                  <Button onClick={() => selectWinningBid(bidToAssign)}>Confirmer l'attribution</Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mb-4">
+                  Veuillez sélectionner une offre à attribuer depuis le tableau des offres.
+                </p>
+                <div className="flex justify-end">
+                  <Button variant="outline" onClick={() => setShowAssignDialog(false)}>Fermer</Button>
+                </div>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
