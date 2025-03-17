@@ -11,15 +11,9 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { 
-  ArrowUpDown, 
-  Eye, 
-  Loader2, 
-  AlertCircle
-} from 'lucide-react';
+import { ArrowUpDown, Eye, FileText } from 'lucide-react';
+import { formatBudget, formatDate } from '@/utils/tenderFormatUtils';
 import { ProjectSummary } from '@/types/projects';
-import { formatBudget } from '@/utils/tenderFormatUtils';
-import { Badge } from '@/components/ui/badge';
 
 interface ProjectManagementTableProps {
   projects: ProjectSummary[];
@@ -40,119 +34,114 @@ export default function ProjectManagementTable({
 }: ProjectManagementTableProps) {
   const navigate = useNavigate();
 
-  const getStatusBadge = (status: string) => {
+  const renderStatusBadge = (status: string) => {
     switch (status) {
       case 'En cours':
-        return <Badge className="bg-amber-500">En cours</Badge>;
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">En cours</span>;
       case 'Clôturé':
-        return <Badge className="bg-gray-500">Clôturé</Badge>;
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Clôturé</span>;
       case 'Attribué':
-        return <Badge className="bg-green-600">Attribué</Badge>;
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Attribué</span>;
       default:
-        return <Badge>Inconnu</Badge>;
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{status}</span>;
     }
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="flex items-center justify-center p-8">Chargement des projets...</div>;
   }
 
   if (error) {
-    return (
-      <div className="text-center py-10 text-muted-foreground">
-        <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-2" />
-        <p>Une erreur est survenue lors du chargement des projets.</p>
-        <p className="text-xs text-destructive mt-1">{error}</p>
-      </div>
-    );
-  }
-
-  if (projects.length === 0) {
-    return (
-      <TableRow>
-        <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
-          Aucun projet correspondant à vos critères
-        </TableCell>
-      </TableRow>
-    );
+    return <div className="flex items-center justify-center p-8 text-red-500">Erreur: {error}</div>;
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[250px]">
-            <div 
-              className="flex items-center gap-1 cursor-pointer"
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead 
+              className="cursor-pointer"
               onClick={() => handleSort('projectName')}
             >
-              Projet 
-              <ArrowUpDown size={14} />
-            </div>
-          </TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Statut</TableHead>
-          <TableHead>Client</TableHead>
-          <TableHead>
-            <div 
-              className="flex items-center gap-1 cursor-pointer"
+              <div className="flex items-center">
+                Nom du projet
+                {sortField === 'projectName' && (
+                  <ArrowUpDown className={`ml-1 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`} />
+                )}
+              </div>
+            </TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Client</TableHead>
+            <TableHead>Statut</TableHead>
+            <TableHead 
+              className="cursor-pointer"
               onClick={() => handleSort('startDate')}
             >
-              Début 
-              <ArrowUpDown size={14} />
-            </div>
-          </TableHead>
-          <TableHead>Localisation</TableHead>
-          <TableHead>
-            <div 
-              className="flex items-center gap-1 cursor-pointer"
+              <div className="flex items-center">
+                Date début
+                {sortField === 'startDate' && (
+                  <ArrowUpDown className={`ml-1 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`} />
+                )}
+              </div>
+            </TableHead>
+            <TableHead>Budget</TableHead>
+            <TableHead 
+              className="cursor-pointer"
               onClick={() => handleSort('progressPercentage')}
             >
-              Avancement 
-              <ArrowUpDown size={14} />
-            </div>
-          </TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {projects.map((project) => (
-          <TableRow key={project.id}>
-            <TableCell>
-              <div className="font-medium">{project.projectName}</div>
-              <div className="text-xs text-muted-foreground">Budget: {formatBudget(project.budget)}</div>
-            </TableCell>
-            <TableCell>{project.projectType}</TableCell>
-            <TableCell>{getStatusBadge(project.status)}</TableCell>
-            <TableCell>{project.clientName}</TableCell>
-            <TableCell>{project.startDate ? new Date(project.startDate).toLocaleDateString('fr-FR') : 'Non défini'}</TableCell>
-            <TableCell>{project.location}</TableCell>
-            <TableCell>
-              <div className="flex flex-col gap-1">
-                <Progress value={project.progressPercentage} className="h-2" />
-                <div className="text-xs text-muted-foreground">
-                  {project.tendersAssigned}/{project.tendersCount} lots ({project.progressPercentage}%)
-                </div>
+              <div className="flex items-center">
+                Progression
+                {sortField === 'progressPercentage' && (
+                  <ArrowUpDown className={`ml-1 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`} />
+                )}
               </div>
-            </TableCell>
-            <TableCell className="text-right">
-              <Button 
-                size="sm" 
-                variant="default" 
-                className="gap-1"
-                onClick={() => navigate(`/project-detail/${project.id}`)}
-              >
-                <Eye size={14} />
-                <span>Détails</span>
-              </Button>
-            </TableCell>
+            </TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {projects.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={8} className="text-center py-8">
+                Aucun projet trouvé
+              </TableCell>
+            </TableRow>
+          ) : (
+            projects.map((project) => (
+              <TableRow key={project.id}>
+                <TableCell className="font-medium">{project.projectName}</TableCell>
+                <TableCell>{project.projectType}</TableCell>
+                <TableCell>{project.clientName}</TableCell>
+                <TableCell>{renderStatusBadge(project.status)}</TableCell>
+                <TableCell>{project.startDate ? formatDate(project.startDate) : '-'}</TableCell>
+                <TableCell>{project.budget ? formatBudget(project.budget) : '-'}</TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-1 w-full">
+                    <Progress value={project.progressPercentage} className="h-2" />
+                    <span className="text-xs text-muted-foreground">
+                      {project.progressPercentage}% - {project.tendersAssigned}/{project.tendersCount} AO
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="flex items-center gap-1"
+                      onClick={() => navigate(`/project-detail/${project.id}`)}
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span>Détails</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
