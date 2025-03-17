@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Layers, MessageSquare, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Layers, MessageSquare, FileText, Upload } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { getTenderDetailById } from '@/data/mockTenderDetail';
 import TenderDetailHeader from '@/components/tenderDetail/TenderDetailHeader';
@@ -22,12 +22,10 @@ export default function TenderDetail() {
   const tender = id ? getTenderDetailById(id) : undefined;
   
   useEffect(() => {
-    // If tender not found, redirect to tender management page
     if (!tender && id) {
       navigate('/tender-management');
     }
     
-    // Récupérer le profil utilisateur actif depuis localStorage
     const savedProfile = localStorage.getItem('btp-connect-active-profile');
     if (savedProfile) {
       setActiveProfile(savedProfile);
@@ -106,7 +104,6 @@ export default function TenderDetail() {
   );
 }
 
-// Composant spécifique pour les entreprises qui consultent l'appel d'offres
 function TenderLotsForContractor({ tender }) {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
