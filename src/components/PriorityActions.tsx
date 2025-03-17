@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, MessageSquare, Upload, FileText } from 'lucide-react';
+import { Calendar, MessageSquare, Upload, FileText, ShoppingCart, CalendarCheck, Package, Wrench, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PriorityAction {
@@ -8,7 +8,7 @@ interface PriorityAction {
   title: string;
   project: string;
   deadline: string;
-  type: 'quote' | 'document' | 'message';
+  type: 'quote' | 'document' | 'message' | 'tender' | 'meeting' | 'purchase' | 'planning' | 'delivery' | 'service';
 }
 
 interface PriorityActionsProps {
@@ -24,8 +24,20 @@ export default function PriorityActions({ actions }: PriorityActionsProps) {
         return <FileText size={16} className="text-status-in-progress" />;
       case 'message':
         return <MessageSquare size={16} className="text-status-assigned" />;
+      case 'tender':
+        return <FileText size={16} className="text-status-pending" />;
+      case 'meeting':
+        return <CalendarCheck size={16} className="text-status-assigned" />;
+      case 'purchase':
+        return <ShoppingCart size={16} className="text-status-pending" />;
+      case 'planning':
+        return <Calendar size={16} className="text-status-in-progress" />;
+      case 'delivery':
+        return <Package size={16} className="text-status-completed" />;
+      case 'service':
+        return <Wrench size={16} className="text-status-assigned" />;
       default:
-        return null;
+        return <Building size={16} className="text-muted-foreground" />;
     }
   };
 
@@ -49,8 +61,48 @@ export default function PriorityActions({ actions }: PriorityActionsProps) {
             Répondre
           </Button>
         );
+      case 'tender':
+        return (
+          <Button variant="outline" size="sm">
+            Participer
+          </Button>
+        );
+      case 'meeting':
+        return (
+          <Button variant="outline" size="sm">
+            Planifier
+          </Button>
+        );
+      case 'purchase':
+        return (
+          <Button variant="outline" size="sm">
+            Commander
+          </Button>
+        );
+      case 'planning':
+        return (
+          <Button variant="outline" size="sm">
+            Organiser
+          </Button>
+        );
+      case 'delivery':
+        return (
+          <Button variant="outline" size="sm">
+            Expédier
+          </Button>
+        );
+      case 'service':
+        return (
+          <Button variant="outline" size="sm">
+            Intervenir
+          </Button>
+        );
       default:
-        return null;
+        return (
+          <Button variant="outline" size="sm">
+            Voir
+          </Button>
+        );
     }
   };
 

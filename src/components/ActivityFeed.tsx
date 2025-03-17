@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { FileText, MessageSquare, Bell, Clock } from 'lucide-react';
+import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar } from 'lucide-react';
 
 interface Activity {
   id: string;
   title: string;
   description: string;
   timestamp: string;
-  type: 'tender' | 'message' | 'status' | 'document';
+  type: 'tender' | 'message' | 'status' | 'document' | 'quote' | 'update' | 'order' | 'delivery';
 }
 
 interface ActivityFeedProps {
@@ -39,6 +39,30 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
         return (
           <div className="w-8 h-8 rounded-full bg-status-in-progress/10 flex items-center justify-center text-status-in-progress">
             <FileText size={16} />
+          </div>
+        );
+      case 'quote':
+        return (
+          <div className="w-8 h-8 rounded-full bg-status-pending/10 flex items-center justify-center text-status-pending">
+            <FileText size={16} />
+          </div>
+        );
+      case 'update':
+        return (
+          <div className="w-8 h-8 rounded-full bg-status-in-progress/10 flex items-center justify-center text-status-in-progress">
+            <Bell size={16} />
+          </div>
+        );
+      case 'order':
+        return (
+          <div className="w-8 h-8 rounded-full bg-status-assigned/10 flex items-center justify-center text-status-assigned">
+            <ShoppingCart size={16} />
+          </div>
+        );
+      case 'delivery':
+        return (
+          <div className="w-8 h-8 rounded-full bg-status-completed/10 flex items-center justify-center text-status-completed">
+            <Package size={16} />
           </div>
         );
       default:
