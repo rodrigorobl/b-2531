@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown, FileText, ExternalLink } from 'lucide-react';
 import { Tender, ParticipationStatus } from '@/pages/TenderOffers';
+import { Link } from 'react-router-dom';
 
 interface TenderTableProps {
   tenders: Tender[];
@@ -77,9 +78,11 @@ export default function TenderTable({ tenders, onSelectTender, selectedTenderId 
                 <TableCell>{getParticipationStatusBadge(tender.participationStatus)}</TableCell>
                 <TableCell>{tender.deadline}</TableCell>
                 <TableCell>
-                  <Button size="sm" variant="outline" className="gap-1">
-                    <ExternalLink size={14} />
-                    <span>Accéder à l'Appel d'Offres</span>
+                  <Button size="sm" variant="outline" className="gap-1" asChild>
+                    <Link to={`/tender-specifications?project=${tender.id}`}>
+                      <ExternalLink size={14} />
+                      <span>Accéder à l'Appel d'Offres</span>
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>
