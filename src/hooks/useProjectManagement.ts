@@ -59,8 +59,11 @@ export function useProjectManagement() {
     try {
       // Get project from the project_management_summary view
       const { data: projectData, error: projectError } = await supabase
-        .from('project_management_summary')
-        .select('*')
+        .from('projets')
+        .select(`
+          *,
+          entreprises:maitre_ouvrage_id(nom)
+        `)
         .eq('id', projectId)
         .single();
 
@@ -76,18 +79,18 @@ export function useProjectManagement() {
 
       const projectDetail: ProjectDetail = {
         id: projectData.id,
-        projectName: projectData.project_name,
-        projectType: projectData.project_type,
+        projectName: projectData.nom,
+        projectType: projectData.type_projet,
         description: projectData.description,
-        location: projectData.location || 'Non spécifié',
-        budget: projectData.budget,
-        status: projectData.status as ProjectStatus,
-        startDate: projectData.start_date,
-        endDate: projectData.end_date,
-        tendersCount: projectData.tenders_count,
-        tendersAssigned: projectData.tenders_assigned,
-        progressPercentage: projectData.progress_percentage,
-        clientName: projectData.client_name || 'Non spécifié',
+        location: projectData.localisation || 'Non spécifié',
+        budget: projectData.budget_estime || 0,
+        status: projectData.statut as ProjectStatus,
+        startDate: projectData.date_debut,
+        endDate: projectData.date_fin,
+        tendersCount: tendersData.length,
+        tendersAssigned: tendersData.filter(t => t.statut === 'Attribué').length,
+        progressPercentage: calculateProjectProgress(tendersData),
+        clientName: projectData.entreprises?.nom || 'Non spécifié',
         tenders: tendersData.map(tender => ({
           id: tender.id,
           name: tender.lot,
@@ -111,6 +114,17 @@ export function useProjectManagement() {
       });
       return null;
     }
+  };
+
+  // Helper function to calculate project progress based on tenders
+  const calculateProjectProgress = (tenders: any[]): number => {
+    if (tenders.length === 0) return 0;
+    
+    const totalProgress = tenders.reduce((sum, tender) => {
+      return sum + (tender.progress || 0);
+    }, 0);
+    
+    return Math.round(totalProgress / tenders.length);
   };
 
   // Fetch projects on mount
