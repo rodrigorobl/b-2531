@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import { Company } from '@/types/directory';
@@ -56,7 +55,7 @@ export default function CompanyMap({
       companies.forEach(company => {
         bounds.extend({ lat: company.coordinates.lat, lng: company.coordinates.lng });
       });
-      mapRef.fitBounds(bounds, { padding: 50 });
+      mapRef.fitBounds(bounds);
     }
   }, [mapRef, companies]);
 

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import { TenderSearchResult } from '@/pages/TenderSearch';
@@ -72,7 +71,7 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId }: TenderMapProps
           bounds.extend(coords);
         }
       });
-      mapRef.fitBounds(bounds, { padding: 50 });
+      mapRef.fitBounds(bounds);
     }
   }, [mapRef, tenders]);
 
