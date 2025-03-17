@@ -11,7 +11,7 @@ interface TechnicalTeamMember {
 
 interface UserProfileDialogWrapperProps {
   children: React.ReactNode;
-  onUserSelect: (member: TechnicalTeamMember) => void;
+  onUserSelect?: (member: TechnicalTeamMember) => void; // Made optional with ?
 }
 
 export function UserProfileDialogWrapper({ children, onUserSelect }: UserProfileDialogWrapperProps) {
@@ -44,6 +44,11 @@ export function UserProfileDialogWrapper({ children, onUserSelect }: UserProfile
       }
     });
     setDialogOpen(true);
+    
+    // Call the onUserSelect callback if provided
+    if (onUserSelect) {
+      onUserSelect(member);
+    }
   };
 
   // Pass the handleUserClick to the children
