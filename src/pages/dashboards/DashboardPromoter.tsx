@@ -9,9 +9,11 @@ import ProjectsList from '@/components/ProjectsList';
 import ActivityFeed from '@/components/ActivityFeed';
 import PriorityActions from '@/components/PriorityActions';
 import Sidebar from '@/components/Sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function DashboardPromoter() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Sample data for KPI cards specific to Promoteur
   const kpiData = {
@@ -103,19 +105,19 @@ export default function DashboardPromoter() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex flex-col md:flex-row min-h-screen bg-background">
       <Sidebar />
       
-      <main className="flex-1 px-6 py-8">
+      <main className="flex-1 p-4 md:px-6 md:py-8 overflow-auto">
         {/* Header */}
-        <header className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <h1 className="text-3xl font-bold">Bonjour, Antoine</h1>
+        <header className="mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold">Bonjour, Antoine</h1>
             <Button 
               variant="default" 
-              size="sm" 
+              size={isMobile ? "default" : "sm"}
               onClick={() => navigate('/create-tender')}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap w-full sm:w-auto"
             >
               <Plus size={16} className="mr-1" />
               Lancer un Appel d'Offres
@@ -126,7 +128,7 @@ export default function DashboardPromoter() {
           </p>
           
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-6">
             <DashboardKPI title="Projets en cours" value={kpiData.projectsInProgress} icon={<Briefcase />} color="bg-primary/10 text-primary" linkTo="/projects" />
             <DashboardKPI title="Brouillons d'AO" value={kpiData.tenderDrafts} icon={<FileText />} color="bg-slate-500/10 text-slate-500" linkTo="/tender-management?filter=draft" />
             <DashboardKPI title="AO actifs" value={kpiData.activeTenders} icon={<Bell />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-management?filter=active" />
@@ -135,38 +137,38 @@ export default function DashboardPromoter() {
         </header>
         
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           {/* Left Column - Projects */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-4 md:space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
-              <div className="p-4 border-b flex justify-between items-center">
+              <div className="p-3 md:p-4 border-b flex justify-between items-center flex-wrap gap-2">
                 <h2 className="text-lg font-semibold">Mes projets immobiliers</h2>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/projects">Voir tous</Link>
                 </Button>
               </div>
-              <div className="p-4">
+              <div className="p-3 md:p-4 overflow-auto">
                 <ProjectsList projects={projects} />
               </div>
             </div>
           </div>
           
           {/* Right Column - Priority Actions and Activity Feed */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-4 md:space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
-              <div className="p-4 border-b">
+              <div className="p-3 md:p-4 border-b">
                 <h2 className="text-lg font-semibold">Actions prioritaires</h2>
               </div>
-              <div className="p-4">
+              <div className="p-3 md:p-4 overflow-auto">
                 <PriorityActions actions={priorityActions} />
               </div>
             </div>
             
             <div className="bg-card rounded-lg border shadow-sm">
-              <div className="p-4 border-b">
+              <div className="p-3 md:p-4 border-b">
                 <h2 className="text-lg font-semibold">Activité récente</h2>
               </div>
-              <div className="p-4">
+              <div className="p-3 md:p-4 overflow-auto">
                 <ActivityFeed activities={activities} />
               </div>
             </div>

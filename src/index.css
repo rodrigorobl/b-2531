@@ -163,3 +163,16 @@
   transform: translateY(-10px);
   transition: opacity 300ms, transform 300ms;
 }
+
+/* Additional responsive breakpoints */
+@layer utilities {
+  @variants responsive {
+    /* Extra small screens */
+    .xs\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .xs\:col-span-1 {
+      grid-column: span 1 / span 1;
+    }
+  }
+}

@@ -4,23 +4,25 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function DashboardServices() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex flex-col md:flex-row min-h-screen bg-background">
       <Sidebar />
       
-      <main className="flex-1 px-6 py-8">
-        <header className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <h1 className="text-3xl font-bold">Bonjour, Sophie</h1>
+      <main className="flex-1 p-4 md:px-6 md:py-8 overflow-auto">
+        <header className="mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold">Bonjour, Sophie</h1>
             <Button 
               variant="default" 
-              size="sm" 
+              size={isMobile ? "default" : "sm"}
               onClick={() => navigate('/tender-search')}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap w-full sm:w-auto"
             >
               <Plus size={16} className="mr-1" />
               Rechercher des AO
