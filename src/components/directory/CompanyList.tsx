@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Company } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
-import { AlertTriangle, Loader2, MapPin, Phone, Mail, Globe, Star } from 'lucide-react';
+import { AlertTriangle, Loader2, MapPin, Phone, Mail, Globe, Star, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import CompanyDetailDialog from './CompanyDetailDialog';
 
 interface CompanyListProps {
   companies: Company[];
@@ -39,6 +39,7 @@ export default function CompanyList({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [supabaseCompanies, setSupabaseCompanies] = useState<SupabaseCompany[]>([]);
+  const [showDetail, setShowDetail] = useState(false);
   
   useEffect(() => {
     const fetchCompanies = async () => {
