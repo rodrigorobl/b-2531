@@ -6,7 +6,7 @@ import { ProjectError } from './ProjectError';
 import { ProjectHeader } from './ProjectHeader';
 import { ProjectOverviewTab } from './ProjectOverviewTab';
 import { ProjectTendersTab } from './ProjectTendersTab';
-import { useProjectDetail } from '@/hooks/useProjectDetail';
+import { useProjectDetail } from '@/hooks/projectDetail/useProjectDetail';
 import Sidebar from '@/components/Sidebar';
 
 export function ProjectDetailContainer() {

@@ -1,6 +1,6 @@
 
 import { useProjectList } from './useProjectList';
-import { useProjectDetail } from './useProjectDetail';
+import { useProjectDetail } from './projectDetail/useProjectDetail';
 
 export function useProjectManagement() {
   const { projects, isLoading, error, fetchProjects } = useProjectList();
