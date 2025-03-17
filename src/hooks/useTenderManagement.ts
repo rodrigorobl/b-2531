@@ -63,7 +63,7 @@ export function useTenderManagement() {
       for (const tender of formattedTenders) {
         const { data: lotData, error: lotError } = await supabase
           .from('lots')
-          .select('id, name, status, quotes_received, quotes_required, assigned_to')
+          .select('*')
           .eq('tender_id', tender.id);
           
         if (!lotError && lotData) {
@@ -146,6 +146,7 @@ export function useTenderManagement() {
     if (!status) return 'open';
     
     switch (status.toLowerCase()) {
+      case 'assigned':
       case 'attribué':
         return 'assigned';
       default:

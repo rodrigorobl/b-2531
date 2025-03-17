@@ -1,6 +1,15 @@
 
 export type TenderStatus = 'open' | 'closed' | 'assigned';
 
+export interface LotDetails {
+  id: string;
+  name: string;
+  status: 'open' | 'assigned';
+  quotesReceived: number;
+  quotesRequired: number;
+  assignedTo?: string;
+}
+
 export interface TenderSearchResult {
   id: string;
   projectName: string;
@@ -25,12 +34,5 @@ export interface TenderSearchResult {
   actualQuotesReceived?: number;
   quoteQuality?: 'poor' | 'medium' | 'good';
   budgetRespect?: 'under' | 'on-target' | 'over';
-  lotDetails?: {
-    id: string;
-    name: string;
-    status: 'open' | 'assigned';
-    quotesReceived: number;
-    quotesRequired: number;
-    assignedTo?: string;
-  }[];
+  lotDetails?: LotDetails[];
 }

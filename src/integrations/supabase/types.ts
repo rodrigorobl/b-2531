@@ -240,6 +240,60 @@ export type Database = {
           },
         ]
       }
+      lots: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          quotes_received: number | null
+          quotes_required: number | null
+          status: string | null
+          tender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          quotes_received?: number | null
+          quotes_required?: number | null
+          status?: string | null
+          tender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          quotes_received?: number | null
+          quotes_required?: number | null
+          status?: string | null
+          tender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lots_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "appels_offres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lots_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tender_management_summary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messagerie: {
         Row: {
           date_envoi: string | null
