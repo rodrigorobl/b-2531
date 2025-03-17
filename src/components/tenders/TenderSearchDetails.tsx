@@ -6,48 +6,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { 
-  FileText, 
-  MessageSquare, 
-  Calendar, 
-  Upload, 
-  Map, 
-  Building, 
-  FileDown, 
-  Clock, 
-  Users,
-  Bookmark,
-  Star,
-  ExternalLink
-} from 'lucide-react';
-
+import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, Bookmark, Star, ExternalLink } from 'lucide-react';
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
 }
-
-export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps) {
+export default function TenderSearchDetails({
+  tender
+}: TenderSearchDetailsProps) {
   if (!tender) {
-    return (
-      <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
+    return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
         <div className="text-center p-6 text-muted-foreground">
           <FileText className="mx-auto mb-2 opacity-20" size={40} />
           <p>Sélectionnez un appel d'offres pour voir les détails</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'open': return 'En cours';
-      case 'closed': return 'Clôturé';
-      case 'assigned': return 'Attribué';
-      default: return 'Inconnu';
+      case 'open':
+        return 'En cours';
+      case 'closed':
+        return 'Clôturé';
+      case 'assigned':
+        return 'Attribué';
+      default:
+        return 'Inconnu';
     }
   };
-
-  return (
-    <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
+  return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <h3 className="font-medium truncate">{tender.projectName}</h3>
@@ -124,11 +110,9 @@ export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps
                   <h4 className="text-xs font-medium">Lots concernés</h4>
                 </div>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {tender.lots.map((lot, index) => (
-                    <Badge key={index} variant="outline" className="font-normal">
+                  {tender.lots.map((lot, index) => <Badge key={index} variant="outline" className="font-normal">
                       {lot}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                 </div>
               </div>
               
@@ -152,24 +136,19 @@ export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps
                 </Card>
               </div>
               
-              {tender.status === 'open' && (
-                <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
+              {tender.status === 'open' && <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
                   <Button className="w-full gap-2">
                     <ExternalLink size={14} />
                     <span>Accéder à l'Appel d'offres</span>
                   </Button>
-                </Link>
-              )}
+                </Link>}
               
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="w-full gap-1">
-                  <Bookmark size={14} />
-                  <span>Sauvegarder</span>
-                </Button>
+                
                 <Button variant="outline" size="sm" className="w-full gap-1" asChild>
                   <Link to={`/tender-specifications?project=${tender.id}`}>
                     <ExternalLink size={14} />
-                    <span>Accéder à l'Appel d'offres</span>
+                    
                   </Link>
                 </Button>
               </div>
@@ -233,6 +212,5 @@ export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps
           </TabsContent>
         </div>
       </Tabs>
-    </div>
-  );
+    </div>;
 }
