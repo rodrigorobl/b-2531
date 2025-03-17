@@ -126,7 +126,7 @@ export function TenderManagementTable({
               <TableCell className="text-right font-medium">{tender.budget}</TableCell>
               <TableCell>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link to={`/tender/${tender.id}`}>
+                  <Link to={`/tender/${tender.id}/lot/${tender.id}`}>
                     Détails
                   </Link>
                 </Button>
