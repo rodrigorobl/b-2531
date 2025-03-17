@@ -1,12 +1,12 @@
-import React from 'react';
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
+
+import React, { useState } from 'react';
+import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import { Company, CompanyCategory } from '@/types/directory';
-import { Loader2 } from 'lucide-react';
 import useCompanyDirectory from '@/hooks/useCompanyDirectory';
 import CompanyListStatus from './CompanyListStatus';
 
 interface CompanyMapProps {
-  companies: Company[];
+  companies?: Company[];
   selectedCompany: Company | null;
   setSelectedCompany: (company: Company | null) => void;
   searchQuery?: string;
@@ -15,12 +15,12 @@ interface CompanyMapProps {
 
 const containerStyle = {
   width: '100%',
-  height: '100%'
+  height: '100%',
 };
 
-const defaultCenter = {
-  lat: 48.8566, // Paris coordinates
-  lng: 2.3522
+const center = {
+  lat: 48.8566, // Paris latitude
+  lng: 2.3522, // Paris longitude
 };
 
 export default function CompanyMap({
@@ -29,8 +29,7 @@ export default function CompanyMap({
   searchQuery = '',
   selectedCategory = null
 }: CompanyMapProps) {
-  const [mapRef, setMapRef] = React.useState<google.maps.Map | null>(null);
-  const [infoWindowVisible, setInfoWindowVisible] = React.useState<boolean>(false);
+  const [activeCompany, setActiveCompany] = useState<Company | null>(null);
   
   const { companies, loading, error } = useCompanyDirectory({
     searchQuery,
@@ -39,75 +38,64 @@ export default function CompanyMap({
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyAUXXVw8PFFYuRKGIQZGH-vVrLB98_cvLs"
+    googleMapsApiKey: 'AIzaSyDUJcZMahLqhK9vPGaiskse-2hDH0zAIgA',
   });
 
   const handleMarkerClick = (company: Company) => {
-    setSelectedCompany(company);
-    setInfoWindowVisible(true);
+    setActiveCompany(company);
   };
 
   const handleInfoWindowClose = () => {
-    setSelectedCompany(null);
-    setInfoWindowVisible(false);
+    setActiveCompany(null);
   };
 
-  const onLoad = React.useCallback(function callback(map: google.maps.Map) {
-    setMapRef(map);
-  }, []);
-
-  const onUnmount = React.useCallback(function callback() {
-    setMapRef(null);
-  }, []);
-
-  if (!isLoaded) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Chargement de la carte...</span>
-      </div>
-    );
-  }
+  const handleViewDetail = (company: Company) => {
+    setSelectedCompany(company);
+  };
 
   if (loading || error) {
     return <CompanyListStatus loading={loading} error={error} />;
   }
 
+  if (!isLoaded) {
+    return <div className="flex items-center justify-center h-full">Chargement de la carte...</div>;
+  }
+
   return (
-    <div className="h-full">
+    <div className="h-full w-full">
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={defaultCenter}
-        zoom={6}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
+        center={center}
+        zoom={5}
       >
         {companies.map((company) => (
           <Marker
             key={company.id}
-            position={company.coordinates}
+            position={{
+              lat: company.coordinates.lat,
+              lng: company.coordinates.lng
+            }}
             onClick={() => handleMarkerClick(company)}
           />
         ))}
-        
-        {selectedCompany && infoWindowVisible && (
+
+        {activeCompany && (
           <InfoWindow
-            position={selectedCompany.coordinates}
+            position={{
+              lat: activeCompany.coordinates.lat,
+              lng: activeCompany.coordinates.lng
+            }}
             onCloseClick={handleInfoWindowClose}
           >
-            <div className="p-2 max-w-sm">
-              <h3 className="font-medium text-base">{selectedCompany.name}</h3>
-              <p className="text-sm mt-1">{selectedCompany.specialty}</p>
-              <div className="text-sm mt-1 text-gray-600">{selectedCompany.location}</div>
-              <button 
+            <div className="p-2 max-w-[200px]">
+              <p className="font-bold truncate">{activeCompany.name}</p>
+              <p className="text-sm">{activeCompany.specialty}</p>
+              <p className="text-sm truncate">{activeCompany.location}</p>
+              <button
                 className="mt-2 text-sm text-blue-600 hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // Keep the marker selected, just close the info window
-                  setInfoWindowVisible(false);
-                }}
+                onClick={() => handleViewDetail(activeCompany)}
               >
-                Voir les détails
+                Voir détails
               </button>
             </div>
           </InfoWindow>

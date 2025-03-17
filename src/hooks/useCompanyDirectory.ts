@@ -30,6 +30,7 @@ export default function useCompanyDirectory({
         .select('*');
 
       if (selectedCategory) {
+        // Map our internal category to Supabase's format
         let supabaseCategory;
         switch (selectedCategory) {
           case 'architecte': supabaseCategory = 'Architecte'; break;
@@ -55,9 +56,11 @@ export default function useCompanyDirectory({
       }
       
       if (data) {
-        console.log("Companies data retrieved:", data);
+        console.log("Companies data retrieved:", data.length);
+        console.log("Sample company:", data[0]);
         
         const transformedCompanies = data.map(company => {
+          // Parse coordinates or use default Paris coordinates
           let coordinates = { lat: 48.8566, lng: 2.3522 }; // Default to Paris
           if (company.coordinates && typeof company.coordinates === 'object') {
             const coords = company.coordinates as any;
@@ -69,15 +72,14 @@ export default function useCompanyDirectory({
             }
           }
           
-          // Generate a description if none exists, using the company's speciality
-          const description = `Entreprise spécialisée en ${company.specialite || 'construction'}`;
-          
-          // Provide default certifications as an empty array
-          const certifications: string[] = [];
+          // Generate a description if none exists
+          const description = company.specialite 
+            ? `Entreprise spécialisée en ${company.specialite}`
+            : 'Entreprise de construction et services';
           
           return {
             id: company.id,
-            name: company.nom,
+            name: company.nom || 'Entreprise',
             logo: company.logo || 'https://github.com/shadcn.png',
             category: mapSupabaseCategory(company.categorie_principale),
             specialty: company.specialite || 'Non spécifié',
@@ -92,11 +94,14 @@ export default function useCompanyDirectory({
               email: company.email || 'contact@example.com',
               website: company.site_web || 'www.example.com'
             },
-            certifications // Using the default empty array
+            certifications: [] // Default empty array for certifications
           };
         });
         
         setCompanies(transformedCompanies);
+      } else {
+        console.log("No companies data found");
+        setCompanies([]);
       }
     } catch (err) {
       console.error('Erreur lors de la récupération des entreprises:', err);

@@ -7,7 +7,7 @@ import CompanyListStatus from './CompanyListStatus';
 import useCompanyDirectory from '@/hooks/useCompanyDirectory';
 
 interface CompanyListProps {
-  companies: Company[];
+  companies?: Company[];
   selectedCompany: Company | null;
   setSelectedCompany: (company: Company | null) => void;
   searchQuery?: string;
