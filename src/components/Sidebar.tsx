@@ -1,13 +1,25 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ProfileSelector, ProfileType } from './sidebar/ProfileSelector';
 import { UserProfile } from './sidebar/UserProfile';
 import { Navigation } from './sidebar/Navigation';
 
+// Clé pour stocker le profil actif dans localStorage
+const ACTIVE_PROFILE_KEY = 'btp-connect-active-profile';
+
 export default function Sidebar() {
   const [activeProfile, setActiveProfile] = useState<ProfileType>('entreprise-construction');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Récupérer le profil sauvegardé au chargement du composant
+  useEffect(() => {
+    const savedProfile = localStorage.getItem(ACTIVE_PROFILE_KEY) as ProfileType | null;
+    if (savedProfile) {
+      setActiveProfile(savedProfile);
+    }
+  }, []);
 
   // Mock user data - this would normally come from your auth system
   const user = {
@@ -18,25 +30,39 @@ export default function Sidebar() {
   };
 
   const handleProfileChange = (value: ProfileType) => {
+    // Stocker le profil sélectionné dans localStorage
+    localStorage.setItem(ACTIVE_PROFILE_KEY, value);
     setActiveProfile(value);
     
-    // Redirect to the corresponding dashboard when profile changes
-    switch (value) {
+    // Rediriger vers le dashboard correspondant
+    navigateToProfileDashboard(value);
+  };
+
+  // Fonction utilitaire pour obtenir l'URL du dashboard selon le profil
+  const getDashboardUrl = (profile: ProfileType): string => {
+    switch (profile) {
       case 'promoteur':
-        navigate('/dashboard-promoteur');
-        break;
+        return '/dashboard-promoteur';
       case 'maitre-oeuvre':
-        navigate('/dashboard-bet');
-        break;
+        return '/dashboard-bet';
       case 'entreprise-construction':
-        navigate('/dashboard-construction');
-        break;
+        return '/dashboard-construction';
       case 'entreprise-services':
-        navigate('/dashboard-services');
-        break;
+        return '/dashboard-services';
       case 'industriel':
-        navigate('/dashboard-industry');
-        break;
+        return '/dashboard-industry';
+      default:
+        return '/dashboard';
+    }
+  };
+
+  // Navigation vers le dashboard correspondant au profil
+  const navigateToProfileDashboard = (profile: ProfileType) => {
+    const dashboardUrl = getDashboardUrl(profile);
+    
+    // Ne rediriger que si l'utilisateur n'est pas déjà sur la page de destination
+    if (location.pathname !== dashboardUrl) {
+      navigate(dashboardUrl);
     }
   };
 
