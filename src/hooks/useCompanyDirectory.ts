@@ -31,16 +31,17 @@ export default function useCompanyDirectory({
 
       if (selectedCategory) {
         // Map our internal category to Supabase's format
-        let supabaseCategory;
-        switch (selectedCategory) {
-          case 'architecte': supabaseCategory = 'Architecte'; break;
-          case 'moe_bet': supabaseCategory = 'MOE_BET'; break;
-          case 'construction': supabaseCategory = 'Construction'; break;
-          case 'service': supabaseCategory = 'Service'; break;
-          case 'industriel': supabaseCategory = 'Industriel'; break;
-          case 'fournisseur': supabaseCategory = 'Fournisseur'; break;
-          default: supabaseCategory = null;
-        }
+        const supabaseCategory = (() => {
+          switch (selectedCategory) {
+            case 'architecte': return 'Architecte';
+            case 'moe_bet': return 'MOE_BET';
+            case 'construction': return 'Construction';
+            case 'service': return 'Service';
+            case 'industriel': return 'Industriel';
+            case 'fournisseur': return 'Fournisseur';
+            default: return null;
+          }
+        })();
         
         if (supabaseCategory) {
           console.log("Filtering by category:", supabaseCategory);
@@ -55,7 +56,7 @@ export default function useCompanyDirectory({
         throw fetchError;
       }
       
-      if (data) {
+      if (data && data.length > 0) {
         console.log("Companies data retrieved:", data.length);
         console.log("Sample company:", data[0]);
         
@@ -99,6 +100,7 @@ export default function useCompanyDirectory({
         });
         
         setCompanies(transformedCompanies);
+        console.log("Transformed companies:", transformedCompanies.length);
       } else {
         console.log("No companies data found");
         setCompanies([]);
