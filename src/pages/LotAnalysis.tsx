@@ -1,12 +1,6 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
-import { 
-  Card, 
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -37,7 +31,6 @@ interface Bid {
   administrativeScore: number;
   selected: boolean;
 }
-
 interface Lot {
   id: string;
   name: string;
@@ -47,11 +40,16 @@ interface Lot {
   estimatedBudget: number;
   bids: Bid[];
 }
-
 export default function LotAnalysis() {
-  const { lotId, projectId } = useParams<{ lotId: string, projectId: string }>();
+  const {
+    lotId,
+    projectId
+  } = useParams<{
+    lotId: string;
+    projectId: string;
+  }>();
   const navigate = useNavigate();
-  
+
   // Mock data for demonstration
   const [lot, setLot] = useState<Lot>({
     id: lotId || '1-2',
@@ -60,85 +58,82 @@ export default function LotAnalysis() {
     projectId: projectId || '1',
     projectName: 'Centre Commercial Riviera',
     estimatedBudget: 180000,
-    bids: [
-      {
-        id: '1',
-        companyId: 'c1',
-        companyName: 'ElectroPro SARL',
-        amount: 178500,
-        submissionDate: '2023-05-10',
-        compliant: true,
-        complianceNotes: 'Conforme aux spécifications techniques. Délais respectés.',
-        solvencyScore: 'excellent',
-        administrativeScore: 98,
-        selected: false
-      },
-      {
-        id: '2',
-        companyId: 'c2',
-        companyName: 'Électricité Générale France',
-        amount: 162000,
-        submissionDate: '2023-05-12',
-        compliant: true,
-        complianceNotes: 'Conforme aux spécifications, mais délai d\'exécution un peu long.',
-        solvencyScore: 'average',
-        administrativeScore: 85,
-        selected: false
-      },
-      {
-        id: '3',
-        companyId: 'c3',
-        companyName: 'ElectroSystems',
-        amount: 195000,
-        submissionDate: '2023-05-08',
-        compliant: false,
-        complianceNotes: 'Non conforme: certaines spécifications techniques ne sont pas respectées.',
-        solvencyScore: 'at-risk',
-        administrativeScore: 72,
-        selected: false
-      },
-      {
-        id: '4',
-        companyId: 'c4',
-        companyName: 'Entreprise Bouygues Électricité',
-        amount: 181200,
-        submissionDate: '2023-05-15',
-        compliant: true,
-        complianceNotes: 'Conforme à toutes les spécifications. Excellente méthodologie.',
-        solvencyScore: 'excellent',
-        administrativeScore: 100,
-        selected: false
-      }
-    ]
+    bids: [{
+      id: '1',
+      companyId: 'c1',
+      companyName: 'ElectroPro SARL',
+      amount: 178500,
+      submissionDate: '2023-05-10',
+      compliant: true,
+      complianceNotes: 'Conforme aux spécifications techniques. Délais respectés.',
+      solvencyScore: 'excellent',
+      administrativeScore: 98,
+      selected: false
+    }, {
+      id: '2',
+      companyId: 'c2',
+      companyName: 'Électricité Générale France',
+      amount: 162000,
+      submissionDate: '2023-05-12',
+      compliant: true,
+      complianceNotes: 'Conforme aux spécifications, mais délai d\'exécution un peu long.',
+      solvencyScore: 'average',
+      administrativeScore: 85,
+      selected: false
+    }, {
+      id: '3',
+      companyId: 'c3',
+      companyName: 'ElectroSystems',
+      amount: 195000,
+      submissionDate: '2023-05-08',
+      compliant: false,
+      complianceNotes: 'Non conforme: certaines spécifications techniques ne sont pas respectées.',
+      solvencyScore: 'at-risk',
+      administrativeScore: 72,
+      selected: false
+    }, {
+      id: '4',
+      companyId: 'c4',
+      companyName: 'Entreprise Bouygues Électricité',
+      amount: 181200,
+      submissionDate: '2023-05-15',
+      compliant: true,
+      complianceNotes: 'Conforme à toutes les spécifications. Excellente méthodologie.',
+      solvencyScore: 'excellent',
+      administrativeScore: 100,
+      selected: false
+    }]
   });
-  
   const [selectedBids, setSelectedBids] = useState<string[]>([]);
   const [filterCompliant, setFilterCompliant] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [showCommentDialog, setShowCommentDialog] = useState(false);
   const [commentBidId, setCommentBidId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
-  
+
   // Filter and sort the bids
   const filteredBids = lot.bids.filter(bid => {
     if (filterCompliant === 'compliant') return bid.compliant;
     if (filterCompliant === 'non-compliant') return !bid.compliant;
     return true;
   });
-  
   const sortedBids = [...filteredBids].sort((a, b) => {
     if (sortBy === 'amount-asc') return a.amount - b.amount;
     if (sortBy === 'amount-desc') return b.amount - a.amount;
     if (sortBy === 'date-asc') return new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime();
     if (sortBy === 'date-desc') return new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime();
     if (sortBy === 'solvency') {
-      const scoreMap = { 'excellent': 3, 'average': 2, 'at-risk': 1 };
+      const scoreMap = {
+        'excellent': 3,
+        'average': 2,
+        'at-risk': 1
+      };
       return scoreMap[b.solvencyScore] - scoreMap[a.solvencyScore];
     }
     if (sortBy === 'administrative') return b.administrativeScore - a.administrativeScore;
     return 0;
   });
-  
+
   // Utility functions
   const toggleBidSelection = (bidId: string) => {
     if (selectedBids.includes(bidId)) {
@@ -147,7 +142,6 @@ export default function LotAnalysis() {
       setSelectedBids([...selectedBids, bidId]);
     }
   };
-  
   const selectWinningBid = (bidId: string) => {
     setLot(prevLot => ({
       ...prevLot,
@@ -157,17 +151,14 @@ export default function LotAnalysis() {
         selected: bid.id === bidId
       }))
     }));
-    
     toast.success('Lot attribué avec succès', {
       description: 'Le lot a été attribué à l\'entreprise sélectionnée.'
     });
   };
-  
   const openCommentDialog = (bidId: string) => {
     setCommentBidId(bidId);
     setShowCommentDialog(true);
   };
-  
   const addComment = () => {
     toast.success('Commentaire ajouté', {
       description: 'Votre commentaire a été enregistré avec succès.'
@@ -175,13 +166,11 @@ export default function LotAnalysis() {
     setShowCommentDialog(false);
     setCommentText('');
   };
-  
   const downloadSummary = (format: 'pdf' | 'excel') => {
     toast.success(`Téléchargement en cours (${format.toUpperCase()})`, {
       description: 'Le récapitulatif des offres sera téléchargé dans quelques instants.'
     });
   };
-  
   const getSolvencyBadge = (score: 'excellent' | 'average' | 'at-risk') => {
     switch (score) {
       case 'excellent':
@@ -194,53 +183,34 @@ export default function LotAnalysis() {
         return <Badge>Inconnu</Badge>;
     }
   };
-  
   const getAdministrativeScoreBadge = (score: number) => {
     let bgColor = '';
-    if (score >= 90) bgColor = 'bg-green-500';
-    else if (score >= 75) bgColor = 'bg-amber-500';
-    else bgColor = 'bg-red-500';
-    
+    if (score >= 90) bgColor = 'bg-green-500';else if (score >= 75) bgColor = 'bg-amber-500';else bgColor = 'bg-red-500';
     return <Badge className={bgColor}>{score}%</Badge>;
   };
-  
   const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
   };
-  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR');
   };
 
   // Get the selected bids data
-  const selectedBidsData = selectedBids
-    .map(bidId => lot.bids.find(b => b.id === bidId))
-    .filter((bid): bid is Bid => bid !== undefined);
-  
-  return (
-    <Layout>
+  const selectedBidsData = selectedBids.map(bidId => lot.bids.find(b => b.id === bidId)).filter((bid): bid is Bid => bid !== undefined);
+  return <Layout>
       <div className="container mx-auto py-6">
-        <LotAnalysisHeader 
-          lotName={lot.name}
-          projectName={lot.projectName}
-          projectId={lot.projectId}
-          onDownloadSummary={downloadSummary}
-        />
+        <LotAnalysisHeader lotName={lot.name} projectName={lot.projectName} projectId={lot.projectId} onDownloadSummary={downloadSummary} />
         
-        <LotAnalysisStats 
-          estimatedBudget={lot.estimatedBudget}
-          bidsCount={lot.bids.length}
-          compliantBidsCount={lot.bids.filter(bid => bid.compliant).length}
-          status={lot.status}
-          selectedCompanyName={lot.bids.find(bid => bid.selected)?.companyName}
-          formatPrice={formatPrice}
-        />
+        <LotAnalysisStats estimatedBudget={lot.estimatedBudget} bidsCount={lot.bids.length} compliantBidsCount={lot.bids.filter(bid => bid.compliant).length} status={lot.status} selectedCompanyName={lot.bids.find(bid => bid.selected)?.companyName} formatPrice={formatPrice} />
         
         <Tabs defaultValue="table" className="space-y-4">
           <div className="flex justify-between items-center">
             <TabsList>
               <TabsTrigger value="table">Tableau</TabsTrigger>
-              <TabsTrigger value="chart">Graphique</TabsTrigger>
+              
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
             
@@ -275,30 +245,11 @@ export default function LotAnalysis() {
           <TabsContent value="table" className="space-y-4">
             <Card>
               <CardContent className="p-0">
-                <LotAnalysisTable 
-                  bids={sortedBids}
-                  selectedBids={selectedBids}
-                  isAssigned={lot.status === 'assigned'}
-                  onToggleBidSelection={toggleBidSelection}
-                  onOpenCommentDialog={openCommentDialog}
-                  onSelectWinningBid={selectWinningBid}
-                  formatPrice={formatPrice}
-                  formatDate={formatDate}
-                  getSolvencyBadge={getSolvencyBadge}
-                  getAdministrativeScoreBadge={getAdministrativeScoreBadge}
-                />
+                <LotAnalysisTable bids={sortedBids} selectedBids={selectedBids} isAssigned={lot.status === 'assigned'} onToggleBidSelection={toggleBidSelection} onOpenCommentDialog={openCommentDialog} onSelectWinningBid={selectWinningBid} formatPrice={formatPrice} formatDate={formatDate} getSolvencyBadge={getSolvencyBadge} getAdministrativeScoreBadge={getAdministrativeScoreBadge} />
               </CardContent>
             </Card>
             
-            {selectedBidsData.length > 1 && (
-              <LotComparisonCard 
-                selectedBids={selectedBidsData}
-                estimatedBudget={lot.estimatedBudget}
-                formatPrice={formatPrice}
-                getSolvencyBadge={getSolvencyBadge}
-                getAdministrativeScoreBadge={getAdministrativeScoreBadge}
-              />
-            )}
+            {selectedBidsData.length > 1 && <LotComparisonCard selectedBids={selectedBidsData} estimatedBudget={lot.estimatedBudget} formatPrice={formatPrice} getSolvencyBadge={getSolvencyBadge} getAdministrativeScoreBadge={getAdministrativeScoreBadge} />}
           </TabsContent>
           
           <TabsContent value="chart">
@@ -328,18 +279,12 @@ export default function LotAnalysis() {
             <p className="text-sm text-muted-foreground mb-4">
               Entreprise: {lot.bids.find(bid => bid.id === commentBidId)?.companyName}
             </p>
-            <Textarea
-              placeholder="Votre commentaire..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              className="min-h-[100px]"
-            />
+            <Textarea placeholder="Votre commentaire..." value={commentText} onChange={e => setCommentText(e.target.value)} className="min-h-[100px]" />
             <div className="flex justify-end mt-4">
               <Button onClick={addComment}>Enregistrer</Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-    </Layout>
-  );
+    </Layout>;
 }
