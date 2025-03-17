@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { TenderSearchResult } from '@/pages/TenderSearch';
+import { TenderSearchResult } from '@/types/tenders';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapIcon, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';

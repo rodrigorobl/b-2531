@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { TenderStatus } from '@/pages/TenderSearch';
+import { TenderStatus } from '@/types/tenders';
 
 export const getStatusBadge = (status: TenderStatus) => {
   switch (status) {
