@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FileText, MapPin, Calendar, Building, Clock, MessageSquare, Download, ChevronLeft, CheckCircle, AlertTriangle, Users, ArrowDownUp, X } from 'lucide-react';
+import { FileText, MapPin, Calendar, Building, Clock, MessageSquare, Download, ChevronLeft, CheckCircle, AlertTriangle, Users, ArrowDownUp, X, PieChart } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -236,6 +236,7 @@ const mockTender: Tender = {
     url: '#'
   }]
 };
+
 export default function TenderDetail() {
   const {
     tenderId
@@ -327,6 +328,7 @@ export default function TenderDetail() {
       color: 'bg-red-500'
     };
   };
+
   return <div className="flex min-h-screen bg-background">
       <Sidebar />
       <main className="flex-1 p-6">
@@ -472,9 +474,15 @@ export default function TenderDetail() {
                             <div className={`w-2 h-2 rounded-full ${evaluation.color} mr-2`}></div>
                             <span className="text-sm">{category.name}</span>
                           </div>
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-2">
                             <span className="text-sm mr-2">{category.quotes.length} devis</span>
-                            
+                            <Link 
+                              to={`/tender/${tenderId}/lot/${category.id}`} 
+                              className="text-xs text-primary hover:underline hover:text-primary/80 flex items-center"
+                            >
+                              <PieChart size={12} className="mr-1" />
+                              Analyse
+                            </Link>
                           </div>
                         </div>;
                   })}
@@ -496,7 +504,7 @@ export default function TenderDetail() {
                       <TableHead>Devis reçus</TableHead>
                       <TableHead>Meilleur prix</TableHead>
                       <TableHead>Évaluation</TableHead>
-                      
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -515,6 +523,18 @@ export default function TenderDetail() {
                           <TableCell>
                             {approvedQuote ? <Badge className="bg-green-600">Attribué</Badge> : quotesCount > 0 ? <Badge className="bg-amber-500">En attente</Badge> : <Badge className="bg-red-500">Non démarré</Badge>}
                           </TableCell>
+                          
+                          <TableCell className="text-right">
+                            {quotesCount > 0 && (
+                              <Link 
+                                to={`/tender/${tenderId}/lot/${category.id}`}
+                                className="text-primary hover:underline inline-flex items-center"
+                              >
+                                <PieChart size={14} className="mr-1" />
+                                Analyser
+                              </Link>
+                            )}
+                          </TableCell>
                         </TableRow>;
                   })}
                   </TableBody>
@@ -532,9 +552,18 @@ export default function TenderDetail() {
                 const evaluation = getCategoryEvaluation(category.quotes.length);
                 return <button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`w-full flex items-center justify-between p-3 text-left rounded-lg transition-colors ${selectedCategory === category.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}>
                       <span>{category.name}</span>
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2">
                         <span className="text-sm mr-2">{category.quotes.length}</span>
                         <div className={`w-2 h-2 rounded-full ${selectedCategory === category.id ? 'bg-white' : evaluation.color}`}></div>
+                        {category.quotes.length > 0 && (
+                          <Link 
+                            to={`/tender/${tenderId}/lot/${category.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`text-xs ${selectedCategory === category.id ? 'text-white' : 'text-primary'} hover:underline`}
+                          >
+                            <PieChart size={12} />
+                          </Link>
+                        )}
                       </div>
                     </button>;
               })}
@@ -546,9 +575,20 @@ export default function TenderDetail() {
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg flex items-center justify-between">
                         <span>Devis pour {selectedCategoryData.name}</span>
-                        <Badge variant="outline" className="ml-2">
-                          {selectedCategoryData.quotes.length} devis
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="ml-2">
+                            {selectedCategoryData.quotes.length} devis
+                          </Badge>
+                          {selectedCategoryData.quotes.length > 0 && (
+                            <Link 
+                              to={`/tender/${tenderId}/lot/${selectedCategoryData.id}`}
+                              className="text-primary hover:underline inline-flex items-center"
+                            >
+                              <PieChart size={14} className="mr-1" />
+                              Analyser le lot
+                            </Link>
+                          )}
+                        </div>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
