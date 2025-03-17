@@ -14,12 +14,12 @@ export function ProjectHeader({ projectDetails }: ProjectHeaderProps) {
   const navigate = useNavigate();
   
   return (
-    <>
+    <div className="mb-6">
       <Button 
         variant="outline" 
         size="sm" 
         onClick={() => navigate('/project-management')}
-        className="mb-4 md:mb-6"
+        className="mb-4"
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
         Retour
@@ -37,7 +37,7 @@ export function ProjectHeader({ projectDetails }: ProjectHeaderProps) {
         <span className="text-muted-foreground">{projectDetails.projectType}</span>
       </div>
       
-      <p className="text-muted-foreground mb-4 md:mb-6">{projectDetails.description}</p>
-    </>
+      <p className="text-muted-foreground">{projectDetails.description}</p>
+    </div>
   );
 }

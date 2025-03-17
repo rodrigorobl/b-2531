@@ -11,17 +11,17 @@ interface ProjectInfoCardsProps {
 
 export function ProjectInfoCards({ projectDetails }: ProjectInfoCardsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4 md:mb-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
       <Card>
-        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
+        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center text-center">
           <Building className="h-5 w-5 text-muted-foreground mb-2" />
           <span className="text-xs md:text-sm text-muted-foreground">Client</span>
-          <span className="font-medium text-sm md:text-base">{projectDetails.clientName}</span>
+          <span className="font-medium text-sm md:text-base truncate max-w-full">{projectDetails.clientName}</span>
         </CardContent>
       </Card>
       
       <Card>
-        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
+        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center text-center">
           <Euro className="h-5 w-5 text-muted-foreground mb-2" />
           <span className="text-xs md:text-sm text-muted-foreground">Budget</span>
           <span className="font-medium text-sm md:text-base">{formatBudget(projectDetails.budget)}</span>
@@ -29,7 +29,7 @@ export function ProjectInfoCards({ projectDetails }: ProjectInfoCardsProps) {
       </Card>
       
       <Card>
-        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
+        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center text-center">
           <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
           <span className="text-xs md:text-sm text-muted-foreground">Début</span>
           <span className="font-medium text-sm md:text-base">
@@ -41,10 +41,10 @@ export function ProjectInfoCards({ projectDetails }: ProjectInfoCardsProps) {
       </Card>
       
       <Card>
-        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
+        <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center text-center">
           <MapPin className="h-5 w-5 text-muted-foreground mb-2" />
           <span className="text-xs md:text-sm text-muted-foreground">Localisation</span>
-          <span className="font-medium text-sm md:text-base">{projectDetails.location}</span>
+          <span className="font-medium text-sm md:text-base truncate max-w-full">{projectDetails.location}</span>
         </CardContent>
       </Card>
     </div>

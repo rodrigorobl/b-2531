@@ -61,10 +61,10 @@ export default function ProjectDetailPage() {
     <div className="flex flex-col md:flex-row min-h-screen bg-background">
       <Sidebar />
       <div className="flex-1 overflow-auto">
-        <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto">
           <ProjectHeader projectDetails={projectDetails} />
           
-          <div className="grid gap-4 md:gap-6 md:grid-cols-3">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mb-6">
             <div className="md:col-span-2">
               <ProjectInfoCards projectDetails={projectDetails} />
             </div>
@@ -75,7 +75,7 @@ export default function ProjectDetailPage() {
           </div>
           
           <Tabs defaultValue="tenders" className="w-full">
-            <TabsList className="mb-2">
+            <TabsList className="mb-4">
               <TabsTrigger value="tenders" className="flex items-center gap-1">
                 <Briefcase className="h-4 w-4" />
                 Appels d'offres
