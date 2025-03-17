@@ -1,45 +1,46 @@
+
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { TenderSearchResult } from '@/types/tenders';
-import { useTenderManagement } from '@/hooks/useTenderManagement';
+import { useProjectManagement } from '@/hooks/useProjectManagement';
 import TenderStatsCards from '@/components/tenders/TenderStatsCards';
-import TenderFiltersBar from '@/components/tenders/TenderFiltersBar';
-import TenderManagementTable from '@/components/tenders/TenderManagementTable';
-import TenderLotDetailsDialog from '@/components/tenders/TenderLotDetailsDialog';
+import ProjectFiltersBar from '@/components/projects/ProjectFiltersBar';
+import ProjectManagementTable from '@/components/projects/ProjectManagementTable';
 
 export default function TenderManagementPromoter() {
-  const { tenders, isLoading, error, stats } = useTenderManagement();
+  const { projects, isLoading, error } = useProjectManagement();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [sortField, setSortField] = useState('deadline');
+  const [sortField, setSortField] = useState('projectName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [selectedTender, setSelectedTender] = useState<TenderSearchResult | null>(null);
-  const [showLotDetails, setShowLotDetails] = useState(false);
 
-  // Filter tenders based on search and status
-  const filteredTenders = tenders.filter(tender => {
-    const matchesSearch = tender.projectName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           (tender.location && tender.location.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus = statusFilter === 'all' || tender.status === statusFilter;
+  // Calculate stats based on projects instead of tenders
+  const stats = {
+    totalOpen: projects.filter(p => p.status === 'En cours').length,
+    totalClosed: projects.filter(p => p.status === 'Clôturé').length,
+    totalAssigned: projects.filter(p => p.status === 'Attribué').length,
+    totalProjects: projects.length,
+    averageQuotes: Math.round(projects.reduce((acc, p) => acc + p.tendersCount, 0) / (projects.length || 1)),
+    completionRate: Math.round(projects.reduce((acc, p) => acc + p.progressPercentage, 0) / (projects.length || 1)),
+  };
+
+  // Filter projects based on search and status
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.projectName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (project.location && project.location.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  // Sort tenders based on sort field and direction
-  const sortedTenders = [...filteredTenders].sort((a, b) => {
-    if (sortField === 'deadline') {
-      // Convert deadline string to date for sorting
-      const dateA = new Date(a.deadline.split('/').reverse().join('-'));
-      const dateB = new Date(b.deadline.split('/').reverse().join('-'));
+  // Sort projects based on sort field and direction
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
+    if (sortField === 'startDate') {
+      // Convert date string to date for sorting
+      const dateA = a.startDate ? new Date(a.startDate) : new Date(0);
+      const dateB = b.startDate ? new Date(b.startDate) : new Date(0);
       return sortDirection === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
-    } else if (sortField === 'progress') {
-      const progressA = a.progress || 0;
-      const progressB = b.progress || 0;
-      return sortDirection === 'asc' ? progressA - progressB : progressB - progressA;
-    } else if (sortField === 'quotesReceived') {
-      const quotesA = a.actualQuotesReceived || 0;
-      const quotesB = b.actualQuotesReceived || 0;
-      return sortDirection === 'asc' ? quotesA - quotesB : quotesB - quotesA;
+    } else if (sortField === 'progressPercentage') {
+      return sortDirection === 'asc' ? a.progressPercentage - b.progressPercentage : b.progressPercentage - a.progressPercentage;
     } else {
       // Sort by project name as default
       return sortDirection === 'asc' 
@@ -58,21 +59,15 @@ export default function TenderManagementPromoter() {
     }
   };
 
-  // Open lot details dialog
-  const openLotDetails = (tender: TenderSearchResult) => {
-    setSelectedTender(tender);
-    setShowLotDetails(true);
-  };
-
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
       <div className="flex-1 overflow-auto">
         <div className="p-6 space-y-6">
           <div>
-            <h1 className="text-2xl font-bold mb-2">Gestion des appels d'offres</h1>
+            <h1 className="text-2xl font-bold mb-2">Gestion des projets et appels d'offres</h1>
             <p className="text-muted-foreground">
-              Gérez et suivez tous vos appels d'offres en cours et les attributions de lots.
+              Gérez et suivez tous vos projets et leurs appels d'offres associés.
             </p>
           </div>
           
@@ -80,65 +75,57 @@ export default function TenderManagementPromoter() {
           <TenderStatsCards stats={stats} />
           
           {/* Filters and Search */}
-          <TenderFiltersBar 
+          <ProjectFiltersBar 
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
           />
           
-          {/* Tenders Table */}
+          {/* Projects Table */}
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="mb-6 w-full grid grid-cols-4">
               <TabsTrigger value="all" onClick={() => setStatusFilter('all')}>
                 Tous
               </TabsTrigger>
-              <TabsTrigger value="open" onClick={() => setStatusFilter('open')}>
+              <TabsTrigger value="En cours" onClick={() => setStatusFilter('En cours')}>
                 En cours
               </TabsTrigger>
-              <TabsTrigger value="closed" onClick={() => setStatusFilter('closed')}>
+              <TabsTrigger value="Clôturé" onClick={() => setStatusFilter('Clôturé')}>
                 Clôturés
               </TabsTrigger>
-              <TabsTrigger value="assigned" onClick={() => setStatusFilter('assigned')}>
+              <TabsTrigger value="Attribué" onClick={() => setStatusFilter('Attribué')}>
                 Attribués
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="all" className="m-0">
               <div className="rounded-md border bg-card">
-                <TenderManagementTable 
-                  tenders={sortedTenders}
+                <ProjectManagementTable 
+                  projects={sortedProjects}
                   isLoading={isLoading}
                   error={error}
                   sortField={sortField}
                   sortDirection={sortDirection}
                   handleSort={handleSort}
-                  openLotDetails={openLotDetails}
                 />
               </div>
             </TabsContent>
             
-            <TabsContent value="open" className="m-0">
+            <TabsContent value="En cours" className="m-0">
               {/* Content will be filtered by the tab selection */}
             </TabsContent>
             
-            <TabsContent value="closed" className="m-0">
+            <TabsContent value="Clôturé" className="m-0">
               {/* Content will be filtered by the tab selection */}
             </TabsContent>
             
-            <TabsContent value="assigned" className="m-0">
+            <TabsContent value="Attribué" className="m-0">
               {/* Content will be filtered by the tab selection */}
             </TabsContent>
           </Tabs>
         </div>
       </div>
-
-      {/* Lot Details Dialog */}
-      <TenderLotDetailsDialog 
-        selectedTender={selectedTender}
-        showLotDetails={showLotDetails}
-        setShowLotDetails={setShowLotDetails}
-      />
     </div>
   );
 }

@@ -73,6 +73,13 @@ export type Database = {
             foreignKeyName: "appels_offres_projet_id_fkey"
             columns: ["projet_id"]
             isOneToOne: false
+            referencedRelation: "project_management_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appels_offres_projet_id_fkey"
+            columns: ["projet_id"]
+            isOneToOne: false
             referencedRelation: "projets"
             referencedColumns: ["id"]
           },
@@ -438,6 +445,24 @@ export type Database = {
       }
     }
     Views: {
+      project_management_summary: {
+        Row: {
+          budget: number | null
+          client_name: string | null
+          description: string | null
+          end_date: string | null
+          id: string | null
+          location: string | null
+          progress_percentage: number | null
+          project_name: string | null
+          project_type: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["projet_statut"] | null
+          tenders_assigned: number | null
+          tenders_count: number | null
+        }
+        Relationships: []
+      }
       tender_management_summary: {
         Row: {
           actual_quotes_received: number | null
