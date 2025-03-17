@@ -125,7 +125,7 @@ export function LotAnalysisTable({
                     size="sm"
                     onClick={() => onSelectWinningBid(bid.id)}
                   >
-                    <Check className="h-4 w-4" />
+                    <Check className="h-4 w-4" /> Attribuer le lot
                   </Button>
                 )}
                 
