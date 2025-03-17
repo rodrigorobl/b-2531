@@ -1,10 +1,12 @@
-
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import ProjectHeader from '@/components/ProjectHeader';
 import ProjectInfo from '@/components/ProjectInfo';
 import TenderOffers from '@/components/TenderOffers';
 import Communication from '@/components/Communication';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 // Sample data for demonstration
 const projectData = {
@@ -166,11 +168,29 @@ const documentsData = [
 ];
 
 export default function Index() {
+  const navigate = useNavigate();
+  
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="flex w-full min-h-screen bg-background">
       <Sidebar />
       
       <main className="flex-1 p-6 animate-slide-in overflow-hidden">
+        <div className="mb-4">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleBack}
+            className="mb-2"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour
+          </Button>
+        </div>
+        
         <ProjectHeader project={projectData} />
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
