@@ -18,7 +18,7 @@ export function useProjectManagement() {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
-      // Fetch all projects
+      // Fetch all projects from the projets table
       const { data, error } = await supabase
         .from('projets')
         .select(`
@@ -30,19 +30,11 @@ export function useProjectManagement() {
 
       console.log("Données projets récupérées:", data);
 
-      // If no data, use sample projects for demonstration
-      if (!data || data.length === 0) {
-        // Create some demo projects directly instead of trying to insert to DB
-        const demoProjects = getLocalDemoProjects();
-        setProjects(demoProjects);
-        console.log("Using local demo projects:", demoProjects);
-        setIsLoading(false);
-        return;
-      }
-
+      // Transform the data into ProjectSummary objects
       const projectsList: ProjectSummary[] = [];
 
-      for (const project of data) {
+      for (const project of data || []) {
+        // Fetch tenders for each project
         const { data: tendersData, error: tendersError } = await supabase
           .from('appels_offres')
           .select('*')
@@ -74,7 +66,22 @@ export function useProjectManagement() {
         });
       }
 
-      setProjects(projectsList);
+      // Only use demo projects if no projects were found
+      if (projectsList.length === 0) {
+        const demoProjects = getLocalDemoProjects();
+        setProjects(demoProjects);
+        console.log("Aucun projet trouvé dans la base de données, utilisation des projets de démonstration:", demoProjects);
+        
+        toast({
+          title: "Information",
+          description: "Aucun projet trouvé. Affichage des projets de démonstration.",
+          variant: "default",
+        });
+      } else {
+        setProjects(projectsList);
+        console.log("Projets chargés depuis la base de données:", projectsList);
+      }
+      
       setError(null);
     } catch (err: any) {
       console.error('Error fetching projects:', err);
@@ -84,7 +91,7 @@ export function useProjectManagement() {
       
       toast({
         title: "Information",
-        description: "Affichage des projets de démonstration.",
+        description: "Erreur lors du chargement des projets. Affichage des projets de démonstration.",
         variant: "default",
       });
     } finally {
