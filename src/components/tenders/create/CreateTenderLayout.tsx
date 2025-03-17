@@ -27,12 +27,12 @@ const CreateTenderLayout: React.FC<CreateTenderLayoutProps> = ({
   onSubmit
 }) => {
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background w-full">
       <Sidebar />
       
-      <div className="flex flex-col flex-1 overflow-y-auto">
+      <div className="flex flex-col flex-1 overflow-y-auto w-full">
         {/* Header */}
-        <header className="sticky top-0 z-10 border-b bg-background p-4">
+        <header className="sticky top-0 z-10 border-b bg-background p-4 w-full">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold">Créer un appel d'offres</h1>
@@ -62,7 +62,7 @@ const CreateTenderLayout: React.FC<CreateTenderLayoutProps> = ({
           <TenderFormNav currentStep={currentStep} totalSteps={totalSteps} onStepClick={onStepClick} />
         </header>
         
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-6 w-full">
           {children}
         </main>
       </div>

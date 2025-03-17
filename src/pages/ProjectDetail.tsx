@@ -67,10 +67,10 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-background">
+    <div className="flex flex-col md:flex-row min-h-screen bg-background w-full">
       <Sidebar />
-      <div className="flex-1 overflow-auto">
-        <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      <div className="flex-1 overflow-auto w-full">
+        <div className="p-4 md:p-6 w-full">
           <ProjectHeader projectDetails={projectDetails} />
           
           <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mb-6">

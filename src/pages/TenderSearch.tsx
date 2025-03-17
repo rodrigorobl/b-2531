@@ -33,10 +33,10 @@ export default function TenderSearch() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background w-full">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="p-6">
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
+        <div className="p-4 md:p-6 w-full">
           <h1 className="text-2xl font-bold mb-6">Rechercher un Appel d'Offres</h1>
           
           <TenderSearchBar 
@@ -52,7 +52,7 @@ export default function TenderSearch() {
           <div className="flex h-[calc(100vh-230px)]">
             <TenderSearchFilters />
             
-            <div className="flex-1 max-w-[55%] bg-white rounded-lg shadow-sm mr-4 overflow-hidden">
+            <div className="flex-1 bg-white rounded-lg shadow-sm mr-4 overflow-hidden">
               <div className="flex items-center justify-between p-4">
                 <div className="text-sm text-muted-foreground">
                   {filteredTenders.length} appels d'offres trouvés
