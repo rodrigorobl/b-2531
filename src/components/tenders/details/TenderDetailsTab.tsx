@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Link } from 'react-router-dom';
 import { 
   FileText, 
-  Upload, 
+  Eye, 
   Map, 
   Building, 
   FileDown, 
@@ -95,10 +96,10 @@ export default function TenderDetailsTab({ tender }: TenderDetailsTabProps) {
       </div>
       
       {tender.status === 'open' && (
-        <Button className="w-full gap-2">
-          <Upload size={14} />
-          <span>Déposer un devis</span>
-        </Button>
+        <Link to={`/tender-detail/${tender.id}`} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
+          <Eye size={14} />
+          <span>Voir la fiche du projet</span>
+        </Link>
       )}
       
       <div className="grid grid-cols-2 gap-2">
