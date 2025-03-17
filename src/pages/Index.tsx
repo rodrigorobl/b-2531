@@ -174,11 +174,11 @@ export default function Index() {
         <ProjectHeader project={projectData} />
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          <div className="md:col-span-3 h-full overflow-auto">
+          <div className="md:col-span-4 h-full overflow-auto">
             <ProjectInfo info={projectInfo} />
           </div>
           
-          <div className="md:col-span-5 h-full overflow-auto">
+          <div className="md:col-span-4 h-full overflow-auto">
             <TenderOffers offers={offerData} />
           </div>
           
