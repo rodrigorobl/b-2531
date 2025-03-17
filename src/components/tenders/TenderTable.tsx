@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowUpDown, FileText, Upload } from 'lucide-react';
+import { ArrowUpDown, FileText, ExternalLink } from 'lucide-react';
 import { Tender, ParticipationStatus } from '@/pages/TenderOffers';
 
 interface TenderTableProps {
@@ -77,18 +77,10 @@ export default function TenderTable({ tenders, onSelectTender, selectedTenderId 
                 <TableCell>{getParticipationStatusBadge(tender.participationStatus)}</TableCell>
                 <TableCell>{tender.deadline}</TableCell>
                 <TableCell>
-                  <div className="flex gap-2">
-                    {(tender.status === 'open' && tender.participationStatus === 'to-submit') && (
-                      <Button size="sm" className="gap-1">
-                        <Upload size={14} />
-                        <span>Déposer un devis</span>
-                      </Button>
-                    )}
-                    <Button size="sm" variant="outline" className="gap-1">
-                      <FileText size={14} />
-                      <span>DCE</span>
-                    </Button>
-                  </div>
+                  <Button size="sm" variant="outline" className="gap-1">
+                    <ExternalLink size={14} />
+                    <span>Accéder à l'Appel d'Offres</span>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
