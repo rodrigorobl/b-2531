@@ -19,6 +19,7 @@ import EditCompany from "./pages/EditCompany";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import CreateTender from "./pages/CreateTender";
+import CompanyDirectory from "./pages/CompanyDirectory";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/company" element={<Company />} />
           <Route path="/company/edit" element={<EditCompany />} />
           <Route path="/profile/user/:userId" element={<UserProfile />} />
+          <Route path="/directory" element={<CompanyDirectory />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

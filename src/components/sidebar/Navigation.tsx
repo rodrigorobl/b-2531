@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, BookOpen } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 
 interface NavigationProps {
@@ -81,6 +81,12 @@ export const Navigation: React.FC<NavigationProps> = ({
               <span>Gestion des AO</span>
             </Link>
           </li>}
+        <li>
+          <Link to="/directory" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+            <BookOpen size={18} />
+            <span>Annuaire</span>
+          </Link>
+        </li>
         <li>
           <Link to="/messaging" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/messaging' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <MessageSquare size={18} />
