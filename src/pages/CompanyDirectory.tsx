@@ -42,7 +42,13 @@ export default function CompanyDirectory() {
             rating: company.note_moyenne,
             reviewCount: company.nombre_avis,
             description: `Entreprise spécialisée en ${company.specialite}`,
-            coordinates: company.coordinates,
+            coordinates: company.coordinates ? {
+              lat: company.coordinates.lat,
+              lng: company.coordinates.lng
+            } : {
+              lat: 48.8566,
+              lng: 2.3522
+            }, // Coordonnées par défaut (Paris) si non spécifiées
             contact: {
               phone: company.telephone || '01 23 45 67 89',
               email: company.email || 'contact@example.com',

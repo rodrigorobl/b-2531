@@ -149,6 +149,7 @@ export type Database = {
           administrateur_id: string | null
           adresse: string | null
           categorie_principale: Database["public"]["Enums"]["entreprise_categorie"]
+          coordinates: Json | null
           date_creation: string | null
           email: string | null
           id: string
@@ -167,6 +168,7 @@ export type Database = {
           administrateur_id?: string | null
           adresse?: string | null
           categorie_principale: Database["public"]["Enums"]["entreprise_categorie"]
+          coordinates?: Json | null
           date_creation?: string | null
           email?: string | null
           id?: string
@@ -185,6 +187,7 @@ export type Database = {
           administrateur_id?: string | null
           adresse?: string | null
           categorie_principale?: Database["public"]["Enums"]["entreprise_categorie"]
+          coordinates?: Json | null
           date_creation?: string | null
           email?: string | null
           id?: string

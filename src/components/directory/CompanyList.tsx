@@ -32,7 +32,7 @@ interface SupabaseCompany {
   coordinates: {
     lat: number;
     lng: number;
-  };
+  } | null;
 }
 
 export default function CompanyList({
@@ -58,7 +58,7 @@ export default function CompanyList({
         if (error) throw error;
         
         if (data) {
-          setSupabaseCompanies(data as SupabaseCompany[]);
+          setSupabaseCompanies(data as unknown as SupabaseCompany[]);
         }
       } catch (err) {
         console.error('Erreur lors de la récupération des entreprises:', err);
@@ -84,7 +84,7 @@ export default function CompanyList({
       rating: company.note_moyenne,
       reviewCount: company.nombre_avis,
       description: `Entreprise spécialisée en ${company.specialite}`,
-      coordinates: company.coordinates,
+      coordinates: company.coordinates || { lat: 48.8566, lng: 2.3522 }, // Default to Paris if no coordinates
       contact: {
         phone: company.telephone || '01 23 45 67 89',
         email: company.email || 'contact@example.com',
