@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
@@ -167,9 +166,11 @@ export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps
                   <Bookmark size={14} />
                   <span>Sauvegarder</span>
                 </Button>
-                <Button variant="outline" size="sm" className="w-full gap-1">
-                  <FileDown size={14} />
-                  <span>Télécharger DCE</span>
+                <Button variant="outline" size="sm" className="w-full gap-1" asChild>
+                  <Link to={`/tender-specifications?project=${tender.id}`}>
+                    <ExternalLink size={14} />
+                    <span>Accéder à l'Appel d'offres</span>
+                  </Link>
                 </Button>
               </div>
             </div>
