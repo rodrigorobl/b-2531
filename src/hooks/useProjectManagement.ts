@@ -15,7 +15,8 @@ export function useProjectManagement() {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      // First get basic project information
+      const { data: projectsData, error: projectsError } = await supabase
         .from('projets')
         .select(`
           id,
@@ -27,46 +28,50 @@ export function useProjectManagement() {
           statut,
           date_debut,
           date_fin,
-          entreprises(nom),
-          (
-            SELECT count(*) FROM appels_offres WHERE projet_id = projets.id
-          ) as tenders_count,
-          (
-            SELECT count(*) FROM appels_offres WHERE projet_id = projets.id AND statut = 'Attribué'
-          ) as tenders_assigned
+          entreprises (nom)
         `);
 
-      if (error) throw error;
+      if (projectsError) throw projectsError;
 
-      const formattedProjects: ProjectSummary[] = data.map(item => {
-        // Calculate progress percentage
-        const tendersCount = item.tenders_count || 0;
-        const tendersAssigned = item.tenders_assigned || 0;
-        const progressPercentage = tendersCount > 0 
-          ? Math.round((tendersAssigned / tendersCount) * 100)
-          : 0;
+      // For each project, get the tenders count and assigned count
+      const projectsWithTendersCount = await Promise.all(
+        projectsData.map(async (project) => {
+          // Get all tenders for this project
+          const { data: tenders, error: tendersError } = await supabase
+            .from('appels_offres')
+            .select('id, statut')
+            .eq('projet_id', project.id);
 
-        return {
-          id: item.id,
-          projectName: item.nom,
-          projectType: item.type_projet,
-          description: item.description,
-          location: item.localisation || 'Non spécifié',
-          budget: item.budget_estime,
-          status: item.statut as ProjectStatus,
-          startDate: item.date_debut,
-          endDate: item.date_fin,
-          tendersCount,
-          tendersAssigned,
-          progressPercentage,
-          clientName: item.entreprises?.nom || 'Non spécifié'
-        };
-      });
+          if (tendersError) throw tendersError;
 
-      setProjects(formattedProjects);
+          const tendersCount = tenders?.length || 0;
+          const tendersAssigned = tenders?.filter(t => t.statut === 'Attribué').length || 0;
+          const progressPercentage = tendersCount > 0 
+            ? Math.round((tendersAssigned / tendersCount) * 100)
+            : 0;
+
+          return {
+            id: project.id,
+            projectName: project.nom,
+            projectType: project.type_projet,
+            description: project.description,
+            location: project.localisation || 'Non spécifié',
+            budget: project.budget_estime,
+            status: project.statut as ProjectStatus,
+            startDate: project.date_debut,
+            endDate: project.date_fin,
+            tendersCount,
+            tendersAssigned,
+            progressPercentage,
+            clientName: project.entreprises?.nom || 'Non spécifié'
+          };
+        })
+      );
+
+      setProjects(projectsWithTendersCount);
       setError(null);
       setIsLoading(false);
-      return formattedProjects;
+      return projectsWithTendersCount;
     } catch (err: any) {
       console.error('Error fetching projects:', err);
       setError(err.message);
@@ -95,7 +100,7 @@ export function useProjectManagement() {
           statut,
           date_debut,
           date_fin,
-          entreprises(nom)
+          entreprises (nom)
         `)
         .eq('id', projectId)
         .single();

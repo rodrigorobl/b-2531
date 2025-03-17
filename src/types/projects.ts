@@ -1,6 +1,4 @@
 
-import { TenderStatus } from './tenders';
-
 export type ProjectStatus = 'En cours' | 'Clôturé' | 'Attribué';
 
 export interface ProjectSummary {
