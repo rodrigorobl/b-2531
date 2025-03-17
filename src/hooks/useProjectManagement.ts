@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -95,16 +96,14 @@ export function useProjectManagement() {
   // Helper function to insert sample projects for demo purposes
   const insertSampleProjects = async () => {
     try {
-      // First insert a sample client
+      // First insert a sample client - using a valid category from the enum
       const { data: clientData, error: clientError } = await supabase
         .from('entreprises')
-        .insert([
-          { 
-            nom: 'Immobilier Moderne', 
-            categorie_principale: 'Promoteur', 
-            specialite: 'Résidentiel' 
-          }
-        ])
+        .insert({
+          nom: 'Immobilier Moderne', 
+          categorie_principale: 'Construction', // Changed from 'Promoteur' to a valid enum value
+          specialite: 'Résidentiel' 
+        })
         .select();
 
       if (clientError) throw clientError;
