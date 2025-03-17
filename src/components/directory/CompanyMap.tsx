@@ -133,12 +133,15 @@ export default function CompanyMap({
   
   return (
     <div className="relative w-full h-full">
-      <style jsx>{`
-        .mapboxgl-popup-content {
-          padding: 15px;
-          border-radius: 8px;
-        }
-      `}</style>
+      {/* Adding styles directly to head instead of using jsx prop */}
+      <style>
+        {`
+          .mapboxgl-popup-content {
+            padding: 15px;
+            border-radius: 8px;
+          }
+        `}
+      </style>
       <div ref={mapContainer} className="absolute inset-0" />
       
       {mapboxToken === "REMPLACEZ_PAR_VOTRE_TOKEN_MAPBOX" && (
