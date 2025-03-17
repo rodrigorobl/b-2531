@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { ProjectSummary, ProjectDetail } from '@/types/projects';
+import { ProjectSummary, ProjectDetail, ProjectStatus } from '@/types/projects';
 import { useToast } from '@/hooks/use-toast';
 import { formatBudget, formatDate } from '@/utils/tenderFormatUtils';
 import { mapStatus } from '@/utils/tenderStatusUtils';

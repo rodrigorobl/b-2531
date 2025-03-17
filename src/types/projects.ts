@@ -22,7 +22,7 @@ export interface ProjectDetail extends ProjectSummary {
     id: string;
     name: string;
     type: string;
-    status: TenderStatus;
+    status: 'open' | 'closed' | 'assigned';
     quotesReceived: number;
     deadline: string;
     lotsTotal: number;
