@@ -16,6 +16,8 @@ import TenderOffers from "./pages/TenderOffers";
 import TenderSearch from "./pages/TenderSearch";
 import TenderDetail from "./pages/TenderDetail";
 import TenderManagementPromoter from "./pages/TenderManagementPromoter";
+import ProjectManagement from "./pages/ProjectManagement";
+import ProjectDetail from "./pages/ProjectDetail";
 import Company from "./pages/Company";
 import EditCompany from "./pages/EditCompany";
 import NotFound from "./pages/NotFound";
@@ -44,6 +46,8 @@ const App = () => (
           <Route path="/tender-search" element={<TenderSearch />} />
           <Route path="/tender-detail/:id" element={<TenderDetail />} />
           <Route path="/tender-management" element={<TenderManagementPromoter />} />
+          <Route path="/project-management" element={<ProjectManagement />} />
+          <Route path="/project-detail/:id" element={<ProjectDetail />} />
           <Route path="/create-tender" element={<CreateTender />} />
           <Route path="/company" element={<Company />} />
           <Route path="/company/edit" element={<EditCompany />} />

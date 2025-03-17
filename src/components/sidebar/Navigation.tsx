@@ -55,6 +55,12 @@ export const Navigation: React.FC<NavigationProps> = ({
             <span>Tableau de bord</span>
           </Link>
         </li>
+        {(activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre') && <li>
+          <Link to="/project-management" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/project-management' || location.pathname.startsWith('/project-detail/') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+            <Briefcase size={18} />
+            <span>Projets</span>
+          </Link>
+        </li>}
         <li>
           <Link to="/projects" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <Briefcase size={18} />
