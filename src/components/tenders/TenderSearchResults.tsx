@@ -25,7 +25,7 @@ export default function TenderSearchResults({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   return (
-    <div className="flex-1 bg-white rounded-lg shadow-sm mr-4 overflow-auto p-4">
+    <div className="flex-1 max-w-[55%] bg-white rounded-lg shadow-sm mr-4 overflow-auto p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm text-muted-foreground">
           {tenders.length} appels d'offres trouvés

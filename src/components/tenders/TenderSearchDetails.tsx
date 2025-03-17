@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
@@ -27,7 +26,7 @@ interface TenderSearchDetailsProps {
 export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps) {
   if (!tender) {
     return (
-      <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
+      <div className="w-96 min-w-96 bg-white rounded-lg shadow-sm flex items-center justify-center">
         <div className="text-center p-6 text-muted-foreground">
           <FileText className="mx-auto mb-2 opacity-20" size={40} />
           <p>Sélectionnez un appel d'offres pour voir les détails</p>
@@ -46,7 +45,7 @@ export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps
   };
 
   return (
-    <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
+    <div className="w-96 min-w-96 bg-white rounded-lg shadow-sm flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <h3 className="font-medium truncate">{tender.projectName}</h3>
