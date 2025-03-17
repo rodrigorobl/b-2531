@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { TenderSearchResult } from '@/pages/TenderSearch';
+import { TenderSearchResult } from '@/types/tenders';
 import TenderViewModeSelector from './TenderViewModeSelector';
 import TenderFilterSortMenu from './TenderFilterSortMenu';
 import TenderGridView from './TenderGridView';
