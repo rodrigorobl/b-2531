@@ -44,8 +44,9 @@ const App = () => (
           <Route path="/create-tender" element={<CreateTender />} />
           <Route path="/company" element={<Company />} />
           <Route path="/company/edit" element={<EditCompany />} />
-          <Route path="/profile/user/:userId" element={<UserProfile />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/directory" element={<CompanyDirectory />} />
+          <Route path="/projects" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
