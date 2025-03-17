@@ -17,6 +17,7 @@ export default function TenderDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
+  const [activeProfile, setActiveProfile] = useState<string | null>(null);
   
   const tender = id ? getTenderDetailById(id) : undefined;
   
@@ -25,15 +26,19 @@ export default function TenderDetail() {
     if (!tender && id) {
       navigate('/tender-management');
     }
+    
+    // Récupérer le profil utilisateur actif depuis localStorage
+    const savedProfile = localStorage.getItem('btp-connect-active-profile');
+    if (savedProfile) {
+      setActiveProfile(savedProfile);
+    }
   }, [tender, id, navigate]);
-  
-  if (!tender) {
-    return <div>Chargement...</div>;
-  }
   
   const handleViewLotQuotes = (lotId: string) => {
     setSelectedLotId(lotId);
   };
+
+  const isPromoter = activeProfile === 'promoteur';
   
   return (
     <div className="flex h-screen bg-background">
@@ -52,7 +57,8 @@ export default function TenderDetail() {
           </div>
           
           <TenderDetailHeader tender={tender} />
-          <TenderProgressIndicators tender={tender} />
+          
+          {isPromoter && <TenderProgressIndicators tender={tender} />}
           
           <Tabs defaultValue="lots">
             <TabsList className="mb-4">
@@ -71,14 +77,18 @@ export default function TenderDetail() {
             </TabsList>
             
             <TabsContent value="lots" className="mt-0">
-              {selectedLotId ? (
-                <TenderQuotesComparisonTable 
-                  tender={tender} 
-                  selectedLotId={selectedLotId} 
-                  onClose={() => setSelectedLotId(null)} 
-                />
+              {isPromoter ? (
+                selectedLotId ? (
+                  <TenderQuotesComparisonTable 
+                    tender={tender} 
+                    selectedLotId={selectedLotId} 
+                    onClose={() => setSelectedLotId(null)} 
+                  />
+                ) : (
+                  <TenderLotsTable tender={tender} onViewLotQuotes={handleViewLotQuotes} />
+                )
               ) : (
-                <TenderLotsTable tender={tender} onViewLotQuotes={handleViewLotQuotes} />
+                <TenderLotsForContractor tender={tender} />
               )}
             </TabsContent>
             
@@ -91,6 +101,40 @@ export default function TenderDetail() {
             </TabsContent>
           </Tabs>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Composant spécifique pour les entreprises qui consultent l'appel d'offres
+function TenderLotsForContractor({ tender }) {
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <h2 className="text-lg font-medium mb-4">Lots disponibles pour candidature</h2>
+      
+      <div className="divide-y">
+        {tender.lots.map((lot) => (
+          <div key={lot.id} className="py-4">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h3 className="font-medium">{lot.name}</h3>
+                <p className="text-sm text-muted-foreground">{lot.description}</p>
+              </div>
+              <Badge variant="outline" className="ml-2">
+                Budget estimé: {new Intl.NumberFormat('fr-FR', {
+                  style: 'currency',
+                  currency: 'EUR',
+                  maximumFractionDigits: 0,
+                }).format(lot.budget)}
+              </Badge>
+            </div>
+            
+            <Button className="mt-2">
+              <Upload className="w-4 h-4 mr-1" />
+              Soumettre un devis
+            </Button>
+          </div>
+        ))}
       </div>
     </div>
   );

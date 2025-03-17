@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
+import { ProfileType } from '@/components/sidebar/ProfileSelector';
 import { 
   FileText, 
   Eye, 
@@ -16,14 +17,21 @@ import {
   Users,
   Bookmark,
   Calendar,
-  Star
+  Star,
+  Upload
 } from 'lucide-react';
 
 interface TenderDetailsTabProps {
   tender: TenderSearchResult;
+  activeProfile?: ProfileType;
 }
 
-export default function TenderDetailsTab({ tender }: TenderDetailsTabProps) {
+export default function TenderDetailsTab({ 
+  tender, 
+  activeProfile = 'entreprise-construction' 
+}: TenderDetailsTabProps) {
+  const isPromoter = activeProfile === 'promoteur';
+  
   return (
     <div className="space-y-4">
       <div>
@@ -96,10 +104,23 @@ export default function TenderDetailsTab({ tender }: TenderDetailsTabProps) {
       </div>
       
       {tender.status === 'open' && (
-        <Link to={`/tender-detail/${tender.id}`} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-          <Eye size={14} />
-          <span>Voir la fiche du projet</span>
-        </Link>
+        isPromoter ? (
+          <Link to={`/tender-detail/${tender.id}`} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
+            <Eye size={14} />
+            <span>Voir la fiche du projet</span>
+          </Link>
+        ) : (
+          <>
+            <Link to={`/tender-detail/${tender.id}`} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full mb-2">
+              <Eye size={14} />
+              <span>Voir la fiche du projet</span>
+            </Link>
+            <Button className="w-full gap-2">
+              <Upload size={14} />
+              <span>Soumettre un devis</span>
+            </Button>
+          </>
+        )
       )}
       
       <div className="grid grid-cols-2 gap-2">

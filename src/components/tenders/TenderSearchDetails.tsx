@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TenderSearchResult } from '@/types/tenders';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import TenderDetailsHeader from './details/TenderDetailsHeader';
 import TenderDetailsTab from './details/TenderDetailsTab';
 import TenderMessagesTab from './details/TenderMessagesTab';
 import TenderDocumentsTab from './details/TenderDocumentsTab';
+import { ProfileType } from '@/components/sidebar/ProfileSelector';
 
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
@@ -16,6 +17,16 @@ interface TenderSearchDetailsProps {
 }
 
 export default function TenderSearchDetails({ tender, onViewDetail }: TenderSearchDetailsProps) {
+  const [activeProfile, setActiveProfile] = useState<ProfileType>('entreprise-construction');
+
+  useEffect(() => {
+    // Récupérer le profil utilisateur actif depuis localStorage
+    const savedProfile = localStorage.getItem('btp-connect-active-profile') as ProfileType | null;
+    if (savedProfile) {
+      setActiveProfile(savedProfile);
+    }
+  }, []);
+
   if (!tender) {
     return <TenderEmptyState />;
   }
@@ -50,7 +61,7 @@ export default function TenderSearchDetails({ tender, onViewDetail }: TenderSear
         
         <div className="flex-1 overflow-auto">
           <TabsContent value="details" className="h-full m-0 p-4">
-            <TenderDetailsTab tender={tender} />
+            <TenderDetailsTab tender={tender} activeProfile={activeProfile} />
           </TabsContent>
           
           <TabsContent value="messages" className="h-full m-0">
