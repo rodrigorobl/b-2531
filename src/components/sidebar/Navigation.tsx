@@ -3,9 +3,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, BookOpen, List, ClipboardCheck } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
+
 interface NavigationProps {
   activeProfile: ProfileType;
 }
+
 export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
@@ -66,6 +68,15 @@ export const Navigation: React.FC<NavigationProps> = ({
               <span>Projets</span>
             </Link>
           </li>}
+        {/* Add opportunities search link for Maître d'Œuvre/BET profile */}
+        {activeProfile === 'maitre-oeuvre' && (
+          <li>
+            <Link to="/opportunities-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/opportunities-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+              <Search size={18} />
+              <span>Recherche d'opportunités</span>
+            </Link>
+          </li>
+        )}
         {(activeProfile === 'entreprise-construction' || activeProfile === 'entreprise-services' || activeProfile === 'industriel') && <>
             <li>
               <Link to="/tenders" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tenders' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -80,9 +91,6 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
           </>}
-        {(activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre') && <li>
-            
-          </li>}
         {/* Add new menu item for "Devis à analyser" for MOE and BET profiles */}
         {(activeProfile === 'maitre-oeuvre') && (
           <li>

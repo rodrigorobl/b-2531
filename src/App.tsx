@@ -15,6 +15,7 @@ import DashboardIndustry from "./pages/DashboardIndustry";
 import Messaging from "./pages/Messaging";
 import TenderOffers from "./pages/TenderOffers";
 import TenderSearch from "./pages/TenderSearch";
+import OpportunitiesSearch from "./pages/OpportunitiesSearch";
 import TenderDetail from "./pages/TenderDetail";
 import Company from "./pages/Company";
 import EditCompany from "./pages/EditCompany";
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/messaging" element={<Messaging />} />
             <Route path="/tenders" element={<TenderOffers />} />
             <Route path="/tender-search" element={<TenderSearch />} />
+            <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
             <Route path="/tender/:projectId/lot/:lotId" element={<LotAnalysis />} />
             <Route path="/tender-specifications" element={<Index />} />
