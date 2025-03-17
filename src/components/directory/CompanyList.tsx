@@ -1,11 +1,12 @@
 
-import React from 'react';
-import { Building, MapPin, Star, Phone, Mail, ExternalLink, Award } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Building, MapPin, Star, Phone, Mail, ExternalLink, Award, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Company } from '@/types/directory';
 import CompanyDetailDialog from './CompanyDetailDialog';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CompanyListProps {
   companies: Company[];
@@ -13,19 +14,92 @@ interface CompanyListProps {
   setSelectedCompany: (company: Company | null) => void;
 }
 
+interface SupabaseCompany {
+  id: string;
+  nom: string;
+  categorie_principale: string;
+  specialite: string;
+  ville: string;
+  adresse: string;
+  region: string;
+  pays: string;
+  telephone: string;
+  email: string;
+  site_web: string;
+  logo: string;
+  note_moyenne: number;
+  nombre_avis: number;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
+
 export default function CompanyList({
   companies,
   selectedCompany,
   setSelectedCompany
 }: CompanyListProps) {
-  const [showDetail, setShowDetail] = React.useState(false);
+  const [showDetail, setShowDetail] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [supabaseCompanies, setSupabaseCompanies] = useState<SupabaseCompany[]>([]);
+  
+  // Récupérer les entreprises depuis Supabase
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('entreprises')
+          .select('*')
+          .order('nom');
+        
+        if (error) throw error;
+        
+        if (data) {
+          setSupabaseCompanies(data as SupabaseCompany[]);
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des entreprises:', err);
+        setError('Impossible de charger les données des entreprises');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchCompanies();
+  }, []);
+
+  // Mapper les entreprises Supabase au format Company pour l'interface
+  const mapSupabaseToCompanies = (): Company[] => {
+    return supabaseCompanies.map(company => ({
+      id: company.id,
+      name: company.nom,
+      logo: company.logo || 'https://github.com/shadcn.png', // Logo par défaut si null
+      category: company.categorie_principale.toLowerCase() as any,
+      specialty: company.specialite,
+      location: company.ville || 'Non spécifié',
+      address: company.adresse || '',
+      rating: company.note_moyenne,
+      reviewCount: company.nombre_avis,
+      description: `Entreprise spécialisée en ${company.specialite}`,
+      coordinates: company.coordinates,
+      contact: {
+        phone: company.telephone || '01 23 45 67 89',
+        email: company.email || 'contact@example.com',
+        website: company.site_web || 'www.example.com'
+      },
+      certifications: []
+    }));
+  };
   
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'architecte': return 'Architecte';
-      case 'bureau-etudes': return 'Bureau d\'études';
+      case 'moe_bet': return 'Bureau d\'études';
       case 'construction': return 'Construction';
-      case 'services': return 'Services';
+      case 'service': return 'Services';
       case 'industriel': return 'Industriel';
       case 'fournisseur': return 'Fournisseur';
       default: return category;
@@ -35,9 +109,9 @@ export default function CompanyList({
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'architecte': return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'bureau-etudes': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'moe_bet': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'construction': return 'bg-green-100 text-green-800 border-green-200';
-      case 'services': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'service': return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'industriel': return 'bg-red-100 text-red-800 border-red-200';
       case 'fournisseur': return 'bg-gray-100 text-gray-800 border-gray-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -48,22 +122,45 @@ export default function CompanyList({
     setSelectedCompany(company);
     setShowDetail(true);
   };
+
+  const displayCompanies = mapSupabaseToCompanies();
+  
+  if (loading) {
+    return (
+      <div className="p-4 flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Chargement des entreprises...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 flex items-center justify-center h-full">
+        <div className="text-center">
+          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium">Erreur de chargement</h3>
+          <p className="text-sm text-muted-foreground mt-2">{error}</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="p-4">
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-lg font-medium">
-          {companies.length} entreprise{companies.length !== 1 ? 's' : ''} trouvée{companies.length !== 1 ? 's' : ''}
+          {displayCompanies.length} entreprise{displayCompanies.length !== 1 ? 's' : ''} trouvée{displayCompanies.length !== 1 ? 's' : ''}
         </h2>
       </div>
       
       <div className="space-y-4">
-        {companies.length === 0 ? (
+        {displayCompanies.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             Aucune entreprise ne correspond à vos critères
           </div>
         ) : (
-          companies.map((company) => (
+          displayCompanies.map((company) => (
             <Card key={company.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row p-4">
@@ -98,7 +195,7 @@ export default function CompanyList({
                       </div>
                       <div className="flex items-center gap-1 text-amber-500">
                         <Star size={16} className="fill-amber-500" />
-                        <span className="font-medium">{company.rating}</span>
+                        <span className="font-medium">{company.rating.toFixed(1)}</span>
                         <span className="text-muted-foreground text-sm">({company.reviewCount})</span>
                       </div>
                     </div>
