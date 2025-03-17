@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Briefcase } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
@@ -20,6 +20,15 @@ export default function ProjectDetailPage() {
   const [projectDetails, setProjectDetails] = useState<ProjectDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  
+  // Check if user has promoteur profile
+  useEffect(() => {
+    const activeProfile = localStorage.getItem('btp-connect-active-profile');
+    if (activeProfile !== 'promoteur') {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
   
   useEffect(() => {
     const loadProjectDetails = async () => {

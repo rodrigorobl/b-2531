@@ -11,6 +11,8 @@ interface ProjectErrorProps {
 
 export function ProjectError({ error }: ProjectErrorProps) {
   const navigate = useNavigate();
+  const activeProfile = localStorage.getItem('btp-connect-active-profile');
+  const redirectPath = activeProfile === 'promoteur' ? '/project-management' : '/dashboard';
   
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background">
@@ -22,7 +24,7 @@ export function ProjectError({ error }: ProjectErrorProps) {
           <p className="text-muted-foreground text-center mb-6">{error || "Projet non trouvé"}</p>
           <Button
             variant="outline"
-            onClick={() => navigate('/project-management')}
+            onClick={() => navigate(redirectPath)}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour à la liste des projets
