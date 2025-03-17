@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -7,7 +8,7 @@ import TenderOffers from '@/components/TenderOffers';
 import Communication from '@/components/Communication';
 import ProjectMap from '@/components/ProjectMap';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, Upload, Clock, MapPin, FileText, Building, Calendar, DollarSign } from 'lucide-react';
+import { ArrowLeft, Download, Upload, Clock, MapPin, FileText, Building, Calendar, DollarSign, Ruler } from 'lucide-react';
 
 const projectData = {
   id: "PRJ-2023-042",
@@ -193,15 +194,27 @@ export default function Index() {
         
         <ProjectHeader project={projectData} />
         
-        <div className="flex gap-4 mb-6">
-          <Button size="lg" variant="default" className="flex-1 py-6">
-            <Download className="mr-2 h-5 w-5" />
-            Télécharger le DCE
-          </Button>
-          <Button size="lg" variant="default" className="flex-1 py-6 bg-green-600 hover:bg-green-700">
-            <Upload className="mr-2 h-5 w-5" />
-            Déposer une offre
-          </Button>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="space-y-4">
+            <Button size="lg" variant="default" className="w-full py-6">
+              <Download className="mr-2 h-5 w-5" />
+              Télécharger le DCE
+            </Button>
+            <Button size="lg" variant="outline" className="w-full py-6">
+              <FileText className="mr-2 h-5 w-5" />
+              Télécharger le DPGF
+            </Button>
+          </div>
+          <div className="space-y-4">
+            <Button size="lg" variant="default" className="w-full py-6 bg-green-600 hover:bg-green-700">
+              <Upload className="mr-2 h-5 w-5" />
+              Déposer une offre
+            </Button>
+            <Button size="lg" variant="outline" className="w-full py-6">
+              <Ruler className="mr-2 h-5 w-5" />
+              Faire réaliser les métrés
+            </Button>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
