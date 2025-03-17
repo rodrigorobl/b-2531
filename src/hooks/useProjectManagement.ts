@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -18,67 +17,79 @@ export function useProjectManagement() {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
-      console.log("Fetching projects from the 'projets' table...");
-      // Fetch all projects from the projets table
-      const { data, error } = await supabase
+      console.log("Fetching projects from Supabase 'projets' table...");
+      
+      // Fetch all projects from the projets table with the company name
+      const { data: projectsData, error: projectsError } = await supabase
         .from('projets')
         .select(`
           *,
           entreprises:maitre_ouvrage_id(nom)
         `);
 
-      if (error) throw error;
+      if (projectsError) {
+        console.error('Error fetching projects:', projectsError);
+        throw projectsError;
+      }
 
-      console.log("Projects data retrieved:", data);
+      console.log(`Retrieved ${projectsData?.length || 0} projects from database:`, projectsData);
 
       // Transform the data into ProjectSummary objects
       const projectsList: ProjectSummary[] = [];
 
-      if (data && data.length > 0) {
-        for (const project of data) {
-          // Fetch tenders for each project
-          const { data: tendersData, error: tendersError } = await supabase
-            .from('appels_offres')
-            .select('*')
-            .eq('projet_id', project.id);
+      if (projectsData && projectsData.length > 0) {
+        for (const project of projectsData) {
+          try {
+            // Fetch tenders for each project
+            const { data: tendersData, error: tendersError } = await supabase
+              .from('appels_offres')
+              .select('*')
+              .eq('projet_id', project.id);
 
-          if (tendersError) {
-            console.error('Error fetching tenders for project:', project.id, tendersError);
-            // Continue with the next project instead of throwing
-            continue;
+            if (tendersError) {
+              console.error('Error fetching tenders for project:', project.id, tendersError);
+              // Continue with the next project instead of throwing
+              continue;
+            }
+
+            console.log(`Retrieved ${tendersData?.length || 0} tenders for project ${project.id}`);
+
+            const assignedTenders = tendersData 
+              ? tendersData.filter(tender => tender.statut === 'Attribué').length 
+              : 0;
+
+            const progressPercentage = tendersData && tendersData.length > 0
+              ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
+              : 0;
+
+            projectsList.push({
+              id: project.id,
+              projectName: project.nom,
+              projectType: project.type_projet,
+              description: project.description,
+              location: project.localisation || '',
+              budget: project.budget_estime || 0,
+              status: project.statut || 'En cours',
+              startDate: project.date_debut,
+              endDate: project.date_fin,
+              tendersCount: tendersData ? tendersData.length : 0,
+              tendersAssigned: assignedTenders,
+              progressPercentage: progressPercentage,
+              clientName: project.entreprises?.nom || 'Client inconnu'
+            });
+          } catch (err) {
+            console.error('Error processing project:', project.id, err);
+            // Continue with the next project instead of failing entirely
           }
-
-          const assignedTenders = tendersData ? tendersData.filter(tender => 
-            tender.statut === 'Attribué').length : 0;
-
-          const progressPercentage = tendersData && tendersData.length > 0
-            ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
-            : 0;
-
-          projectsList.push({
-            id: project.id,
-            projectName: project.nom,
-            projectType: project.type_projet,
-            description: project.description,
-            location: project.localisation || '',
-            budget: project.budget_estime || 0,
-            status: project.statut || 'En cours',
-            startDate: project.date_debut,
-            endDate: project.date_fin,
-            tendersCount: tendersData ? tendersData.length : 0,
-            tendersAssigned: assignedTenders,
-            progressPercentage: progressPercentage,
-            clientName: project.entreprises?.nom || 'Client inconnu'
-          });
         }
 
         setProjects(projectsList);
-        console.log("Projects loaded from database:", projectsList);
+        console.log("Successfully loaded projects from database:", projectsList);
       } else {
-        // Only use demo projects if no projects were found
+        // If no projects were found, use demo projects as fallback
+        console.log("No projects found in database, using demo projects instead");
         const demoProjects = getLocalDemoProjects();
         setProjects(demoProjects);
-        console.log("No projects found in database, using demo projects:", demoProjects);
         
         toast({
           title: "Information",
@@ -89,10 +100,9 @@ export function useProjectManagement() {
       
       setError(null);
     } catch (err: any) {
-      console.error('Error fetching projects:', err);
+      console.error('Error in fetchProjects():', err);
       const demoProjects = getLocalDemoProjects();
       setProjects(demoProjects);
-      console.log("Error occurred, using local demo projects:", demoProjects);
       
       toast({
         title: "Information",
@@ -189,6 +199,9 @@ export function useProjectManagement() {
         }
       }
       
+      console.log("Fetching detailed project data from Supabase for ID:", projectId);
+      
+      // Fetch project details from Supabase
       const { data: projectData, error: projectError } = await supabase
         .from('projets')
         .select(`
@@ -198,20 +211,40 @@ export function useProjectManagement() {
         .eq('id', projectId)
         .single();
 
-      if (projectError) throw projectError;
+      if (projectError) {
+        console.error("Error fetching project details:", projectError);
+        throw projectError;
+      }
 
+      if (!projectData) {
+        console.error("Project not found with ID:", projectId);
+        setError("Projet non trouvé");
+        setIsLoading(false);
+        return null;
+      }
+
+      console.log("Project data fetched successfully:", projectData);
+
+      // Fetch tenders for this project
       const { data: tendersData, error: tendersError } = await supabase
         .from('appels_offres')
         .select('*')
         .eq('projet_id', projectId);
 
-      if (tendersError) throw tendersError;
+      if (tendersError) {
+        console.error("Error fetching tenders:", tendersError);
+        throw tendersError;
+      }
 
+      console.log(`Retrieved ${tendersData?.length || 0} tenders for project ${projectId}`);
+
+      // Calculate project progress from tenders
       const progressPercentage = tendersData && tendersData.length > 0
         ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
         : 0;
 
-      const tenders = tendersData.map(tender => ({
+      // Transform tenders data to ProjectTender format
+      const tenders = (tendersData || []).map(tender => ({
         id: tender.id,
         name: tender.lot,
         description: tender.description,
@@ -224,6 +257,7 @@ export function useProjectManagement() {
         progress: tender.progress || 0
       }));
 
+      // Create the project detail object
       const projectDetail: ProjectDetail = {
         id: projectData.id,
         projectName: projectData.nom,
@@ -241,6 +275,7 @@ export function useProjectManagement() {
         tenders: tenders
       };
 
+      console.log("Project details prepared successfully");
       setError(null);
       setIsLoading(false);
       return projectDetail;
