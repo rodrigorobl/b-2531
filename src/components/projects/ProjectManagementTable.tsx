@@ -47,6 +47,10 @@ export default function ProjectManagementTable({
     }
   };
 
+  const handleRowClick = (projectId: string) => {
+    navigate(`/project-detail/${projectId}`);
+  };
+
   if (isLoading) {
     return <div className="flex items-center justify-center p-8">Chargement des projets...</div>;
   }
@@ -109,7 +113,11 @@ export default function ProjectManagementTable({
             </TableRow>
           ) : (
             projects.map((project) => (
-              <TableRow key={project.id}>
+              <TableRow 
+                key={project.id}
+                className="cursor-pointer hover:bg-muted transition-colors"
+                onClick={() => handleRowClick(project.id)}
+              >
                 <TableCell className="font-medium">{project.projectName}</TableCell>
                 <TableCell>{project.projectType}</TableCell>
                 <TableCell>{project.clientName}</TableCell>
@@ -124,13 +132,16 @@ export default function ProjectManagementTable({
                     </span>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex space-x-2">
                     <Button 
                       variant="outline" 
                       size="sm"
                       className="flex items-center gap-1"
-                      onClick={() => navigate(`/project-detail/${project.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/project-detail/${project.id}`);
+                      }}
                     >
                       <Eye className="h-4 w-4" />
                       <span>Détails</span>
