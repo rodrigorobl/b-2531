@@ -17,6 +17,21 @@ export function useProjectManagement() {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
+      // Insert sample project data for testing if no data exists
+      const { data: existingProjects, error: checkError } = await supabase
+        .from('projets')
+        .select('id')
+        .limit(1);
+        
+      if (checkError) throw checkError;
+      
+      // If no projects exist, insert sample data
+      if (existingProjects.length === 0) {
+        console.log("No projects found, inserting sample data");
+        await insertSampleProjects();
+      }
+
+      // Fetch all projects
       const { data, error } = await supabase
         .from('projets')
         .select(`
@@ -74,6 +89,72 @@ export function useProjectManagement() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Helper function to insert sample projects for demo purposes
+  const insertSampleProjects = async () => {
+    try {
+      // First insert a sample client
+      const { data: clientData, error: clientError } = await supabase
+        .from('entreprises')
+        .insert([
+          { 
+            nom: 'Immobilier Moderne', 
+            categorie_principale: 'Promoteur', 
+            specialite: 'Résidentiel' 
+          }
+        ])
+        .select();
+
+      if (clientError) throw clientError;
+      
+      const clientId = clientData[0].id;
+      
+      // Then insert sample projects
+      const { error: projectsError } = await supabase
+        .from('projets')
+        .insert([
+          {
+            nom: 'Résidence Les Jardins',
+            description: 'Complexe résidentiel de 50 appartements avec espaces verts',
+            type_projet: 'Résidentiel',
+            localisation: 'Lyon',
+            budget_estime: 5000000,
+            statut: 'En cours',
+            date_debut: new Date().toISOString().split('T')[0],
+            date_fin: new Date(new Date().setMonth(new Date().getMonth() + 18)).toISOString().split('T')[0],
+            maitre_ouvrage_id: clientId
+          },
+          {
+            nom: 'Tour Horizon',
+            description: 'Immeuble de bureaux de 15 étages en centre-ville',
+            type_projet: 'Commercial',
+            localisation: 'Paris',
+            budget_estime: 12000000,
+            statut: 'En cours',
+            date_debut: new Date().toISOString().split('T')[0],
+            date_fin: new Date(new Date().setMonth(new Date().getMonth() + 24)).toISOString().split('T')[0],
+            maitre_ouvrage_id: clientId
+          },
+          {
+            nom: 'Campus Technologique',
+            description: 'Campus de recherche et développement pour entreprises tech',
+            type_projet: 'Industriel',
+            localisation: 'Toulouse',
+            budget_estime: 8500000,
+            statut: 'En cours',
+            date_debut: new Date().toISOString().split('T')[0],
+            date_fin: new Date(new Date().setMonth(new Date().getMonth() + 30)).toISOString().split('T')[0],
+            maitre_ouvrage_id: clientId
+          }
+        ]);
+
+      if (projectsError) throw projectsError;
+
+      console.log("Sample project data inserted successfully");
+    } catch (err) {
+      console.error("Error inserting sample project data:", err);
     }
   };
 
