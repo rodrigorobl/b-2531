@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
@@ -7,9 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
 import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, Bookmark, Star, ExternalLink } from 'lucide-react';
+
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
 }
+
 export default function TenderSearchDetails({
   tender
 }: TenderSearchDetailsProps) {
@@ -21,6 +24,7 @@ export default function TenderSearchDetails({
         </div>
       </div>;
   }
+  
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'open':
@@ -33,6 +37,7 @@ export default function TenderSearchDetails({
         return 'Inconnu';
     }
   };
+  
   return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
@@ -136,12 +141,12 @@ export default function TenderSearchDetails({
                 </Card>
               </div>
               
-              {tender.status === 'open' && <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
-                  <Button className="w-full gap-2">
-                    <ExternalLink size={14} />
-                    <span>Accéder à l'Appel d'offres</span>
-                  </Button>
-                </Link>}
+              <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
+                <Button className="w-full gap-2">
+                  <ExternalLink size={14} />
+                  <span>Accéder à l'Appel d'offres</span>
+                </Button>
+              </Link>
               
               <div className="grid grid-cols-2 gap-2">
                 
