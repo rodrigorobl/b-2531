@@ -25,4 +25,12 @@ export interface TenderSearchResult {
   actualQuotesReceived?: number;
   quoteQuality?: 'poor' | 'medium' | 'good';
   budgetRespect?: 'under' | 'on-target' | 'over';
+  lotDetails?: {
+    id: string;
+    name: string;
+    status: 'open' | 'assigned';
+    quotesReceived: number;
+    quotesRequired: number;
+    assignedTo?: string;
+  }[];
 }

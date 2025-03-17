@@ -31,7 +31,8 @@ import {
   Filter,
   ArrowUpDown,
   Search,
-  Loader2
+  Loader2,
+  Layers
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
@@ -46,6 +47,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Link } from 'react-router-dom';
 import { useTenderManagement } from '@/hooks/useTenderManagement';
 import { TenderSearchResult } from '@/types/tenders';
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 
 export default function TenderManagementPromoter() {
   const navigate = useNavigate();
@@ -54,6 +61,8 @@ export default function TenderManagementPromoter() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortField, setSortField] = useState('deadline');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [selectedTender, setSelectedTender] = useState<TenderSearchResult | null>(null);
+  const [showLotDetails, setShowLotDetails] = useState(false);
 
   // Filter tenders based on search and status
   const filteredTenders = tenders.filter(tender => {
@@ -100,6 +109,18 @@ export default function TenderManagementPromoter() {
     }
   };
 
+  // Helper function to get lot status badge
+  const getLotStatusBadge = (status: 'open' | 'assigned') => {
+    switch (status) {
+      case 'assigned':
+        return <Badge className="bg-status-assigned">Attribué</Badge>;
+      case 'open':
+        return <Badge className="bg-status-pending">En cours</Badge>;
+      default:
+        return <Badge>Inconnu</Badge>;
+    }
+  };
+
   // Helper function to get quote quality indicator
   const getQuoteQualityIndicator = (quality: string) => {
     switch (quality) {
@@ -136,6 +157,12 @@ export default function TenderManagementPromoter() {
       setSortField(field);
       setSortDirection('asc');
     }
+  };
+
+  // Open lot details dialog
+  const openLotDetails = (tender: TenderSearchResult) => {
+    setSelectedTender(tender);
+    setShowLotDetails(true);
   };
 
   return (
@@ -348,6 +375,15 @@ export default function TenderManagementPromoter() {
                             <TableCell>{tender.budgetRespect && getBudgetRespectIndicator(tender.budgetRespect)}</TableCell>
                             <TableCell className="text-right">
                               <div className="flex gap-2 justify-end">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="gap-1"
+                                  onClick={() => openLotDetails(tender)}
+                                >
+                                  <Layers size={14} />
+                                  <span>Lots</span>
+                                </Button>
                                 <Link 
                                   to={`/tender-detail/${tender.id}`}
                                   className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
@@ -385,6 +421,56 @@ export default function TenderManagementPromoter() {
           </Tabs>
         </div>
       </div>
+
+      {/* Lot Details Dialog */}
+      {selectedTender && (
+        <Dialog open={showLotDetails} onOpenChange={setShowLotDetails}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Lots pour {selectedTender.projectName}</DialogTitle>
+            </DialogHeader>
+            
+            <div className="mt-4">
+              {selectedTender.lotDetails && selectedTender.lotDetails.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nom du lot</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead>Devis reçus</TableHead>
+                      <TableHead>Entreprise attributaire</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedTender.lotDetails.map((lot) => (
+                      <TableRow key={lot.id}>
+                        <TableCell className="font-medium">{lot.name}</TableCell>
+                        <TableCell>{getLotStatusBadge(lot.status)}</TableCell>
+                        <TableCell>{lot.quotesReceived}/{lot.quotesRequired}</TableCell>
+                        <TableCell>
+                          {lot.assignedTo || (
+                            <span className="text-muted-foreground text-sm">Non attribué</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <p>Aucun lot défini pour cet appel d'offres.</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex justify-end mt-4">
+              <Button variant="outline" onClick={() => setShowLotDetails(false)}>
+                Fermer
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

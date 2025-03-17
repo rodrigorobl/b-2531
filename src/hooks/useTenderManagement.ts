@@ -59,6 +59,28 @@ export function useTenderManagement() {
         budgetRespect: getRandomBudgetRespect()
       }));
 
+      // Fetch lot details for each tender
+      for (const tender of formattedTenders) {
+        const { data: lotData, error: lotError } = await supabase
+          .from('lots')
+          .select('id, name, status, quotes_received, quotes_required, assigned_to')
+          .eq('tender_id', tender.id);
+          
+        if (!lotError && lotData) {
+          tender.lotDetails = lotData.map(lot => ({
+            id: lot.id,
+            name: lot.name,
+            status: mapLotStatus(lot.status),
+            quotesReceived: lot.quotes_received || 0,
+            quotesRequired: lot.quotes_required || 3,
+            assignedTo: lot.assigned_to
+          }));
+          
+          // Update lots array for backward compatibility
+          tender.lots = lotData.map(lot => lot.name);
+        }
+      }
+
       setTenders(formattedTenders);
       setError(null);
     } catch (err: any) {
@@ -113,6 +135,17 @@ export function useTenderManagement() {
         return 'open';
       case 'clôturé':
         return 'closed';
+      case 'attribué':
+        return 'assigned';
+      default:
+        return 'open';
+    }
+  }
+  
+  function mapLotStatus(status: string | null): 'open' | 'assigned' {
+    if (!status) return 'open';
+    
+    switch (status.toLowerCase()) {
       case 'attribué':
         return 'assigned';
       default:
