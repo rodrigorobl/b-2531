@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Calendar, ArrowRight, FileText, Upload } from 'lucide-react';
+import { Calendar, ArrowRight, FileText, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface TenderOffer {
   id: string;
@@ -55,10 +56,13 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
           
           {offer.status === 'open' && (
             <div className="mt-3 flex gap-2">
-              <Button variant="default" size="sm" className="w-full">
-                <Upload size={14} className="mr-1.5" />
-                Déposer un devis
-              </Button>
+              <Link 
+                to={`/tender-detail/${offer.id}`}
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+              >
+                <Eye size={14} className="mr-1.5" />
+                Voir la fiche du projet
+              </Link>
               <Button variant="outline" size="sm">
                 <FileText size={14} className="mr-1.5" />
                 DCE
@@ -68,10 +72,10 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
           
           {offer.status !== 'open' && (
             <div className="flex justify-end mt-3">
-              <a href={`/tenders/${offer.id}`} className="text-primary text-sm flex items-center hover:underline">
+              <Link to={`/tender-detail/${offer.id}`} className="text-primary text-sm flex items-center hover:underline">
                 <span>Détails</span>
                 <ArrowRight size={14} className="ml-1" />
-              </a>
+              </Link>
             </div>
           )}
         </div>
