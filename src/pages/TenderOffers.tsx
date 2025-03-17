@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import TenderFiltersSidebar from '@/components/tenders/TenderFiltersSidebar';
 import TenderTable from '@/components/tenders/TenderTable';
 import TenderDetails from '@/components/tenders/TenderDetails';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Building2, Clock, CheckCircle, Search } from 'lucide-react';
+import { Building2, Clock, CheckCircle, Search, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 export type TenderStatus = 'open' | 'closed' | 'assigned';
@@ -23,6 +22,7 @@ export interface Tender {
   createdAt: string;
   description: string;
   estimatedValue: string;
+  isFavorite?: boolean;
 }
 
 export default function TenderOffers() {
@@ -43,7 +43,8 @@ export default function TenderOffers() {
       projectType: "Logement",
       createdAt: "01/05/2023",
       description: "Construction d'une résidence de 45 appartements sur 5 étages",
-      estimatedValue: "780 000 €"
+      estimatedValue: "780 000 €",
+      isFavorite: true
     },
     {
       id: "tender-002",
@@ -101,7 +102,8 @@ export default function TenderOffers() {
 
   const filteredTenders = tenders.filter(tender => {
     // Filter by selected tab (status)
-    if (selectedTab !== 'all' && tender.status !== selectedTab) return false;
+    if (selectedTab === 'favorites' && !tender.isFavorite) return false;
+    if (selectedTab !== 'all' && selectedTab !== 'favorites' && tender.status !== selectedTab) return false;
     
     // Filter by search query
     if (searchQuery && 
@@ -140,7 +142,7 @@ export default function TenderOffers() {
           </div>
           
           <Tabs defaultValue="open" className="w-full" onValueChange={setSelectedTab}>
-            <TabsList className="mb-6 w-full grid grid-cols-4">
+            <TabsList className="mb-6 w-full grid grid-cols-5">
               <TabsTrigger value="open" className="flex gap-2 items-center">
                 <Clock size={16} />
                 <span>En cours</span>
@@ -152,6 +154,10 @@ export default function TenderOffers() {
               <TabsTrigger value="assigned" className="flex gap-2 items-center">
                 <CheckCircle size={16} />
                 <span>Attribués</span>
+              </TabsTrigger>
+              <TabsTrigger value="favorites" className="flex gap-2 items-center">
+                <Star size={16} />
+                <span>Favoris</span>
               </TabsTrigger>
               <TabsTrigger value="all">Tous</TabsTrigger>
             </TabsList>
@@ -179,6 +185,13 @@ export default function TenderOffers() {
                 <TabsContent value="assigned" className="m-0 h-full">
                   <TenderTable 
                     tenders={filteredTenders.filter(t => t.status === 'assigned')} 
+                    onSelectTender={handleTenderSelect}
+                    selectedTenderId={selectedTender}
+                  />
+                </TabsContent>
+                <TabsContent value="favorites" className="m-0 h-full">
+                  <TenderTable 
+                    tenders={filteredTenders.filter(t => t.isFavorite)} 
                     onSelectTender={handleTenderSelect}
                     selectedTenderId={selectedTender}
                   />
