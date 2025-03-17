@@ -27,7 +27,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       case 'industriel':
         return '/dashboard-industry';
       default:
-        return '/dashboard';
+        return '/dashboard-promoteur'; // Changed default to promoteur dashboard
     }
   };
   

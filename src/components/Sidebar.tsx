@@ -9,7 +9,7 @@ import { Navigation } from './sidebar/Navigation';
 const ACTIVE_PROFILE_KEY = 'btp-connect-active-profile';
 
 export default function Sidebar() {
-  const [activeProfile, setActiveProfile] = useState<ProfileType>('entreprise-construction');
+  const [activeProfile, setActiveProfile] = useState<ProfileType>('promoteur'); // Default to promoteur
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,6 +18,9 @@ export default function Sidebar() {
     const savedProfile = localStorage.getItem(ACTIVE_PROFILE_KEY) as ProfileType | null;
     if (savedProfile) {
       setActiveProfile(savedProfile);
+    } else {
+      // If no profile is saved, default to promoteur and save it
+      localStorage.setItem(ACTIVE_PROFILE_KEY, 'promoteur');
     }
   }, []);
 
@@ -61,7 +64,7 @@ export default function Sidebar() {
       case 'industriel':
         return '/dashboard-industry';
       default:
-        return '/dashboard';
+        return '/dashboard-promoteur'; // Changed default to promoteur dashboard
     }
   };
 
@@ -79,7 +82,7 @@ export default function Sidebar() {
     <aside className="w-64 h-screen bg-sidebar text-sidebar-foreground flex flex-col border-r border-sidebar-border shadow-sm">
       
       <div className="p-4 flex flex-col gap-3 border-b border-sidebar-border">
-        <Link to="/" className="text-xl font-bold text-white">
+        <Link to="/dashboard-promoteur" className="text-xl font-bold text-white">
           BTP CONNECT
         </Link>
         

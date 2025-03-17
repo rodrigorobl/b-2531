@@ -25,11 +25,11 @@ import CreateTender from '@/pages/CreateTender';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Dashboard />,
+    element: <Navigate to="/dashboard-promoteur" replace />,
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: <Navigate to="/dashboard-promoteur" replace />,
   },
   {
     path: "/dashboard-promoteur",
