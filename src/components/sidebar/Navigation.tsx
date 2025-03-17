@@ -1,18 +1,15 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, BookOpen, List } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
-
 interface NavigationProps {
   activeProfile: ProfileType;
 }
-
 export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
   const location = useLocation();
-  
+
   // Get the dashboard route based on the active profile
   const getDashboardRoute = () => {
     switch (activeProfile) {
@@ -30,20 +27,12 @@ export const Navigation: React.FC<NavigationProps> = ({
         return '/dashboard';
     }
   };
-  
+
   // Check if the current location is one of the dashboard routes
   const isActiveDashboard = () => {
-    const dashboardRoutes = [
-      '/dashboard',
-      '/dashboard-promoteur',
-      '/dashboard-bet',
-      '/dashboard-construction',
-      '/dashboard-services',
-      '/dashboard-industry'
-    ];
+    const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
   };
-  
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
         {getProfileName(activeProfile)}
@@ -55,8 +44,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             <span>Tableau de bord</span>
           </Link>
         </li>
-        {activeProfile === 'promoteur' && (
-          <>
+        {activeProfile === 'promoteur' && <>
             <li>
               <Link to="/projects" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <Briefcase size={18} />
@@ -69,16 +57,13 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <span>Liste des AO</span>
               </Link>
             </li>
-          </>
-        )}
-        {activeProfile !== 'promoteur' && (
-          <li>
+          </>}
+        {activeProfile !== 'promoteur' && <li>
             <Link to="/projects" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
               <Briefcase size={18} />
               <span>Projets</span>
             </Link>
-          </li>
-        )}
+          </li>}
         {(activeProfile === 'entreprise-construction' || activeProfile === 'entreprise-services' || activeProfile === 'industriel') && <>
             <li>
               <Link to="/tenders" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tenders' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -94,10 +79,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             </li>
           </>}
         {(activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre') && <li>
-            <Link to="/tender-specifications" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tender-specifications' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-              <FileText size={18} />
-              <span>Gestion des AO</span>
-            </Link>
+            
           </li>}
         <li>
           <Link to="/directory" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
