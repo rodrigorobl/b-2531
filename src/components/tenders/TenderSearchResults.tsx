@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { TenderSearchResult } from '@/types/tenders';
 import TenderGridView from './TenderGridView';
 import TenderListView from './TenderListView';

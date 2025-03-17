@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import TenderSearchFilters from '@/components/tenders/TenderSearchFilters';
 import TenderSearchResults from '@/components/tenders/TenderSearchResults';
@@ -9,11 +10,11 @@ import TenderSearchBar from '@/components/tenders/TenderSearchBar';
 import TenderStatusTabs from '@/components/tenders/TenderStatusTabs';
 import { mockTenders } from '@/data/mockTenders';
 import { filterTenders } from '@/utils/tenderFilters';
-import { TenderSearchResult } from '@/types/tenders';
 import TenderViewModeSelector from '@/components/tenders/TenderViewModeSelector';
 import TenderFilterSortMenu from '@/components/tenders/TenderFilterSortMenu';
 
 export default function TenderSearch() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [selectedTender, setSelectedTender] = useState<string | null>(null);
@@ -25,6 +26,10 @@ export default function TenderSearch() {
 
   const handleTenderSelect = (tenderId: string) => {
     setSelectedTender(tenderId);
+  };
+
+  const handleViewTenderDetail = (tenderId: string) => {
+    navigate(`/tender-detail/${tenderId}`);
   };
 
   return (
@@ -47,7 +52,7 @@ export default function TenderSearch() {
           <div className="flex h-[calc(100vh-230px)]">
             <TenderSearchFilters />
             
-            <div className="flex-1 max-w-[55%] bg-white rounded-lg shadow-sm mr-4 overflow-auto">
+            <div className="flex-1 max-w-[55%] bg-white rounded-lg shadow-sm mr-4 overflow-hidden">
               <div className="flex items-center justify-between p-4">
                 <div className="text-sm text-muted-foreground">
                   {filteredTenders.length} appels d'offres trouvés
@@ -76,14 +81,6 @@ export default function TenderSearch() {
                     selectedTenderId={selectedTender}
                   />
                 </div>
-              ) : viewMode === 'grid' ? (
-                <TenderSearchResults 
-                  tenders={filteredTenders}
-                  onSelectTender={handleTenderSelect}
-                  selectedTenderId={selectedTender}
-                  viewMode={viewMode}
-                  onViewModeChange={setViewMode}
-                />
               ) : (
                 <TenderSearchResults 
                   tenders={filteredTenders}
@@ -97,6 +94,7 @@ export default function TenderSearch() {
             
             <TenderSearchDetails
               tender={mockTenders.find(t => t.id === selectedTender)}
+              onViewDetail={handleViewTenderDetail}
             />
           </div>
         </div>

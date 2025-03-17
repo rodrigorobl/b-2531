@@ -2,6 +2,8 @@
 import React from 'react';
 import { TenderSearchResult } from '@/types/tenders';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 import TenderEmptyState from './details/TenderEmptyState';
 import TenderDetailsHeader from './details/TenderDetailsHeader';
 import TenderDetailsTab from './details/TenderDetailsTab';
@@ -10,16 +12,28 @@ import TenderDocumentsTab from './details/TenderDocumentsTab';
 
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
+  onViewDetail?: (tenderId: string) => void;
 }
 
-export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps) {
+export default function TenderSearchDetails({ tender, onViewDetail }: TenderSearchDetailsProps) {
   if (!tender) {
     return <TenderEmptyState />;
   }
 
   return (
     <div className="w-96 min-w-96 bg-white rounded-lg shadow-sm flex flex-col">
-      <TenderDetailsHeader tender={tender} />
+      <div className="p-4 border-b">
+        <div className="flex justify-between items-center">
+          <h3 className="font-medium truncate">{tender.projectName}</h3>
+          {onViewDetail && (
+            <Button size="sm" variant="outline" onClick={() => onViewDetail(tender.id)}>
+              <ExternalLink size={14} className="mr-1" />
+              Détails
+            </Button>
+          )}
+        </div>
+        <TenderDetailsHeader tender={tender} />
+      </div>
       
       <Tabs defaultValue="details" className="flex-1 flex flex-col">
         <TabsList className="w-full justify-start px-4 pt-2 bg-transparent">
