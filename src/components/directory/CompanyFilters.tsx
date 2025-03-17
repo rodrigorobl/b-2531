@@ -45,7 +45,6 @@ export default function CompanyFilters({
   };
   
   const regions = [
-    'Toutes régions',
     'Île-de-France',
     'Auvergne-Rhône-Alpes',
     'Nouvelle-Aquitaine',
@@ -62,7 +61,7 @@ export default function CompanyFilters({
   ];
   
   const handleCategoryChange = (value: string) => {
-    if (value === '') {
+    if (value === "null") {
       setSelectedCategory(null);
     } else {
       setSelectedCategory(value as CompanyCategory);
@@ -87,12 +86,12 @@ export default function CompanyFilters({
             <Building size={16} className="text-muted-foreground" />
             Catégorie
           </Label>
-          <Select value={selectedCategory || ''} onValueChange={handleCategoryChange}>
+          <Select value={selectedCategory || "null"} onValueChange={handleCategoryChange}>
             <SelectTrigger>
               <SelectValue placeholder="Toutes catégories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes catégories</SelectItem>
+              <SelectItem value="null">Toutes catégories</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}
@@ -105,12 +104,12 @@ export default function CompanyFilters({
         {selectedCategory && (
           <div className="space-y-2">
             <Label>Spécialité</Label>
-            <Select>
+            <Select defaultValue={specialties[selectedCategory][0]}>
               <SelectTrigger>
                 <SelectValue placeholder="Toutes spécialités" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toutes spécialités</SelectItem>
+                <SelectItem value="_all">Toutes spécialités</SelectItem>
                 {specialties[selectedCategory].map(specialty => (
                   <SelectItem key={specialty} value={specialty}>
                     {specialty}
@@ -126,11 +125,12 @@ export default function CompanyFilters({
             <MapPin size={16} className="text-muted-foreground" />
             Localisation
           </Label>
-          <Select>
+          <Select defaultValue={regions[0]}>
             <SelectTrigger>
               <SelectValue placeholder="Toutes régions" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="_all">Toutes régions</SelectItem>
               {regions.map(region => (
                 <SelectItem key={region} value={region}>
                   {region}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import CompanyDirectoryHeader from '@/components/directory/CompanyDirectoryHeader';
@@ -152,6 +151,8 @@ export default function CompanyDirectory() {
           setSearchQuery={setSearchQuery}
           viewMode={viewMode}
           setViewMode={setViewMode}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
         />
         
         <div className="flex flex-1 overflow-hidden">

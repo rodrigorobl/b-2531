@@ -4,20 +4,24 @@ import { Search, List, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ViewMode } from '@/types/directory';
+import { ViewMode, CompanyCategory } from '@/types/directory';
 
 interface CompanyDirectoryHeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
+  selectedCategory: CompanyCategory | null;
+  setSelectedCategory: (category: CompanyCategory | null) => void;
 }
 
 export default function CompanyDirectoryHeader({
   searchQuery,
   setSearchQuery,
   viewMode,
-  setViewMode
+  setViewMode,
+  selectedCategory,
+  setSelectedCategory
 }: CompanyDirectoryHeaderProps) {
   const categories = [
     { id: 'architecte', label: 'Architectes' },
@@ -27,6 +31,14 @@ export default function CompanyDirectoryHeader({
     { id: 'industriel', label: 'Industriels' },
     { id: 'fournisseur', label: 'Fournisseurs' }
   ];
+  
+  const handleCategoryChange = (value: string) => {
+    if (value === 'all') {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(value as CompanyCategory);
+    }
+  };
   
   return (
     <div className="border-b border-border p-4 space-y-4 bg-background">
@@ -65,7 +77,7 @@ export default function CompanyDirectoryHeader({
         </div>
       </div>
       
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs value={selectedCategory || 'all'} onValueChange={handleCategoryChange} className="w-full">
         <TabsList className="w-full h-auto flex flex-wrap justify-start">
           <TabsTrigger value="all" className="flex-grow-0">Toutes catégories</TabsTrigger>
           {categories.map(category => (
