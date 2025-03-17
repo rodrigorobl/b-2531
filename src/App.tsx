@@ -25,6 +25,7 @@ import DashboardIndustry from '@/pages/dashboards/DashboardIndustry';
 import CreateTender from '@/pages/CreateTender';
 import CompanyDirectory from '@/pages/CompanyDirectory';
 import NotFound from '@/pages/NotFound';
+import MyTenders from '@/pages/MyTenders';
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
   {
     path: "/create-tender",
     element: <CreateTender />
+  },
+  {
+    path: "/my-tenders",
+    element: <MyTenders />
   },
   {
     path: "*",

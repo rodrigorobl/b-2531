@@ -135,6 +135,7 @@ export type Database = {
           entreprise_id: string
           id: string
           montant: number
+          projet_id: string | null
           statut: Database["public"]["Enums"]["devis_statut"] | null
         }
         Insert: {
@@ -144,6 +145,7 @@ export type Database = {
           entreprise_id: string
           id?: string
           montant: number
+          projet_id?: string | null
           statut?: Database["public"]["Enums"]["devis_statut"] | null
         }
         Update: {
@@ -153,6 +155,7 @@ export type Database = {
           entreprise_id?: string
           id?: string
           montant?: number
+          projet_id?: string | null
           statut?: Database["public"]["Enums"]["devis_statut"] | null
         }
         Relationships: [
@@ -175,6 +178,20 @@ export type Database = {
             columns: ["entreprise_id"]
             isOneToOne: false
             referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devis_projet_id_fkey"
+            columns: ["projet_id"]
+            isOneToOne: false
+            referencedRelation: "project_management_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devis_projet_id_fkey"
+            columns: ["projet_id"]
+            isOneToOne: false
+            referencedRelation: "projets"
             referencedColumns: ["id"]
           },
         ]
