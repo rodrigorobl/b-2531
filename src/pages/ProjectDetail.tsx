@@ -11,11 +11,13 @@ import { ProjectHeader } from '@/components/project-detail/ProjectHeader';
 import { ProjectOverviewTab } from '@/components/project-detail/ProjectOverviewTab';
 import { ProjectTendersTab } from '@/components/project-detail/ProjectTendersTab';
 import { ProjectData, TenderData, QuoteData } from '@/types/projectDetail';
+import { useProjectManagement } from '@/hooks/useProjectManagement';
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { fetchProjectDetails } = useProjectManagement();
   
   const [project, setProject] = useState<ProjectData | null>(null);
   const [tenders, setTenders] = useState<TenderData[]>([]);
@@ -51,81 +53,77 @@ export default function ProjectDetail() {
       try {
         console.log("Fetching project with ID:", id);
         
-        // Fetch project details
-        const { data: projectData, error: projectError } = await supabase
-          .from('projets')
-          .select(`
-            *,
-            entreprises:maitre_ouvrage_id(nom)
-          `)
-          .eq('id', id)
-          .maybeSingle();
+        // Utiliser le hook useProjectManagement pour récupérer les détails du projet
+        const projectDetail = await fetchProjectDetails(id);
         
-        if (projectError) {
-          console.error("Error fetching project:", projectError);
-          throw projectError;
-        }
-        
-        if (!projectData) {
+        if (!projectDetail) {
           console.error("Project not found with ID:", id);
           setError("Projet non trouvé");
           setIsLoading(false);
           return;
         }
         
-        console.log("Project data fetched:", projectData);
+        console.log("Project data fetched:", projectDetail);
         
-        // Fetch tenders for this project
-        const { data: tendersData, error: tendersError } = await supabase
-          .from('appels_offres')
-          .select('*')
-          .eq('projet_id', id);
+        // Transformer les données du projet dans le format attendu par les composants
+        const projectData: ProjectData = {
+          id: projectDetail.id,
+          nom: projectDetail.projectName,
+          description: projectDetail.description,
+          type_projet: projectDetail.projectType,
+          localisation: projectDetail.location,
+          budget_estime: projectDetail.budget,
+          statut: projectDetail.status,
+          date_debut: projectDetail.startDate,
+          date_fin: projectDetail.endDate,
+          maitre_ouvrage_id: '', // Cette info peut être manquante
+          maitre_ouvrage_nom: projectDetail.clientName,
+          progress_percentage: projectDetail.progressPercentage
+        };
         
-        if (tendersError) {
-          console.error("Error fetching tenders:", tendersError);
-          throw tendersError;
-        }
+        // Transformer les données des appels d'offres dans le format attendu
+        const tendersData: TenderData[] = projectDetail.tenders.map(tender => ({
+          id: tender.id,
+          lot: tender.name,
+          description: tender.description || '',
+          type_appel_offre: tender.type,
+          statut: mapStatusToTenderStatus(tender.status),
+          date_limite: tender.deadline,
+          budget: null, // Cette info peut être manquante dans la transformation
+          quotes_received: tender.quotesReceived,
+          progress: tender.progress,
+          lots_total: tender.lotsTotal,
+          lots_assigned: tender.lotsAssigned
+        }));
         
-        console.log("Tenders fetched:", tendersData.length);
-          
-        // Calculate overall project progress
-        const projectProgress = calculateProjectProgress(tendersData);
-        
-        // Update state with fetched data
-        setProject({
-          ...projectData,
-          maitre_ouvrage_nom: projectData.entreprises?.nom,
-          progress_percentage: projectProgress
-        });
+        setProject(projectData);
         setTenders(tendersData);
         
-        // Fetch quotes for all tenders
-        if (tendersData.length > 0) {
-          const tendersWithQuotes: { [key: string]: QuoteData[] } = {};
+        // Maintenant récupérer les devis pour chaque appel d'offre
+        const tenderQuotes: { [key: string]: QuoteData[] } = {};
+        
+        for (const tender of tendersData) {
+          const { data: quotesData, error: quotesError } = await supabase
+            .from('devis')
+            .select(`
+              *,
+              entreprises:entreprise_id(nom)
+            `)
+            .eq('appel_offre_id', tender.id);
           
-          for (const tender of tendersData) {
-            const { data: quotesData, error: quotesError } = await supabase
-              .from('devis')
-              .select(`
-                *,
-                entreprises:entreprise_id(nom)
-              `)
-              .eq('appel_offre_id', tender.id);
-            
-            if (!quotesError && quotesData) {
-              tendersWithQuotes[tender.id] = quotesData.map(quote => ({
-                ...quote,
-                entreprise_nom: quote.entreprises?.nom
-              }));
-            }
+          if (!quotesError && quotesData) {
+            tenderQuotes[tender.id] = quotesData.map(quote => ({
+              ...quote,
+              entreprise_nom: quote.entreprises?.nom
+            }));
           }
-          
-          setQuotes(tendersWithQuotes);
-          
-          // Select the first tender by default
-          if (tendersData.length > 0 && !selectedTenderId) {
-            setSelectedTenderId(tendersData[0].id);
-          }
+        }
+        
+        setQuotes(tenderQuotes);
+        
+        // Select the first tender by default
+        if (tendersData.length > 0 && !selectedTenderId) {
+          setSelectedTenderId(tendersData[0].id);
         }
       } catch (error) {
         console.error('Error fetching project data:', error);
@@ -141,7 +139,21 @@ export default function ProjectDetail() {
     }
     
     fetchProjectData();
-  }, [id, toast]);
+  }, [id, toast, fetchProjectDetails]);
+  
+  // Helper function to map statuses
+  const mapStatusToTenderStatus = (status: string): 'Ouvert' | 'Clôturé' | 'Attribué' => {
+    switch (status) {
+      case 'open':
+        return 'Ouvert';
+      case 'closed':
+        return 'Clôturé';
+      case 'assigned':
+        return 'Attribué';
+      default:
+        return 'Ouvert';
+    }
+  };
   
   // Calculate project progress based on tenders
   const calculateProjectProgress = (tenders: TenderData[]): number => {

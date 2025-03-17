@@ -48,6 +48,8 @@ export default function ProjectManagementTable({
   };
 
   const handleRowClick = (projectId: string) => {
+    // Vérification de l'ID avant de naviguer
+    console.log("Navigating to project detail with ID:", projectId);
     navigate(`/project-detail/${projectId}`);
   };
 
@@ -140,6 +142,7 @@ export default function ProjectManagementTable({
                       className="flex items-center gap-1"
                       onClick={(e) => {
                         e.stopPropagation();
+                        console.log("Button click - Navigating to project detail with ID:", project.id);
                         navigate(`/project-detail/${project.id}`);
                       }}
                     >
