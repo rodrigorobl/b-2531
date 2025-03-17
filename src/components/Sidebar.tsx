@@ -30,12 +30,21 @@ export default function Sidebar() {
   };
 
   const handleProfileChange = (value: ProfileType) => {
+    // Ne pas changer de profil si on est sur la page project-detail
+    if (location.pathname.includes('/project-detail/') && value !== 'promoteur') {
+      // Si on essaie de changer pour un profil non-promoteur depuis la page project-detail,
+      // on empêche le changement et on reste sur 'promoteur'
+      return;
+    }
+    
     // Stocker le profil sélectionné dans localStorage
     localStorage.setItem(ACTIVE_PROFILE_KEY, value);
     setActiveProfile(value);
     
-    // Rediriger vers le dashboard correspondant
-    navigateToProfileDashboard(value);
+    // Rediriger vers le dashboard correspondant sauf si on est sur project-detail
+    if (!location.pathname.includes('/project-detail/')) {
+      navigateToProfileDashboard(value);
+    }
   };
 
   // Fonction utilitaire pour obtenir l'URL du dashboard selon le profil

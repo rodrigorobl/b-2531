@@ -22,7 +22,7 @@ export default function ProjectDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   
-  // Check if user has promoteur profile
+  // Check if user has promoteur profile, but don't change the profile
   useEffect(() => {
     const activeProfile = localStorage.getItem('btp-connect-active-profile');
     if (activeProfile !== 'promoteur') {
