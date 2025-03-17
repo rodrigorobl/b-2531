@@ -31,31 +31,41 @@ export default function CompanyDirectory() {
         
         if (data) {
           // Transformer les données au format Company
-          const transformedCompanies: Company[] = data.map(company => ({
-            id: company.id,
-            name: company.nom,
-            logo: company.logo || 'https://github.com/shadcn.png', // Logo par défaut
-            category: company.categorie_principale.toLowerCase() as CompanyCategory,
-            specialty: company.specialite,
-            location: company.ville || 'Non spécifié',
-            address: company.adresse || '',
-            rating: company.note_moyenne,
-            reviewCount: company.nombre_avis,
-            description: `Entreprise spécialisée en ${company.specialite}`,
-            coordinates: company.coordinates ? {
-              lat: company.coordinates.lat,
-              lng: company.coordinates.lng
-            } : {
-              lat: 48.8566,
-              lng: 2.3522
-            }, // Coordonnées par défaut (Paris) si non spécifiées
-            contact: {
-              phone: company.telephone || '01 23 45 67 89',
-              email: company.email || 'contact@example.com',
-              website: company.site_web || 'www.example.com'
-            },
-            certifications: []
-          }));
+          const transformedCompanies: Company[] = data.map(company => {
+            // Safely handle coordinates
+            let coordinates = { lat: 48.8566, lng: 2.3522 }; // Default to Paris
+            
+            if (company.coordinates && typeof company.coordinates === 'object') {
+              // Check if coordinates has lat and lng properties
+              const coords = company.coordinates as any;
+              if (coords.lat !== undefined && coords.lng !== undefined) {
+                coordinates = {
+                  lat: Number(coords.lat),
+                  lng: Number(coords.lng)
+                };
+              }
+            }
+            
+            return {
+              id: company.id,
+              name: company.nom,
+              logo: company.logo || 'https://github.com/shadcn.png', // Logo par défaut
+              category: company.categorie_principale.toLowerCase() as CompanyCategory,
+              specialty: company.specialite,
+              location: company.ville || 'Non spécifié',
+              address: company.adresse || '',
+              rating: company.note_moyenne,
+              reviewCount: company.nombre_avis,
+              description: `Entreprise spécialisée en ${company.specialite}`,
+              coordinates: coordinates,
+              contact: {
+                phone: company.telephone || '01 23 45 67 89',
+                email: company.email || 'contact@example.com',
+                website: company.site_web || 'www.example.com'
+              },
+              certifications: []
+            };
+          });
           
           setCompanies(transformedCompanies);
         }

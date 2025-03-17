@@ -12,6 +12,7 @@ interface CompanyMapProps {
   setSelectedCompany: (company: Company | null) => void;
 }
 
+// Define a type that matches what we expect from Supabase
 interface SupabaseCompany {
   id: string;
   nom: string;
@@ -67,8 +68,32 @@ export default function CompanyMap({
         if (error) throw error;
         
         if (data) {
-          // Filter out companies without coordinates and cast to SupabaseCompany type
-          const companiesWithCoordinates = data.filter(company => company.coordinates !== null) as SupabaseCompany[];
+          // Filter out companies without coordinates and safely type cast
+          const companiesWithCoordinates = data
+            .filter(company => company.coordinates !== null)
+            .map(company => {
+              // Ensure coordinates are properly typed
+              let safeCompany = {...company} as unknown as SupabaseCompany;
+              
+              // Ensure coordinates have proper structure
+              if (company.coordinates && typeof company.coordinates === 'object') {
+                const coords = company.coordinates as any;
+                if (coords.lat !== undefined && coords.lng !== undefined) {
+                  safeCompany.coordinates = {
+                    lat: Number(coords.lat),
+                    lng: Number(coords.lng)
+                  };
+                } else {
+                  safeCompany.coordinates = null;
+                }
+              } else {
+                safeCompany.coordinates = null;
+              }
+              
+              return safeCompany;
+            })
+            .filter(company => company.coordinates !== null);
+            
           setSupabaseCompanies(companiesWithCoordinates);
         }
       } catch (err) {

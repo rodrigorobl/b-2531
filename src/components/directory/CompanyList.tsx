@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
-import { Building, MapPin, Star, Phone, Mail, ExternalLink, Award, Loader2, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { Company } from '@/types/directory';
-import CompanyDetailDialog from './CompanyDetailDialog';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertTriangle, Loader2, MapPin, Phone, Mail, Globe, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 interface CompanyListProps {
   companies: Company[];
@@ -20,13 +20,9 @@ interface SupabaseCompany {
   categorie_principale: string;
   specialite: string;
   ville: string;
-  adresse: string;
-  region: string;
-  pays: string;
-  telephone: string;
-  email: string;
-  site_web: string;
-  logo: string;
+  telephone: string | null;
+  email: string | null;
+  site_web: string | null;
   note_moyenne: number;
   nombre_avis: number;
   coordinates: {
@@ -40,12 +36,10 @@ export default function CompanyList({
   selectedCompany,
   setSelectedCompany
 }: CompanyListProps) {
-  const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [supabaseCompanies, setSupabaseCompanies] = useState<SupabaseCompany[]>([]);
   
-  // Récupérer les entreprises depuis Supabase
   useEffect(() => {
     const fetchCompanies = async () => {
       setLoading(true);
@@ -58,11 +52,40 @@ export default function CompanyList({
         if (error) throw error;
         
         if (data) {
-          setSupabaseCompanies(data as unknown as SupabaseCompany[]);
+          const processedCompanies = data.map(company => {
+            const typedCompany: SupabaseCompany = {
+              id: company.id,
+              nom: company.nom,
+              categorie_principale: company.categorie_principale,
+              specialite: company.specialite,
+              ville: company.ville || null,
+              telephone: company.telephone || null,
+              email: company.email || null,
+              site_web: company.site_web || null,
+              note_moyenne: company.note_moyenne || 0,
+              nombre_avis: company.nombre_avis || 0,
+              coordinates: null
+            };
+            
+            if (company.coordinates && typeof company.coordinates === 'object') {
+              const coords = company.coordinates as any;
+              if (coords.lat !== undefined && coords.lng !== undefined) {
+                typedCompany.coordinates = {
+                  lat: Number(coords.lat),
+                  lng: Number(coords.lng)
+                };
+              }
+            }
+            
+            return typedCompany;
+          });
+          
+          setSupabaseCompanies(processedCompanies);
         }
       } catch (err) {
         console.error('Erreur lors de la récupération des entreprises:', err);
-        setError('Impossible de charger les données des entreprises');
+        toast.error('Impossible de charger les données des entreprises');
+        setError('Erreur de chargement');
       } finally {
         setLoading(false);
       }
@@ -71,20 +94,19 @@ export default function CompanyList({
     fetchCompanies();
   }, []);
 
-  // Mapper les entreprises Supabase au format Company pour l'interface
   const mapSupabaseToCompanies = (): Company[] => {
     return supabaseCompanies.map(company => ({
       id: company.id,
       name: company.nom,
-      logo: company.logo || 'https://github.com/shadcn.png', // Logo par défaut si null
+      logo: 'https://github.com/shadcn.png',
       category: company.categorie_principale.toLowerCase() as any,
       specialty: company.specialite,
       location: company.ville || 'Non spécifié',
-      address: company.adresse || '',
+      address: '',
       rating: company.note_moyenne,
       reviewCount: company.nombre_avis,
       description: `Entreprise spécialisée en ${company.specialite}`,
-      coordinates: company.coordinates || { lat: 48.8566, lng: 2.3522 }, // Default to Paris if no coordinates
+      coordinates: company.coordinates || { lat: 48.8566, lng: 2.3522 },
       contact: {
         phone: company.telephone || '01 23 45 67 89',
         email: company.email || 'contact@example.com',
@@ -93,7 +115,7 @@ export default function CompanyList({
       certifications: []
     }));
   };
-  
+
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'architecte': return 'Architecte';
@@ -105,7 +127,7 @@ export default function CompanyList({
       default: return category;
     }
   };
-  
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'architecte': return 'bg-amber-100 text-amber-800 border-amber-200';
@@ -117,14 +139,14 @@ export default function CompanyList({
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-  
+
   const handleShowDetail = (company: Company) => {
     setSelectedCompany(company);
     setShowDetail(true);
   };
 
   const displayCompanies = mapSupabaseToCompanies();
-  
+
   if (loading) {
     return (
       <div className="p-4 flex items-center justify-center h-full">
@@ -145,7 +167,7 @@ export default function CompanyList({
       </div>
     );
   }
-  
+
   return (
     <div className="p-4">
       <div className="mb-4 flex justify-between items-center">
