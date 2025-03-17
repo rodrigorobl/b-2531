@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { Company, CompanyCategory, mapSupabaseCategory } from '@/types/directory';
+import { Company, CompanyCategory } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -16,7 +16,7 @@ export default function useCompanyDirectory({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
-
+  
   // Use useCallback to avoid recreating this function on every render
   const fetchCompanies = useCallback(async () => {
     setLoading(true);
@@ -69,6 +69,12 @@ export default function useCompanyDirectory({
             }
           }
           
+          // Generate a description if none exists, using the company's speciality
+          const description = `Entreprise spécialisée en ${company.specialite || 'construction'}`;
+          
+          // Provide default certifications as an empty array
+          const certifications: string[] = [];
+          
           return {
             id: company.id,
             name: company.nom,
@@ -79,14 +85,14 @@ export default function useCompanyDirectory({
             address: company.adresse || '',
             rating: company.note_moyenne || 0,
             reviewCount: company.nombre_avis || 0,
-            description: company.description || `Entreprise spécialisée en ${company.specialite || 'construction'}`,
+            description, // Using the generated description
             coordinates,
             contact: {
               phone: company.telephone || '01 23 45 67 89',
               email: company.email || 'contact@example.com',
               website: company.site_web || 'www.example.com'
             },
-            certifications: company.certifications || []
+            certifications // Using the default empty array
           };
         });
         
