@@ -25,6 +25,7 @@ import CreateTender from "./pages/CreateTender";
 import CompanyDirectory from "./pages/CompanyDirectory";
 import ProjectsList from "./pages/ProjectsList";
 import LotAnalysis from "./pages/LotAnalysis";
+import TenderList from "./pages/TenderList";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
             <Route path="/tender/:projectId/lot/:lotId" element={<LotAnalysis />} />
             <Route path="/tender-management" element={<Index />} />
+            <Route path="/tender-list" element={<TenderList />} />
             <Route path="/create-tender" element={<CreateTender />} />
             <Route path="/projects" element={<ProjectsList />} />
             <Route path="/company" element={<Company />} />
