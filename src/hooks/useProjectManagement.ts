@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ProjectSummary, ProjectDetail } from '@/types/projects';
+import { ProjectSummary, ProjectDetail, TenderStatus } from '@/types/projects';
+import { mapStatus } from '@/utils/tenderStatusUtils';
 
 export function useProjectManagement() {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
@@ -17,7 +17,6 @@ export function useProjectManagement() {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
-      // Récupérer les projets depuis la table projets
       const { data, error } = await supabase
         .from('projets')
         .select(`
@@ -32,7 +31,6 @@ export function useProjectManagement() {
       const projectsList: ProjectSummary[] = [];
 
       for (const project of data) {
-        // Récupérer le nombre d'appels d'offres par projet
         const { data: tendersData, error: tendersError } = await supabase
           .from('appels_offres')
           .select('*')
@@ -40,11 +38,9 @@ export function useProjectManagement() {
 
         if (tendersError) throw tendersError;
 
-        // Calculer le nombre d'appels d'offres assignés
         const assignedTenders = tendersData ? tendersData.filter(tender => 
           tender.statut === 'Attribué').length : 0;
 
-        // Calculer le pourcentage de progression
         const progressPercentage = tendersData && tendersData.length > 0
           ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
           : 0;
@@ -84,7 +80,6 @@ export function useProjectManagement() {
   const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
     setIsLoading(true);
     try {
-      // Récupérer les détails du projet
       const { data: projectData, error: projectError } = await supabase
         .from('projets')
         .select(`
@@ -96,7 +91,6 @@ export function useProjectManagement() {
 
       if (projectError) throw projectError;
 
-      // Récupérer les appels d'offres liés au projet
       const { data: tendersData, error: tendersError } = await supabase
         .from('appels_offres')
         .select('*')
@@ -104,19 +98,16 @@ export function useProjectManagement() {
 
       if (tendersError) throw tendersError;
 
-      // Calculer le pourcentage de progression
       const progressPercentage = tendersData && tendersData.length > 0
         ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
         : 0;
 
-      // Transformer les données des appels d'offres
       const tenders = tendersData.map(tender => ({
         id: tender.id,
         name: tender.lot,
         description: tender.description,
         type: tender.type_appel_offre,
-        status: tender.statut === 'Ouvert' ? 'open' : 
-               tender.statut === 'Clôturé' ? 'closed' : 'assigned',
+        status: mapStatus(tender.statut) as TenderStatus,
         quotesReceived: tender.quotes_received || 0,
         deadline: tender.date_limite,
         lotsTotal: tender.lots_total || 1,
