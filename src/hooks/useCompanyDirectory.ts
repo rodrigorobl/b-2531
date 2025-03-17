@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Company, CompanyCategory, mapSupabaseCategory } from '@/types/directory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -17,86 +17,93 @@ export default function useCompanyDirectory({
   const [error, setError] = useState<string | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
 
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      setLoading(true);
-      try {
-        console.log("Fetching companies from Supabase...");
-        let query = supabase
-          .from('entreprises')
-          .select('*')
-          .order('nom');
+  // Use useCallback to avoid recreating this function on every render
+  const fetchCompanies = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      console.log("Fetching companies from Supabase...");
+      console.log("Selected category:", selectedCategory);
+      
+      let query = supabase
+        .from('entreprises')
+        .select('*');
 
-        if (selectedCategory) {
-          let supabaseCategory;
-          switch (selectedCategory) {
-            case 'architecte': supabaseCategory = 'Architecte'; break;
-            case 'moe_bet': supabaseCategory = 'MOE_BET'; break;
-            case 'construction': supabaseCategory = 'Construction'; break;
-            case 'service': supabaseCategory = 'Service'; break;
-            case 'industriel': supabaseCategory = 'Industriel'; break;
-            case 'fournisseur': supabaseCategory = 'Fournisseur'; break;
-            default: supabaseCategory = null;
-          }
-          
-          if (supabaseCategory) {
-            query = query.eq('categorie_principale', supabaseCategory);
-          }
+      if (selectedCategory) {
+        let supabaseCategory;
+        switch (selectedCategory) {
+          case 'architecte': supabaseCategory = 'Architecte'; break;
+          case 'moe_bet': supabaseCategory = 'MOE_BET'; break;
+          case 'construction': supabaseCategory = 'Construction'; break;
+          case 'service': supabaseCategory = 'Service'; break;
+          case 'industriel': supabaseCategory = 'Industriel'; break;
+          case 'fournisseur': supabaseCategory = 'Fournisseur'; break;
+          default: supabaseCategory = null;
         }
         
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        
-        if (data) {
-          console.log("Companies data retrieved:", data);
-          
-          const transformedCompanies = data.map(company => {
-            let coordinates = { lat: 48.8566, lng: 2.3522 };
-            if (company.coordinates && typeof company.coordinates === 'object') {
-              const coords = company.coordinates as any;
-              if (coords.lat !== undefined && coords.lng !== undefined) {
-                coordinates = {
-                  lat: Number(coords.lat),
-                  lng: Number(coords.lng)
-                };
-              }
-            }
-            
-            return {
-              id: company.id,
-              name: company.nom,
-              logo: company.logo || 'https://github.com/shadcn.png',
-              category: mapSupabaseCategory(company.categorie_principale),
-              specialty: company.specialite,
-              location: company.ville || 'Non spécifié',
-              address: company.adresse || '',
-              rating: company.note_moyenne || 0,
-              reviewCount: company.nombre_avis || 0,
-              description: `Entreprise spécialisée en ${company.specialite}`,
-              coordinates,
-              contact: {
-                phone: company.telephone || '01 23 45 67 89',
-                email: company.email || 'contact@example.com',
-                website: company.site_web || 'www.example.com'
-              },
-              certifications: []
-            };
-          });
-          
-          setCompanies(transformedCompanies);
+        if (supabaseCategory) {
+          console.log("Filtering by category:", supabaseCategory);
+          query = query.eq('categorie_principale', supabaseCategory);
         }
-      } catch (err) {
-        console.error('Erreur lors de la récupération des entreprises:', err);
-        toast.error('Impossible de charger les données des entreprises');
-        setError('Erreur de chargement');
-      } finally {
-        setLoading(false);
       }
-    };
-    
-    fetchCompanies();
+      
+      const { data, error: fetchError } = await query;
+      
+      if (fetchError) {
+        console.error("Supabase fetch error:", fetchError);
+        throw fetchError;
+      }
+      
+      if (data) {
+        console.log("Companies data retrieved:", data);
+        
+        const transformedCompanies = data.map(company => {
+          let coordinates = { lat: 48.8566, lng: 2.3522 }; // Default to Paris
+          if (company.coordinates && typeof company.coordinates === 'object') {
+            const coords = company.coordinates as any;
+            if (coords.lat !== undefined && coords.lng !== undefined) {
+              coordinates = {
+                lat: Number(coords.lat),
+                lng: Number(coords.lng)
+              };
+            }
+          }
+          
+          return {
+            id: company.id,
+            name: company.nom,
+            logo: company.logo || 'https://github.com/shadcn.png',
+            category: mapSupabaseCategory(company.categorie_principale),
+            specialty: company.specialite || 'Non spécifié',
+            location: company.ville || 'Non spécifié',
+            address: company.adresse || '',
+            rating: company.note_moyenne || 0,
+            reviewCount: company.nombre_avis || 0,
+            description: company.description || `Entreprise spécialisée en ${company.specialite || 'construction'}`,
+            coordinates,
+            contact: {
+              phone: company.telephone || '01 23 45 67 89',
+              email: company.email || 'contact@example.com',
+              website: company.site_web || 'www.example.com'
+            },
+            certifications: company.certifications || []
+          };
+        });
+        
+        setCompanies(transformedCompanies);
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération des entreprises:', err);
+      toast.error('Impossible de charger les données des entreprises');
+      setError('Erreur lors du chargement des données');
+    } finally {
+      setLoading(false);
+    }
   }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchCompanies();
+  }, [fetchCompanies]);
 
   // Filter companies based on search query
   const filteredCompanies = companies.filter(company => {
@@ -113,6 +120,7 @@ export default function useCompanyDirectory({
   return {
     companies: filteredCompanies,
     loading,
-    error
+    error,
+    refetch: fetchCompanies
   };
 }

@@ -24,7 +24,6 @@ const defaultCenter = {
 };
 
 export default function CompanyMap({
-  companies: ignoredCompanies,
   selectedCompany,
   setSelectedCompany,
   searchQuery = '',

@@ -25,14 +25,15 @@ export default function CompanyDirectoryHeader({
 }: CompanyDirectoryHeaderProps) {
   const categories = [
     { id: 'architecte', label: 'Architectes' },
-    { id: 'bureau-etudes', label: 'MOE & BET' },
-    { id: 'construction', label: 'Entreprises de construction' },
-    { id: 'services', label: 'Entreprises de services' },
+    { id: 'moe_bet', label: 'MOE & BET' },
+    { id: 'construction', label: 'Construction' },
+    { id: 'service', label: 'Services' },
     { id: 'industriel', label: 'Industriels' },
     { id: 'fournisseur', label: 'Fournisseurs' }
   ];
   
   const handleCategoryChange = (value: string) => {
+    console.log("Category changed to:", value);
     if (value === 'all') {
       setSelectedCategory(null);
     } else {

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Company, CompanyCategory } from '@/types/directory';
 import CompanyCard from './CompanyCard';
 import CompanyDetailDialog from './CompanyDetailDialog';
@@ -15,13 +15,12 @@ interface CompanyListProps {
 }
 
 export default function CompanyList({
-  companies: ignoredCompanies,
   selectedCompany,
   setSelectedCompany,
   searchQuery = '',
   selectedCategory = null
 }: CompanyListProps) {
-  const [showDetail, setShowDetail] = useState(false);
+  const [showDetail, setShowDetail] = React.useState(false);
   
   const { companies, loading, error } = useCompanyDirectory({
     searchQuery,
