@@ -67,11 +67,9 @@ export default function TenderManagementTable({
 
   if (tenders.length === 0) {
     return (
-      <TableRow>
-        <TableCell colSpan={10} className="text-center py-10 text-muted-foreground">
-          Aucun appel d'offres correspondant à vos critères
-        </TableCell>
-      </TableRow>
+      <div className="text-center py-10 text-muted-foreground">
+        Aucun appel d'offres correspondant à vos critères
+      </div>
     );
   }
 
