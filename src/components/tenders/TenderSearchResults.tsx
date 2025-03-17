@@ -24,6 +24,12 @@ export default function TenderSearchResults({
   const [sortBy, setSortBy] = useState<'date' | 'budget' | 'location'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
+  // Si le mode d'affichage est carte, on ne rend pas ce composant du tout
+  // car TenderMap sera affiché à la place par le parent
+  if (viewMode === 'map') {
+    return null;
+  }
+
   return (
     <div className="flex-1 bg-white rounded-lg shadow-sm mr-4 overflow-auto p-4">
       <div className="flex items-center justify-between mb-4">
@@ -37,14 +43,12 @@ export default function TenderSearchResults({
             onViewModeChange={onViewModeChange} 
           />
           
-          {viewMode === 'map' && (
-            <TenderFilterSortMenu
-              sortBy={sortBy}
-              sortDirection={sortDirection}
-              setSortBy={setSortBy}
-              setSortDirection={setSortDirection}
-            />
-          )}
+          <TenderFilterSortMenu
+            sortBy={sortBy}
+            sortDirection={sortDirection}
+            setSortBy={setSortBy}
+            setSortDirection={setSortDirection}
+          />
         </div>
       </div>
 
@@ -54,13 +58,13 @@ export default function TenderSearchResults({
           selectedTenderId={selectedTenderId} 
           onSelectTender={onSelectTender} 
         />
-      ) : viewMode === 'list' ? (
+      ) : (
         <TenderListView 
           tenders={tenders} 
           selectedTenderId={selectedTenderId} 
           onSelectTender={onSelectTender} 
         />
-      ) : null}
+      )}
     </div>
   );
 }

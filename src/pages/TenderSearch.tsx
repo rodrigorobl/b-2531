@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import TenderSearchFilters from '@/components/tenders/TenderSearchFilters';
@@ -186,6 +187,7 @@ export default function TenderSearch() {
                   tenders={filteredTenders}
                   onSelectTender={handleTenderSelect}
                   selectedTenderId={selectedTender}
+                  onViewModeChange={setViewMode}
                 />
               ) : (
                 <TenderSearchResults 

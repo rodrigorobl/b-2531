@@ -1,14 +1,18 @@
+
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Building, Star } from 'lucide-react';
+import TenderViewModeSelector from './TenderViewModeSelector';
+import TenderFilterSortMenu from './TenderFilterSortMenu';
 
 interface TenderMapProps {
   tenders: TenderSearchResult[];
   onSelectTender: (tenderId: string) => void;
   selectedTenderId: string | null;
+  onViewModeChange: (mode: 'grid' | 'list' | 'map') => void;
 }
 
 const containerStyle = {
@@ -30,9 +34,11 @@ const cityCoordinates: Record<string, { lat: number, lng: number }> = {
   'Montpellier': { lat: 43.6108, lng: 3.8767 }
 };
 
-const TenderMap = ({ tenders, onSelectTender, selectedTenderId }: TenderMapProps) => {
+const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange }: TenderMapProps) => {
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
   const [infoWindowOpen, setInfoWindowOpen] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'location'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -92,8 +98,29 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId }: TenderMapProps
 
   return (
     <div className="flex-1 rounded-lg shadow-sm mr-4 overflow-hidden flex flex-col">
+      {/* En-tête avec le sélecteur de vue et les filtres */}
+      <div className="p-4 bg-white border-b flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          {tenders.length} appels d'offres trouvés
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <TenderViewModeSelector 
+            viewMode="map" 
+            onViewModeChange={onViewModeChange} 
+          />
+          
+          <TenderFilterSortMenu
+            sortBy={sortBy}
+            sortDirection={sortDirection}
+            setSortBy={setSortBy}
+            setSortDirection={setSortDirection}
+          />
+        </div>
+      </div>
+
       {/* Liste des tenders sur le côté */}
-      <div className="h-1/3 overflow-auto p-3 border-b">
+      <div className="h-1/3 overflow-auto p-3 border-b bg-white">
         <h3 className="text-sm font-medium mb-2">Résultats ({tenders.length})</h3>
         <div className="space-y-2">
           {tenders.map(tender => (
@@ -140,7 +167,7 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId }: TenderMapProps
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={{ lat: 46.227638, lng: 2.213749 }} // Centre de la France
-            zoom={5}
+            zoom: 5,
             onLoad={onMapLoad}
             options={{
               zoomControl: true,
@@ -170,9 +197,10 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId }: TenderMapProps
                       strokeWeight: 2,
                     }}
                     animation={selectedTenderId === tender.id ? google.maps.Animation.BOUNCE : undefined}
+                    title={tender.projectName} // Tooltip quand on survole le marqueur
                   />
                   
-                  {infoWindowOpen === tender.id && (
+                  {(infoWindowOpen === tender.id || selectedTenderId === tender.id) && (
                     <InfoWindow
                       position={coords}
                       onCloseClick={() => setInfoWindowOpen(null)}
@@ -182,7 +210,14 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId }: TenderMapProps
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '12px', color: '#666' }}>
                           <span>{tender.projectType}</span>
                           <span style={{ margin: '0 4px' }}>•</span>
+                          <span>{tender.location}</span>
+                          <span style={{ margin: '0 4px' }}>•</span>
                           <span>{tender.budget}</span>
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#666', marginBottom: '6px' }}>
+                          {tender.description.length > 100 
+                            ? tender.description.substring(0, 100) + '...' 
+                            : tender.description}
                         </div>
                         <div style={{ marginTop: '8px', fontSize: '12px' }}>
                           <span style={{ padding: '2px 6px', borderRadius: '9999px', backgroundColor: getStatusColor(tender.status), color: 'white', fontSize: '11px' }}>
