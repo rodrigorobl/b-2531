@@ -18,6 +18,7 @@ export function useProjectManagement() {
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
+      console.log("Fetching projects from the 'projets' table...");
       // Fetch all projects from the projets table
       const { data, error } = await supabase
         .from('projets')
@@ -28,58 +29,62 @@ export function useProjectManagement() {
 
       if (error) throw error;
 
-      console.log("Données projets récupérées:", data);
+      console.log("Projects data retrieved:", data);
 
       // Transform the data into ProjectSummary objects
       const projectsList: ProjectSummary[] = [];
 
-      for (const project of data || []) {
-        // Fetch tenders for each project
-        const { data: tendersData, error: tendersError } = await supabase
-          .from('appels_offres')
-          .select('*')
-          .eq('projet_id', project.id);
+      if (data && data.length > 0) {
+        for (const project of data) {
+          // Fetch tenders for each project
+          const { data: tendersData, error: tendersError } = await supabase
+            .from('appels_offres')
+            .select('*')
+            .eq('projet_id', project.id);
 
-        if (tendersError) throw tendersError;
+          if (tendersError) {
+            console.error('Error fetching tenders for project:', project.id, tendersError);
+            // Continue with the next project instead of throwing
+            continue;
+          }
 
-        const assignedTenders = tendersData ? tendersData.filter(tender => 
-          tender.statut === 'Attribué').length : 0;
+          const assignedTenders = tendersData ? tendersData.filter(tender => 
+            tender.statut === 'Attribué').length : 0;
 
-        const progressPercentage = tendersData && tendersData.length > 0
-          ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
-          : 0;
+          const progressPercentage = tendersData && tendersData.length > 0
+            ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
+            : 0;
 
-        projectsList.push({
-          id: project.id,
-          projectName: project.nom,
-          projectType: project.type_projet,
-          description: project.description,
-          location: project.localisation || '',
-          budget: project.budget_estime || 0,
-          status: project.statut || 'En cours',
-          startDate: project.date_debut,
-          endDate: project.date_fin,
-          tendersCount: tendersData ? tendersData.length : 0,
-          tendersAssigned: assignedTenders,
-          progressPercentage: progressPercentage,
-          clientName: project.entreprises?.nom || 'Client inconnu'
-        });
-      }
+          projectsList.push({
+            id: project.id,
+            projectName: project.nom,
+            projectType: project.type_projet,
+            description: project.description,
+            location: project.localisation || '',
+            budget: project.budget_estime || 0,
+            status: project.statut || 'En cours',
+            startDate: project.date_debut,
+            endDate: project.date_fin,
+            tendersCount: tendersData ? tendersData.length : 0,
+            tendersAssigned: assignedTenders,
+            progressPercentage: progressPercentage,
+            clientName: project.entreprises?.nom || 'Client inconnu'
+          });
+        }
 
-      // Only use demo projects if no projects were found
-      if (projectsList.length === 0) {
+        setProjects(projectsList);
+        console.log("Projects loaded from database:", projectsList);
+      } else {
+        // Only use demo projects if no projects were found
         const demoProjects = getLocalDemoProjects();
         setProjects(demoProjects);
-        console.log("Aucun projet trouvé dans la base de données, utilisation des projets de démonstration:", demoProjects);
+        console.log("No projects found in database, using demo projects:", demoProjects);
         
         toast({
           title: "Information",
-          description: "Aucun projet trouvé. Affichage des projets de démonstration.",
+          description: "Aucun projet trouvé dans la base de données. Affichage des projets de démonstration.",
           variant: "default",
         });
-      } else {
-        setProjects(projectsList);
-        console.log("Projets chargés depuis la base de données:", projectsList);
       }
       
       setError(null);
