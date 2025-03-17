@@ -20,6 +20,7 @@ import Company from "./pages/Company";
 import EditCompany from "./pages/EditCompany";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
+import UserProfileSettings from "./pages/UserProfileSettings";
 import CreateTender from "./pages/CreateTender";
 import CompanyDirectory from "./pages/CompanyDirectory";
 import ProjectsList from "./pages/ProjectsList";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/projects" element={<ProjectsList />} />
             <Route path="/company" element={<Company />} />
             <Route path="/company/edit" element={<EditCompany />} />
+            <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
             <Route path="/directory" element={<CompanyDirectory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
