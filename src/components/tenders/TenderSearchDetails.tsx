@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Link } from 'react-router-dom';
 import { 
   FileText, 
   MessageSquare, 
@@ -17,7 +18,8 @@ import {
   Clock, 
   Users,
   Bookmark,
-  Star
+  Star,
+  ExternalLink
 } from 'lucide-react';
 
 interface TenderSearchDetailsProps {
@@ -152,10 +154,12 @@ export default function TenderSearchDetails({ tender }: TenderSearchDetailsProps
               </div>
               
               {tender.status === 'open' && (
-                <Button className="w-full gap-2">
-                  <Upload size={14} />
-                  <span>Déposer un devis</span>
-                </Button>
+                <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
+                  <Button className="w-full gap-2">
+                    <ExternalLink size={14} />
+                    <span>Accéder à l'Appel d'offres</span>
+                  </Button>
+                </Link>
               )}
               
               <div className="grid grid-cols-2 gap-2">
