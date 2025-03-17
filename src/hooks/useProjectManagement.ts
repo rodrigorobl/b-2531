@@ -1,10 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { ProjectSummary, ProjectDetail, ProjectStatus } from '@/types/projects';
 import { useToast } from '@/hooks/use-toast';
-import { formatBudget, formatDate } from '@/utils/tenderFormatUtils';
-import { mapStatus } from '@/utils/tenderStatusUtils';
+import { ProjectSummary, ProjectDetail } from '@/types/projects';
 
 export function useProjectManagement() {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
@@ -12,36 +10,64 @@ export function useProjectManagement() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
-      // Get all projects from the project_management_summary view
-      const { data: projectsData, error: projectsError } = await supabase
-        .from('project_management_summary')
-        .select('*');
+      // Récupérer les projets depuis la table projets
+      const { data, error } = await supabase
+        .from('projets')
+        .select(`
+          *,
+          entreprises:maitre_ouvrage_id(nom)
+        `);
 
-      if (projectsError) throw projectsError;
+      if (error) throw error;
 
-      const formattedProjects: ProjectSummary[] = projectsData.map(project => ({
-        id: project.id,
-        projectName: project.project_name,
-        projectType: project.project_type,
-        description: project.description,
-        location: project.location || 'Non spécifié',
-        budget: project.budget,
-        status: project.status as ProjectStatus,
-        startDate: project.start_date,
-        endDate: project.end_date,
-        tendersCount: project.tenders_count,
-        tendersAssigned: project.tenders_assigned,
-        progressPercentage: project.progress_percentage,
-        clientName: project.client_name || 'Non spécifié'
-      }));
+      console.log("Données projets récupérées:", data);
 
-      setProjects(formattedProjects);
+      const projectsList: ProjectSummary[] = [];
+
+      for (const project of data) {
+        // Récupérer le nombre d'appels d'offres par projet
+        const { data: tendersData, error: tendersError } = await supabase
+          .from('appels_offres')
+          .select('*')
+          .eq('projet_id', project.id);
+
+        if (tendersError) throw tendersError;
+
+        // Calculer le nombre d'appels d'offres assignés
+        const assignedTenders = tendersData ? tendersData.filter(tender => 
+          tender.statut === 'Attribué').length : 0;
+
+        // Calculer le pourcentage de progression
+        const progressPercentage = tendersData && tendersData.length > 0
+          ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
+          : 0;
+
+        projectsList.push({
+          id: project.id,
+          projectName: project.nom,
+          projectType: project.type_projet,
+          description: project.description,
+          location: project.localisation || '',
+          budget: project.budget_estime || 0,
+          status: project.statut || 'En cours',
+          startDate: project.date_debut,
+          endDate: project.date_fin,
+          tendersCount: tendersData ? tendersData.length : 0,
+          tendersAssigned: assignedTenders,
+          progressPercentage: progressPercentage,
+          clientName: project.entreprises?.nom || 'Client inconnu'
+        });
+      }
+
+      setProjects(projectsList);
       setError(null);
-      setIsLoading(false);
-      return formattedProjects;
     } catch (err: any) {
       console.error('Error fetching projects:', err);
       setError(err.message);
@@ -50,14 +76,15 @@ export function useProjectManagement() {
         description: "Impossible de charger les projets.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
-      return [];
     }
   };
 
   const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
+    setIsLoading(true);
     try {
-      // Get project from the project_management_summary view
+      // Récupérer les détails du projet
       const { data: projectData, error: projectError } = await supabase
         .from('projets')
         .select(`
@@ -69,7 +96,7 @@ export function useProjectManagement() {
 
       if (projectError) throw projectError;
 
-      // Then fetch all tenders related to this project
+      // Récupérer les appels d'offres liés au projet
       const { data: tendersData, error: tendersError } = await supabase
         .from('appels_offres')
         .select('*')
@@ -77,80 +104,58 @@ export function useProjectManagement() {
 
       if (tendersError) throw tendersError;
 
+      // Calculer le pourcentage de progression
+      const progressPercentage = tendersData && tendersData.length > 0
+        ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
+        : 0;
+
+      // Transformer les données des appels d'offres
+      const tenders = tendersData.map(tender => ({
+        id: tender.id,
+        name: tender.lot,
+        description: tender.description,
+        type: tender.type_appel_offre,
+        status: tender.statut === 'Ouvert' ? 'open' : 
+               tender.statut === 'Clôturé' ? 'closed' : 'assigned',
+        quotesReceived: tender.quotes_received || 0,
+        deadline: tender.date_limite,
+        lotsTotal: tender.lots_total || 1,
+        lotsAssigned: tender.lots_assigned || 0,
+        progress: tender.progress || 0
+      }));
+
       const projectDetail: ProjectDetail = {
         id: projectData.id,
         projectName: projectData.nom,
         projectType: projectData.type_projet,
         description: projectData.description,
-        location: projectData.localisation || 'Non spécifié',
+        location: projectData.localisation || '',
         budget: projectData.budget_estime || 0,
-        status: projectData.statut as ProjectStatus,
+        status: projectData.statut || 'En cours',
         startDate: projectData.date_debut,
         endDate: projectData.date_fin,
         tendersCount: tendersData.length,
-        tendersAssigned: tendersData.filter(t => t.statut === 'Attribué').length,
-        progressPercentage: calculateProjectProgress(tendersData),
-        clientName: projectData.entreprises?.nom || 'Non spécifié',
-        tenders: tendersData.map(tender => ({
-          id: tender.id,
-          name: tender.lot,
-          type: tender.type_appel_offre,
-          status: mapStatus(tender.statut),
-          quotesReceived: tender.quotes_received || 0,
-          deadline: formatDate(tender.date_limite),
-          lotsTotal: tender.lots_total || 1,
-          lotsAssigned: tender.lots_assigned || 0,
-          progress: tender.progress || 0
-        }))
+        tendersAssigned: tendersData.filter(tender => tender.statut === 'Attribué').length,
+        progressPercentage: progressPercentage,
+        clientName: projectData.entreprises?.nom || 'Client inconnu',
+        tenders: tenders
       };
 
+      setError(null);
+      setIsLoading(false);
       return projectDetail;
     } catch (err: any) {
       console.error('Error fetching project details:', err);
+      setError(err.message);
       toast({
         title: "Erreur",
         description: "Impossible de charger les détails du projet.",
         variant: "destructive",
       });
+      setIsLoading(false);
       return null;
     }
   };
-
-  // Helper function to calculate project progress based on tenders
-  const calculateProjectProgress = (tenders: any[]): number => {
-    if (tenders.length === 0) return 0;
-    
-    const totalProgress = tenders.reduce((sum, tender) => {
-      return sum + (tender.progress || 0);
-    }, 0);
-    
-    return Math.round(totalProgress / tenders.length);
-  };
-
-  // Fetch projects on mount
-  useEffect(() => {
-    fetchProjects();
-    
-    // Set up real-time subscription
-    const channel = supabase
-      .channel('project-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'projets'
-        },
-        () => {
-          fetchProjects();
-        }
-      )
-      .subscribe();
-      
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   return {
     projects,

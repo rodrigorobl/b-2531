@@ -14,57 +14,53 @@ export function useFetchTenders() {
   async function fetchTenders() {
     setIsLoading(true);
     try {
+      // Récupérer directement de la table appels_offres
       const { data, error } = await supabase
-        .from('tender_management_summary')
-        .select('*');
+        .from('appels_offres')
+        .select(`
+          *,
+          projets:projet_id(nom, type_projet, localisation)
+        `);
 
       if (error) throw error;
 
+      console.log("Données appels d'offres récupérées:", data);
+
       const formattedTenders: TenderSearchResult[] = data.map(item => ({
         id: item.id,
-        projectName: item.project_name,
-        projectType: item.project_type,
-        location: item.location || 'Non spécifié',
+        projectName: item.projets?.nom || 'Projet inconnu',
+        projectType: item.projets?.type_projet || 'Type inconnu',
+        location: item.projets?.localisation || 'Non spécifié',
         budget: formatBudget(item.budget),
         surface: 'N/A', // Not in our current data model
-        deadline: formatDate(item.deadline),
-        status: mapStatus(item.status),
+        deadline: formatDate(item.date_limite),
+        status: mapStatus(item.statut),
         client: {
           name: 'Client', // We'll need to add this to the database or view
         },
-        lots: [], // We'll need another query to get the actual lots
+        lots: [item.lot], // Single lot per tender in the current model
         isFavorite: false,
         createdAt: new Date().toLocaleDateString('fr-FR'),
-        description: '',
-        progress: item.progress_percentage,
+        description: item.description,
+        progress: item.progress,
         lotsTotal: item.lots_total,
         lotsAssigned: item.lots_assigned,
         quotesReceived: item.quotes_received,
-        actualQuotesReceived: item.actual_quotes_received,
+        actualQuotesReceived: 0, // To be calculated
         // Random values for the demo, should be calculated in a real situation
         quoteQuality: getRandomQuoteQuality(),
         budgetRespect: getRandomBudgetRespect()
       }));
 
-      // Fetch lot details for each tender
+      // Fetch quotes count for each tender
       for (const tender of formattedTenders) {
-        const { data: lotData, error: lotError } = await supabase
-          .from('lots')
-          .select('*')
-          .eq('tender_id', tender.id);
+        const { count: quotesCount, error: quotesError } = await supabase
+          .from('devis')
+          .select('*', { count: 'exact', head: true })
+          .eq('appel_offre_id', tender.id);
           
-        if (!lotError && lotData) {
-          tender.lotDetails = lotData.map(lot => ({
-            id: lot.id,
-            name: lot.name,
-            status: mapLotStatus(lot.status),
-            quotesReceived: lot.quotes_received || 0,
-            quotesRequired: lot.quotes_required || 3,
-            assignedTo: lot.assigned_to
-          }));
-          
-          // Update lots array for backward compatibility
-          tender.lots = lotData.map(lot => lot.name);
+        if (!quotesError) {
+          tender.actualQuotesReceived = quotesCount || 0;
         }
       }
 
