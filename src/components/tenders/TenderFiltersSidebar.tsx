@@ -11,10 +11,13 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { MapPin, Building, Calendar, Star } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { MapPin, Building, Calendar, Star, Euro, Maximize } from 'lucide-react';
 
 export default function TenderFiltersSidebar() {
   const [showFavorites, setShowFavorites] = useState(false);
+  const [budgetRange, setBudgetRange] = useState([0, 5000000]);
+  const [surfaceRange, setSurfaceRange] = useState([0, 15000]);
   
   const projectTypes = [
     { value: 'all', label: 'Tous types' },
@@ -33,6 +36,18 @@ export default function TenderFiltersSidebar() {
     { value: 'occitanie', label: 'Occitanie' },
     { value: 'bretagne', label: 'Bretagne' },
   ];
+
+  const formatBudget = (value: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  const formatSurface = (value: number) => {
+    return `${value} m²`;
+  };
 
   return (
     <div className="w-64 min-w-64 bg-white rounded-lg shadow-sm p-4 mr-4 overflow-auto">
@@ -75,6 +90,46 @@ export default function TenderFiltersSidebar() {
               ))}
             </SelectContent>
           </Select>
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Euro size={16} className="text-muted-foreground" />
+            <Label>Budget estimé</Label>
+          </div>
+          <div className="pt-5 px-2">
+            <Slider 
+              value={budgetRange} 
+              min={0} 
+              max={10000000} 
+              step={100000}
+              onValueChange={setBudgetRange}
+            />
+            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+              <span>{formatBudget(budgetRange[0])}</span>
+              <span>{formatBudget(budgetRange[1])}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Maximize size={16} className="text-muted-foreground" />
+            <Label>Surface du projet</Label>
+          </div>
+          <div className="pt-5 px-2">
+            <Slider 
+              value={surfaceRange} 
+              min={0} 
+              max={30000} 
+              step={500}
+              onValueChange={setSurfaceRange}
+            />
+            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+              <span>{formatSurface(surfaceRange[0])}</span>
+              <span>{formatSurface(surfaceRange[1])}</span>
+            </div>
+          </div>
         </div>
         
         <div className="space-y-2">
