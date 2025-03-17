@@ -303,18 +303,18 @@ export default function LotAnalysis() {
             </TabsList>
             
             <div className="flex gap-2">
-              <Select value={filterCompliant || ''} onValueChange={setFilterCompliant}>
+              <Select value={filterCompliant || ""} onValueChange={setFilterCompliant}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filtrer par conformité" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les devis</SelectItem>
+                  <SelectItem value="all">Tous les devis</SelectItem>
                   <SelectItem value="compliant">Conformes</SelectItem>
                   <SelectItem value="non-compliant">Non conformes</SelectItem>
                 </SelectContent>
               </Select>
               
-              <Select value={sortBy || ''} onValueChange={setSortBy}>
+              <Select value={sortBy || ""} onValueChange={setSortBy}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Trier par" />
                 </SelectTrigger>
