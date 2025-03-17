@@ -21,7 +21,7 @@ export default function TenderOffers({
   return <div className="column h-full animate-fade-in" style={{
     animationDelay: '0.1s'
   }}>
-      <h2 className="column-header">Mes d'offres</h2>
+      <h2 className="column-header">Mes offres</h2>
       
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="w-full mb-4 grid grid-cols-3">
