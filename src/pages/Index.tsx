@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -8,7 +7,7 @@ import TenderOffers from '@/components/TenderOffers';
 import Communication from '@/components/Communication';
 import ProjectMap from '@/components/ProjectMap';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Download, Upload } from 'lucide-react';
 
 // Sample data for demonstration
 const projectData = {
@@ -195,12 +194,21 @@ export default function Index() {
         
         <ProjectHeader project={projectData} />
         
+        <div className="flex gap-4 mb-6">
+          <Button size="lg" variant="default" className="flex-1 py-6">
+            <Download className="mr-2 h-5 w-5" />
+            Télécharger le DCE
+          </Button>
+          <Button size="lg" variant="default" className="flex-1 py-6 bg-green-600 hover:bg-green-700">
+            <Upload className="mr-2 h-5 w-5" />
+            Déposer une offre
+          </Button>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          {/* Informations générales sur 50% de la largeur */}
           <div className="md:col-span-6 h-full overflow-auto">
             <ProjectInfo info={projectInfo} />
             
-            {/* Carte Google Maps */}
             <div className="mt-4">
               <h2 className="column-header mb-4">Localisation du projet</h2>
               <ProjectMap location={projectData.location} />
