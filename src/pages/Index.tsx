@@ -7,9 +7,8 @@ import TenderOffers from '@/components/TenderOffers';
 import Communication from '@/components/Communication';
 import ProjectMap from '@/components/ProjectMap';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, Upload } from 'lucide-react';
+import { ArrowLeft, Download, Upload, Clock, MapPin, FileText, Building, Calendar, DollarSign } from 'lucide-react';
 
-// Sample data for demonstration
 const projectData = {
   id: "PRJ-2023-042",
   name: "Construction d'un immeuble de bureaux à Lyon Part-Dieu",
@@ -205,21 +204,95 @@ export default function Index() {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          <div className="md:col-span-6 h-full overflow-auto">
-            <ProjectInfo info={projectInfo} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="bg-white rounded-lg shadow-subtle p-4">
+            <h2 className="text-lg font-semibold mb-4 pb-2 border-b flex items-center">
+              <FileText className="mr-2 h-5 w-5 text-primary" />
+              Informations générales
+            </h2>
             
-            <div className="mt-4">
-              <h2 className="column-header mb-4">Localisation du projet</h2>
-              <ProjectMap location={projectData.location} />
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center">
+                  <Building className="h-4 w-4 text-muted-foreground mr-2" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Type de projet</p>
+                    <p className="font-medium">{projectData.type}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 text-muted-foreground mr-2" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Date limite</p>
+                    <p className="font-medium">{projectData.deadline}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <DollarSign className="h-4 w-4 text-muted-foreground mr-2" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Budget estimé</p>
+                    <p className="font-medium">{projectInfo.budget}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 text-muted-foreground mr-2" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Durée estimée</p>
+                    <p className="font-medium">{projectInfo.startDate} - {projectInfo.endDate}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Description du projet</p>
+                <p className="text-sm">{projectInfo.description}</p>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Surface</p>
+                <p className="font-medium">{projectInfo.surface}</p>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium mb-2">Étapes clés</h3>
+                <div className="space-y-2">
+                  {projectInfo.milestones.map((milestone, index) => (
+                    <div key={index} className="flex items-center">
+                      <div className={`h-3 w-3 rounded-full mr-2 ${milestone.completed ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                      <span className="text-sm">{milestone.date}: {milestone.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="md:col-span-3 h-full overflow-auto">
+          <div className="bg-white rounded-lg shadow-subtle p-4">
+            <h2 className="text-lg font-semibold mb-4 pb-2 border-b flex items-center">
+              <MapPin className="mr-2 h-5 w-5 text-primary" />
+              Localisation du projet
+            </h2>
+            
+            <div className="mb-4">
+              <p className="text-sm text-muted-foreground mb-1">Adresse détaillée</p>
+              <p className="font-medium">{projectData.location.address}</p>
+            </div>
+            
+            <div className="h-64">
+              <ProjectMap location={projectData.location} />
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-[calc(100vh-600px)] overflow-auto">
             <TenderOffers offers={offerData} />
           </div>
           
-          <div className="md:col-span-3 h-full overflow-auto">
+          <div className="h-[calc(100vh-600px)] overflow-auto">
             <Communication 
               messages={messagesData} 
               notifications={notificationsData} 
