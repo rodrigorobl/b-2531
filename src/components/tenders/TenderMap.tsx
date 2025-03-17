@@ -12,26 +12,18 @@ interface TenderMapProps {
   onSelectTender: (tenderId: string) => void;
 }
 
-interface ProjectLocation {
+interface MapLocation {
   id: string;
-  nom: string;
-  localisation: string;
-  type_projet: string;
-  statut: string;
-  budget_estime: number;
-  entreprises: {
-    id: string;
-    nom: string;
-    ville: string;
-    coordinates: {
-      lat: number;
-      lng: number;
-    };
-  };
+  name: string;
+  lat: number;
+  lng: number;
+  status: string;
+  budget: string;
+  projectType: string;
 }
 
 export default function TenderMap({ tenders, selectedTenderId, onSelectTender }: TenderMapProps) {
-  const [projectLocations, setProjectLocations] = useState<ProjectLocation[]>([]);
+  const [mapLocations, setMapLocations] = useState<MapLocation[]>([]);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   
   const { isLoaded, loadError } = useJsApiLoader({
@@ -50,40 +42,31 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
     lng: 2.3522,
   };
   
-  // Récupérer les données des projets et leurs localisations depuis Supabase
+  // Create dummy locations from tender data for demonstration
   useEffect(() => {
-    const fetchProjectLocations = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('projets')
-          .select(`
-            id,
-            nom,
-            localisation,
-            type_projet,
-            statut,
-            budget_estime,
-            entreprises!inner(
-              id,
-              nom,
-              ville,
-              coordinates
-            )
-          `)
-          .limit(10);
+    if (tenders.length > 0) {
+      // Create mock coordinates for each tender (for demonstration)
+      const locations: MapLocation[] = tenders.map((tender, index) => {
+        // Generate random offsets around the center of France
+        const latOffset = (Math.random() - 0.5) * 8;
+        const lngOffset = (Math.random() - 0.5) * 8;
         
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-          setProjectLocations(data as ProjectLocation[]);
-        }
-      } catch (error) {
-        console.error('Erreur lors de la récupération des localisations:', error);
-      }
-    };
-    
-    fetchProjectLocations();
-  }, []);
+        return {
+          id: tender.id,
+          name: tender.projectName,
+          lat: center.lat + latOffset,
+          lng: center.lng + lngOffset,
+          status: tender.status,
+          budget: tender.budget,
+          projectType: tender.projectType
+        };
+      });
+      
+      setMapLocations(locations);
+    } else {
+      setMapLocations([]);
+    }
+  }, [tenders]);
 
   // Set active marker when selected tender changes
   useEffect(() => {
@@ -94,40 +77,25 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
   
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'En cours': return '#3b82f6'; // blue
-      case 'Attribué': return '#10b981'; // green
-      case 'Clôturé': return '#6b7280'; // gray
+      case 'open': return '#3b82f6'; // blue
+      case 'assigned': return '#10b981'; // green
+      case 'closed': return '#6b7280'; // gray
       default: return '#6b7280';
     }
   };
   
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'En cours': return 'En cours';
-      case 'Attribué': return 'Attribué';
-      case 'Clôturé': return 'Clôturé';
+      case 'open': return 'En cours';
+      case 'assigned': return 'Attribué';
+      case 'closed': return 'Clôturé';
       default: return status;
     }
   };
-  
-  const formatBudget = (budget: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0
-    }).format(budget);
-  };
 
-  const handleMarkerClick = (projectId: string) => {
-    setActiveMarker(projectId);
-    
-    // Find the matching tender and select it
-    const matchingTender = tenders.find(t => t.projectName === 
-      projectLocations.find(p => p.id === projectId)?.nom);
-    
-    if (matchingTender) {
-      onSelectTender(matchingTender.id);
-    }
+  const handleMarkerClick = (tenderId: string) => {
+    setActiveMarker(tenderId);
+    onSelectTender(tenderId);
   };
 
   // If API key is not valid or Google Maps failed to load
@@ -178,55 +146,48 @@ export default function TenderMap({ tenders, selectedTenderId, onSelectTender }:
           zoomControl: true,
         }}
       >
-        {projectLocations.map((project) => {
-          if (project.entreprises && project.entreprises.coordinates) {
-            const coordinates = project.entreprises.coordinates;
-            
-            return (
-              <Marker
-                key={project.id}
-                position={{
-                  lat: coordinates.lat,
-                  lng: coordinates.lng
-                }}
-                onClick={() => handleMarkerClick(project.id)}
-                icon={{
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  scale: 10,
-                  fillColor: getStatusColor(project.statut),
-                  fillOpacity: 1,
-                  strokeColor: 'white',
-                  strokeWeight: 2,
-                }}
+        {mapLocations.map((location) => (
+          <Marker
+            key={location.id}
+            position={{
+              lat: location.lat,
+              lng: location.lng
+            }}
+            onClick={() => handleMarkerClick(location.id)}
+            icon={{
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: getStatusColor(location.status),
+              fillOpacity: 1,
+              strokeColor: 'white',
+              strokeWeight: 2,
+            }}
+          >
+            {activeMarker === location.id && (
+              <InfoWindow
+                onCloseClick={() => setActiveMarker(null)}
               >
-                {activeMarker === project.id && (
-                  <InfoWindow
-                    onCloseClick={() => setActiveMarker(null)}
-                  >
-                    <div style={{ padding: '5px', maxWidth: '200px' }}>
-                      <strong>{project.nom}</strong><br/>
-                      <span>{project.type_projet}</span><br/>
-                      <span>Budget: {formatBudget(project.budget_estime)}</span><br/>
-                      <span style={{ color: getStatusColor(project.statut) }}>
-                        {getStatusLabel(project.statut)}
-                      </span>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            );
-          }
-          return null;
-        })}
+                <div style={{ padding: '5px', maxWidth: '200px' }}>
+                  <strong>{location.name}</strong><br/>
+                  <span>{location.projectType}</span><br/>
+                  <span>Budget: {location.budget}</span><br/>
+                  <span style={{ color: getStatusColor(location.status) }}>
+                    {getStatusLabel(location.status)}
+                  </span>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        ))}
       </GoogleMap>
       
-      {projectLocations.length === 0 && (
+      {mapLocations.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80">
           <div className="text-center p-6">
             <MapIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium">Aucun projet à afficher</h3>
             <p className="text-sm text-muted-foreground mt-2">
-              Aucun projet avec des coordonnées géographiques n'a été trouvé.
+              Aucun projet correspondant à vos critères de recherche n'a été trouvé.
             </p>
           </div>
         </div>

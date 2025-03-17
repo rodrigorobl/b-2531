@@ -10,12 +10,16 @@ import TenderStatusTabs from '@/components/tenders/TenderStatusTabs';
 import { mockTenders } from '@/data/mockTenders';
 import { filterTenders } from '@/utils/tenderFilters';
 import { TenderSearchResult } from '@/types/tenders';
+import TenderViewModeSelector from '@/components/tenders/TenderViewModeSelector';
+import TenderFilterSortMenu from '@/components/tenders/TenderFilterSortMenu';
 
 export default function TenderSearch() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [selectedTender, setSelectedTender] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
+  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'location'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   
   const filteredTenders = filterTenders(mockTenders, searchQuery, selectedTab);
 
@@ -39,27 +43,57 @@ export default function TenderSearch() {
             selectedTab={selectedTab} 
             setSelectedTab={setSelectedTab} 
           />
-            
+          
           <div className="flex h-[calc(100vh-230px)]">
             <TenderSearchFilters />
             
-            {viewMode === 'map' ? (
-              <div className="flex-1 mr-4">
-                <TenderMap 
+            <div className="flex-1 max-w-[55%] bg-white rounded-lg shadow-sm mr-4 overflow-auto">
+              <div className="flex items-center justify-between p-4">
+                <div className="text-sm text-muted-foreground">
+                  {filteredTenders.length} appels d'offres trouvés
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <TenderViewModeSelector 
+                    viewMode={viewMode} 
+                    onViewModeChange={setViewMode} 
+                  />
+                  
+                  <TenderFilterSortMenu
+                    sortBy={sortBy}
+                    sortDirection={sortDirection}
+                    setSortBy={setSortBy}
+                    setSortDirection={setSortDirection}
+                  />
+                </div>
+              </div>
+              
+              {viewMode === 'map' ? (
+                <div className="h-[calc(100%-60px)]">
+                  <TenderMap 
+                    tenders={filteredTenders}
+                    onSelectTender={handleTenderSelect}
+                    selectedTenderId={selectedTender}
+                  />
+                </div>
+              ) : viewMode === 'grid' ? (
+                <TenderSearchResults 
                   tenders={filteredTenders}
                   onSelectTender={handleTenderSelect}
                   selectedTenderId={selectedTender}
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
                 />
-              </div>
-            ) : (
-              <TenderSearchResults 
-                tenders={filteredTenders}
-                onSelectTender={handleTenderSelect}
-                selectedTenderId={selectedTender}
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-              />
-            )}
+              ) : (
+                <TenderSearchResults 
+                  tenders={filteredTenders}
+                  onSelectTender={handleTenderSelect}
+                  selectedTenderId={selectedTender}
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
+                />
+              )}
+            </div>
             
             <TenderSearchDetails
               tender={mockTenders.find(t => t.id === selectedTender)}
