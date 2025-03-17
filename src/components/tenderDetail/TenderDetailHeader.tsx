@@ -36,6 +36,9 @@ export default function TenderDetailHeader({ tender }: TenderDetailHeaderProps) 
     }
   };
 
+  // Add null check for documents array
+  const documentCount = tender.documents ? tender.documents.length : 0;
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       <div className="flex justify-between items-start mb-4">
@@ -64,11 +67,11 @@ export default function TenderDetailHeader({ tender }: TenderDetailHeaderProps) 
       <div className="flex flex-wrap gap-4 text-sm">
         <div className="flex items-center">
           <MapPin className="w-4 h-4 mr-1 text-muted-foreground" />
-          <span>{tender.location}</span>
+          <span>{tender.location || 'Non spécifié'}</span>
         </div>
         <div className="flex items-center">
           <FileText className="w-4 h-4 mr-1 text-muted-foreground" />
-          <span>{tender.documents.length} documents</span>
+          <span>{documentCount} document{documentCount !== 1 ? 's' : ''}</span>
         </div>
         <div className="flex items-center">
           <CalendarDays className="w-4 h-4 mr-1 text-muted-foreground" />

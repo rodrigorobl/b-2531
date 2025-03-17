@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -37,6 +38,22 @@ export default function TenderDetail() {
   };
 
   const isPromoter = activeProfile === 'promoteur';
+  
+  // Show loading state or redirect if tender is not found
+  if (!tender) {
+    return (
+      <div className="flex h-screen bg-background">
+        <Sidebar />
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <h2 className="text-xl font-medium mb-4">Chargement de l'appel d'offres...</h2>
+          <Button onClick={() => navigate('/tender-management')} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Retour
+          </Button>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="flex h-screen bg-background">
@@ -105,6 +122,17 @@ export default function TenderDetail() {
 }
 
 function TenderLotsForContractor({ tender }) {
+  if (!tender || !tender.lots) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h2 className="text-lg font-medium mb-4">Lots disponibles pour candidature</h2>
+        <div className="text-center text-muted-foreground p-8">
+          Aucun lot n'est disponible pour ce projet.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       <h2 className="text-lg font-medium mb-4">Lots disponibles pour candidature</h2>
