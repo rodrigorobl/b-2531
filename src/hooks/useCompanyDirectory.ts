@@ -36,7 +36,8 @@ export default function useCompanyDirectory({
         
         if (supabaseCategory) {
           console.log("Filtering by category:", supabaseCategory);
-          query = query.eq('categorie_principale', supabaseCategory);
+          // Use the type cast to ensure TypeScript understands this is a valid category
+          query = query.eq('categorie_principale', supabaseCategory as any);
         }
       }
       
