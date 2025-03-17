@@ -1,12 +1,13 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ProfileSelector, ProfileType } from './sidebar/ProfileSelector';
 import { UserProfile } from './sidebar/UserProfile';
 import { Navigation } from './sidebar/Navigation';
+import { useProfile } from '@/contexts/ProfileContext';
 
 export default function Sidebar() {
-  const [activeProfile, setActiveProfile] = useState<ProfileType>('entreprise-construction');
+  const { activeProfile, setActiveProfile } = useProfile();
   const navigate = useNavigate();
 
   // Mock user data - this would normally come from your auth system
