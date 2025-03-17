@@ -23,10 +23,12 @@ import { ProjectDetail } from '@/types/projects';
 import { formatBudget } from '@/utils/tenderFormatUtils';
 import { getStatusBadge } from '@/components/tenders/TenderHelpers';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { fetchProjectDetails } = useProjectManagement();
   const [projectDetails, setProjectDetails] = useState<ProjectDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,9 +64,9 @@ export default function ProjectDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen bg-background">
+      <div className="flex flex-col md:flex-row h-screen bg-background">
         <Sidebar />
-        <div className="flex-1 p-8 flex items-center justify-center">
+        <div className="flex-1 p-4 md:p-8 flex items-center justify-center">
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
         </div>
       </div>
@@ -73,9 +75,9 @@ export default function ProjectDetailPage() {
 
   if (error || !projectDetails) {
     return (
-      <div className="flex h-screen bg-background">
+      <div className="flex flex-col md:flex-row h-screen bg-background">
         <Sidebar />
-        <div className="flex-1 p-8 flex flex-col items-center justify-center">
+        <div className="flex-1 p-4 md:p-8 flex flex-col items-center justify-center">
           <AlertCircle className="w-12 h-12 text-destructive mb-4" />
           <h2 className="text-2xl font-bold mb-2">Erreur</h2>
           <p className="text-muted-foreground">{error || "Projet non trouvé"}</p>
@@ -93,24 +95,24 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex flex-col md:flex-row min-h-screen bg-background">
       <Sidebar />
       <div className="flex-1 overflow-auto">
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-4 md:space-y-6">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={() => navigate('/project-management')}
-            className="mb-6"
+            className="mb-4 md:mb-6"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Retour
           </Button>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-3">
             <div className="md:col-span-2">
-              <h1 className="text-3xl font-bold mb-2">{projectDetails.projectName}</h1>
-              <div className="flex items-center gap-2 mb-4">
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">{projectDetails.projectName}</h1>
+              <div className="flex flex-wrap items-center gap-2 mb-4">
                 <Badge className={`
                   ${projectDetails.status === 'En cours' ? 'bg-amber-500' : ''}
                   ${projectDetails.status === 'Clôturé' ? 'bg-gray-500' : ''}
@@ -121,30 +123,30 @@ export default function ProjectDetailPage() {
                 <span className="text-muted-foreground">{projectDetails.projectType}</span>
               </div>
               
-              <p className="text-muted-foreground mb-6">{projectDetails.description}</p>
+              <p className="text-muted-foreground mb-4 md:mb-6">{projectDetails.description}</p>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4 md:mb-6">
                 <Card>
-                  <CardContent className="p-4 flex flex-col items-center justify-center">
+                  <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
                     <Building className="h-5 w-5 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground">Client</span>
-                    <span className="font-medium">{projectDetails.clientName}</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">Client</span>
+                    <span className="font-medium text-sm md:text-base">{projectDetails.clientName}</span>
                   </CardContent>
                 </Card>
                 
                 <Card>
-                  <CardContent className="p-4 flex flex-col items-center justify-center">
+                  <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
                     <Euro className="h-5 w-5 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground">Budget</span>
-                    <span className="font-medium">{formatBudget(projectDetails.budget)}</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">Budget</span>
+                    <span className="font-medium text-sm md:text-base">{formatBudget(projectDetails.budget)}</span>
                   </CardContent>
                 </Card>
                 
                 <Card>
-                  <CardContent className="p-4 flex flex-col items-center justify-center">
+                  <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
                     <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground">Début</span>
-                    <span className="font-medium">
+                    <span className="text-xs md:text-sm text-muted-foreground">Début</span>
+                    <span className="font-medium text-sm md:text-base">
                       {projectDetails.startDate 
                         ? new Date(projectDetails.startDate).toLocaleDateString('fr-FR')
                         : 'Non défini'}
@@ -153,18 +155,18 @@ export default function ProjectDetailPage() {
                 </Card>
                 
                 <Card>
-                  <CardContent className="p-4 flex flex-col items-center justify-center">
+                  <CardContent className="p-3 md:p-4 flex flex-col items-center justify-center">
                     <MapPin className="h-5 w-5 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground">Localisation</span>
-                    <span className="font-medium">{projectDetails.location}</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">Localisation</span>
+                    <span className="font-medium text-sm md:text-base">{projectDetails.location}</span>
                   </CardContent>
                 </Card>
               </div>
             </div>
             
             <div>
-              <Card>
-                <CardContent className="p-6">
+              <Card className="h-full">
+                <CardContent className="p-4 md:p-6">
                   <h3 className="font-semibold mb-4">Avancement du projet</h3>
                   <div className="space-y-4">
                     <div>
@@ -188,31 +190,31 @@ export default function ProjectDetailPage() {
           </div>
           
           <Tabs defaultValue="tenders" className="w-full">
-            <TabsList>
+            <TabsList className="mb-2">
               <TabsTrigger value="tenders" className="flex items-center gap-1">
                 <Briefcase className="h-4 w-4" />
                 Appels d'offres
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="tenders" className="mt-6">
-              <div className="rounded-md border">
+            <TabsContent value="tenders" className="mt-2 md:mt-4">
+              <div className="rounded-md border overflow-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Lot</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Date limite</TableHead>
-                      <TableHead>Devis reçus</TableHead>
-                      <TableHead>Progression</TableHead>
+                      <TableHead className="min-w-[120px]">Lot</TableHead>
+                      <TableHead className="min-w-[100px]">Type</TableHead>
+                      <TableHead className="min-w-[100px]">Statut</TableHead>
+                      {!isMobile && <TableHead className="min-w-[100px]">Date limite</TableHead>}
+                      {!isMobile && <TableHead className="min-w-[100px]">Devis reçus</TableHead>}
+                      <TableHead className="min-w-[140px]">Progression</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {projectDetails.tenders.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                        <TableCell colSpan={isMobile ? 5 : 7} className="text-center py-8 md:py-10 text-muted-foreground">
                           Aucun appel d'offres pour ce projet
                         </TableCell>
                       </TableRow>
@@ -220,12 +222,12 @@ export default function ProjectDetailPage() {
                       projectDetails.tenders.map((tender) => (
                         <TableRow key={tender.id}>
                           <TableCell>
-                            <div className="font-medium">{tender.name}</div>
+                            <div className="font-medium text-sm md:text-base">{tender.name}</div>
                           </TableCell>
-                          <TableCell>{tender.type}</TableCell>
+                          <TableCell className="text-sm">{tender.type}</TableCell>
                           <TableCell>{getStatusBadge(tender.status)}</TableCell>
-                          <TableCell>{tender.deadline}</TableCell>
-                          <TableCell>{tender.quotesReceived}</TableCell>
+                          {!isMobile && <TableCell className="text-sm">{tender.deadline}</TableCell>}
+                          {!isMobile && <TableCell className="text-sm">{tender.quotesReceived}</TableCell>}
                           <TableCell>
                             <div className="flex flex-col gap-1">
                               <Progress value={tender.progress} className="h-2" />
@@ -242,7 +244,7 @@ export default function ProjectDetailPage() {
                               onClick={() => navigate(`/tender-detail/${tender.id}`)}
                             >
                               <Eye size={14} />
-                              <span>Détails</span>
+                              {!isMobile && <span>Détails</span>}
                             </Button>
                           </TableCell>
                         </TableRow>
