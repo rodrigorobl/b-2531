@@ -3,6 +3,7 @@ import React from 'react';
 import { Calendar, ArrowRight, FileText, Upload } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface TenderOffer {
   id: string;
@@ -68,10 +69,10 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
           
           {offer.status !== 'open' && (
             <div className="flex justify-end mt-3">
-              <a href={`/tenders/${offer.id}`} className="text-primary text-sm flex items-center hover:underline">
+              <Link to={`/tender/${offer.id}`} className="text-primary text-sm flex items-center hover:underline">
                 <span>Détails</span>
                 <ArrowRight size={14} className="ml-1" />
-              </a>
+              </Link>
             </div>
           )}
         </div>
@@ -84,9 +85,9 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
       )}
       
       <div className="pt-3 text-center">
-        <a href="/tenders" className="text-primary text-sm hover:underline">
+        <Link to="/tenders" className="text-primary text-sm hover:underline">
           Voir tous les appels d'offres
-        </a>
+        </Link>
       </div>
     </div>
   );
