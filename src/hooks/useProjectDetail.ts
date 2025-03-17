@@ -1,202 +1,143 @@
 
-import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { ProjectDetail, TenderStatus } from '@/types/projects';
+import { useProjectBase } from './useProjectBase';
+import { mapStatus } from '@/utils/tenderStatusUtils';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { ProjectData, TenderData, QuoteData } from '@/types/projectDetail';
-import { useProjectManagement } from '@/hooks/useProjectManagement';
 
 export function useProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { fetchProjectDetails } = useProjectManagement();
+  const { isLoading, setIsLoading, error, setError, toast, getLocalDemoProjects } = useProjectBase();
   
-  const [project, setProject] = useState<ProjectData | null>(null);
-  const [tenders, setTenders] = useState<TenderData[]>([]);
-  const [quotes, setQuotes] = useState<{ [key: string]: QuoteData[] }>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedTenderId, setSelectedTenderId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [error, setError] = useState<string | null>(null);
-  
-  // Check if user is promoter
-  useEffect(() => {
-    const activeProfile = localStorage.getItem('btp-connect-active-profile');
-    if (activeProfile !== 'promoteur') {
-      navigate('/dashboard-promoteur');
-      toast({
-        title: "Accès limité",
-        description: "Cette page est accessible uniquement pour le profil promoteur",
-        variant: "destructive",
-      });
-    }
-  }, [navigate, toast]);
-  
-  // Helper function to map statuses
-  const mapStatusToTenderStatus = (status: string): 'Ouvert' | 'Clôturé' | 'Attribué' => {
-    switch (status) {
-      case 'open':
-        return 'Ouvert';
-      case 'closed':
-        return 'Clôturé';
-      case 'assigned':
-        return 'Attribué';
-      default:
-        return 'Ouvert';
-    }
-  };
-  
-  // Fetch project data from supabase
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!id) {
-        setError("Identifiant de projet non fourni");
-        setIsLoading(false);
-        return;
+  const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
+    setIsLoading(true);
+    try {
+      // For demo projects, return local data
+      if (projectId.startsWith('demo-')) {
+        const demoProjects = getLocalDemoProjects();
+        const demoProject = demoProjects.find(p => p.id === projectId);
+        
+        if (demoProject) {
+          const projectDetail: ProjectDetail = {
+            ...demoProject,
+            tenders: Array.from({ length: demoProject.tendersCount }).map((_, i) => ({
+              id: `tender-${projectId}-${i}`,
+              name: `Lot ${i + 1}`,
+              description: `Description du lot ${i + 1}`,
+              type: i % 2 === 0 ? 'Réalisation' : 'Conception',
+              status: i < demoProject.tendersAssigned ? 'assigned' : 'open',
+              quotesReceived: Math.floor(Math.random() * 5),
+              deadline: new Date(new Date().getTime() + (30 + i * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              lotsTotal: Math.floor(Math.random() * 5) + 1,
+              lotsAssigned: i < demoProject.tendersAssigned ? 1 : 0,
+              progress: i < demoProject.tendersAssigned ? 50 : 0
+            }))
+          };
+          
+          setIsLoading(false);
+          return projectDetail;
+        }
       }
       
-      setIsLoading(true);
-      try {
-        console.log("Fetching project with ID:", id);
-        
-        // Fetch project details directly from Supabase
-        const { data: projectData, error: projectError } = await supabase
-          .from('projets')
-          .select(`
-            *,
-            entreprises:maitre_ouvrage_id(nom)
-          `)
-          .eq('id', id)
-          .single();
-        
-        if (projectError) {
-          console.error("Error fetching project:", projectError);
-          throw projectError;
-        }
-        
-        if (!projectData) {
-          console.error("Project not found with ID:", id);
-          setError("Projet non trouvé");
-          setIsLoading(false);
-          return;
-        }
-        
-        console.log("Project data fetched:", projectData);
-        
-        // Fetch tenders related to this project
-        const { data: tendersData, error: tendersError } = await supabase
-          .from('appels_offres')
-          .select('*')
-          .eq('projet_id', id);
-        
-        if (tendersError) {
-          console.error("Error fetching tenders:", tendersError);
-          throw tendersError;
-        }
-        
-        console.log("Tenders fetched:", tendersData);
-        
-        // Transform project data
-        const formattedProject: ProjectData = {
-          id: projectData.id,
-          nom: projectData.nom,
-          description: projectData.description,
-          type_projet: projectData.type_projet,
-          localisation: projectData.localisation,
-          budget_estime: projectData.budget_estime,
-          statut: projectData.statut,
-          date_debut: projectData.date_debut,
-          date_fin: projectData.date_fin,
-          maitre_ouvrage_id: projectData.maitre_ouvrage_id,
-          maitre_ouvrage_nom: projectData.entreprises?.nom,
-          progress_percentage: calculateProjectProgress(tendersData || [])
-        };
-        
-        // Transform tenders data
-        const formattedTenders: TenderData[] = (tendersData || []).map(tender => ({
-          id: tender.id,
-          lot: tender.lot,
-          description: tender.description,
-          type_appel_offre: tender.type_appel_offre,
-          statut: tender.statut,
-          date_limite: tender.date_limite,
-          budget: tender.budget,
-          quotes_received: tender.quotes_received,
-          progress: tender.progress,
-          lots_total: tender.lots_total,
-          lots_assigned: tender.lots_assigned,
-          projet_id: tender.projet_id
-        }));
-        
-        setProject(formattedProject);
-        setTenders(formattedTenders);
-        
-        // Fetch quotes for each tender
-        const tenderQuotes: { [key: string]: QuoteData[] } = {};
-        
-        for (const tender of formattedTenders) {
-          const { data: quotesData, error: quotesError } = await supabase
-            .from('devis')
-            .select(`
-              *,
-              entreprises:entreprise_id(nom)
-            `)
-            .eq('appel_offre_id', tender.id);
-          
-          if (!quotesError && quotesData) {
-            tenderQuotes[tender.id] = quotesData.map(quote => ({
-              ...quote,
-              entreprise_nom: quote.entreprises?.nom
-            }));
-          } else if (quotesError) {
-            console.error("Error fetching quotes for tender", tender.id, quotesError);
-          }
-        }
-        
-        setQuotes(tenderQuotes);
-        
-        // Select the first tender by default
-        if (formattedTenders.length > 0 && !selectedTenderId) {
-          setSelectedTenderId(formattedTenders[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching project data:', error);
-        setError("Erreur lors du chargement des données du projet");
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les données du projet",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, [id, toast, selectedTenderId]);
+      console.log("Fetching detailed project data from Supabase for ID:", projectId);
+      
+      // Fetch project details from Supabase
+      const { data: projectData, error: projectError } = await supabase
+        .from('projets')
+        .select(`
+          *,
+          entreprises:maitre_ouvrage_id(nom)
+        `)
+        .eq('id', projectId)
+        .single();
 
-  // Helper function to calculate project progress based on tenders
-  const calculateProjectProgress = (tenders: any[]): number => {
-    if (tenders.length === 0) return 0;
-    
-    const totalProgress = tenders.reduce((sum, tender) => {
-      return sum + (tender.progress || 0);
-    }, 0);
-    
-    return Math.round(totalProgress / tenders.length);
+      if (projectError) {
+        console.error("Error fetching project details:", projectError);
+        throw projectError;
+      }
+
+      if (!projectData) {
+        console.error("Project not found with ID:", projectId);
+        setError("Projet non trouvé");
+        setIsLoading(false);
+        return null;
+      }
+
+      console.log("Project data fetched successfully:", projectData);
+
+      // Fetch tenders for this project
+      const { data: tendersData, error: tendersError } = await supabase
+        .from('appels_offres')
+        .select('*')
+        .eq('projet_id', projectId);
+
+      if (tendersError) {
+        console.error("Error fetching tenders:", tendersError);
+        throw tendersError;
+      }
+
+      console.log(`Retrieved ${tendersData?.length || 0} tenders for project ${projectId}`);
+
+      // Calculate project progress from tenders
+      const progressPercentage = tendersData && tendersData.length > 0
+        ? Math.round(tendersData.reduce((acc, tender) => acc + (tender.progress || 0), 0) / tendersData.length)
+        : 0;
+
+      // Transform tenders data to ProjectTender format
+      const tenders = (tendersData || []).map(tender => ({
+        id: tender.id,
+        name: tender.lot,
+        description: tender.description,
+        type: tender.type_appel_offre,
+        status: mapStatus(tender.statut) as TenderStatus,
+        quotesReceived: tender.quotes_received || 0,
+        deadline: tender.date_limite,
+        lotsTotal: tender.lots_total || 1,
+        lotsAssigned: tender.lots_assigned || 0,
+        progress: tender.progress || 0
+      }));
+
+      // Create the project detail object
+      const projectDetail: ProjectDetail = {
+        id: projectData.id,
+        projectName: projectData.nom,
+        projectType: projectData.type_projet,
+        description: projectData.description,
+        location: projectData.localisation || '',
+        budget: projectData.budget_estime || 0,
+        status: projectData.statut || 'En cours',
+        startDate: projectData.date_debut,
+        endDate: projectData.date_fin,
+        tendersCount: tendersData.length,
+        tendersAssigned: tendersData.filter(tender => tender.statut === 'Attribué').length,
+        progressPercentage: progressPercentage,
+        clientName: projectData.entreprises?.nom || 'Client inconnu',
+        tenders: tenders
+      };
+
+      console.log("Project details prepared successfully");
+      setError(null);
+      setIsLoading(false);
+      return projectDetail;
+    } catch (err: any) {
+      console.error('Error fetching project details:', err);
+      setError(err.message);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les détails du projet.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return null;
+    }
   };
 
   return {
-    project,
-    tenders,
-    quotes,
+    projectId: id,
     isLoading,
-    selectedTenderId,
-    setSelectedTenderId,
-    activeTab,
-    setActiveTab,
     error,
-    navigate
+    navigate,
+    fetchProjectDetails
   };
 }
