@@ -106,27 +106,7 @@ export default function CompanyFilters({
           <Slider defaultValue={[0]} max={5} step={0.5} value={[minRating]} onValueChange={values => setMinRating(values[0])} />
         </div>
         
-        <div className="space-y-2">
-          <Label>Certifications</Label>
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cert-qualibat" />
-              <label htmlFor="cert-qualibat" className="text-sm">Qualibat</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cert-iso9001" />
-              <label htmlFor="cert-iso9001" className="text-sm">ISO 9001</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cert-rge" />
-              <label htmlFor="cert-rge" className="text-sm">RGE</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cert-hqe" />
-              <label htmlFor="cert-hqe" className="text-sm">HQE</label>
-            </div>
-          </div>
-        </div>
+        
         
         <Button className="w-full" onClick={resetFilters}>
           Réinitialiser les filtres
