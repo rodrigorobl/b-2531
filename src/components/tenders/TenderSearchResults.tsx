@@ -5,6 +5,7 @@ import TenderViewModeSelector from './TenderViewModeSelector';
 import TenderFilterSortMenu from './TenderFilterSortMenu';
 import TenderGridView from './TenderGridView';
 import TenderListView from './TenderListView';
+import TenderMap from './TenderMap';
 
 interface TenderSearchResultsProps {
   tenders: TenderSearchResult[];
@@ -37,7 +38,7 @@ export default function TenderSearchResults({
             onViewModeChange={onViewModeChange} 
           />
           
-          {viewMode === 'map' && (
+          {viewMode !== 'map' ? null : (
             <TenderFilterSortMenu
               sortBy={sortBy}
               sortDirection={sortDirection}
@@ -60,7 +61,13 @@ export default function TenderSearchResults({
           selectedTenderId={selectedTenderId} 
           onSelectTender={onSelectTender} 
         />
-      ) : null}
+      ) : (
+        <TenderMap 
+          tenders={tenders} 
+          selectedTenderId={selectedTenderId} 
+          onSelectTender={onSelectTender} 
+        />
+      )}
     </div>
   );
 }

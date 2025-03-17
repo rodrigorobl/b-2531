@@ -9,7 +9,348 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      appels_offres: {
+        Row: {
+          date_limite: string
+          dce_url: string | null
+          description: string
+          entreprise_attribuee_id: string | null
+          id: string
+          lot: string
+          projet_id: string
+          statut: Database["public"]["Enums"]["appel_offre_statut"] | null
+        }
+        Insert: {
+          date_limite: string
+          dce_url?: string | null
+          description: string
+          entreprise_attribuee_id?: string | null
+          id?: string
+          lot: string
+          projet_id: string
+          statut?: Database["public"]["Enums"]["appel_offre_statut"] | null
+        }
+        Update: {
+          date_limite?: string
+          dce_url?: string | null
+          description?: string
+          entreprise_attribuee_id?: string | null
+          id?: string
+          lot?: string
+          projet_id?: string
+          statut?: Database["public"]["Enums"]["appel_offre_statut"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appels_offres_entreprise_attribuee_id_fkey"
+            columns: ["entreprise_attribuee_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appels_offres_projet_id_fkey"
+            columns: ["projet_id"]
+            isOneToOne: false
+            referencedRelation: "projets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      avis: {
+        Row: {
+          commentaire: string | null
+          date_avis: string | null
+          entreprise_id: string
+          id: string
+          note: number
+          utilisateur_id: string
+        }
+        Insert: {
+          commentaire?: string | null
+          date_avis?: string | null
+          entreprise_id: string
+          id?: string
+          note: number
+          utilisateur_id: string
+        }
+        Update: {
+          commentaire?: string | null
+          date_avis?: string | null
+          entreprise_id?: string
+          id?: string
+          note?: number
+          utilisateur_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avis_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avis_utilisateur_id_fkey"
+            columns: ["utilisateur_id"]
+            isOneToOne: false
+            referencedRelation: "utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devis: {
+        Row: {
+          appel_offre_id: string
+          date_soumission: string | null
+          document_url: string | null
+          entreprise_id: string
+          id: string
+          montant: number
+          statut: Database["public"]["Enums"]["devis_statut"] | null
+        }
+        Insert: {
+          appel_offre_id: string
+          date_soumission?: string | null
+          document_url?: string | null
+          entreprise_id: string
+          id?: string
+          montant: number
+          statut?: Database["public"]["Enums"]["devis_statut"] | null
+        }
+        Update: {
+          appel_offre_id?: string
+          date_soumission?: string | null
+          document_url?: string | null
+          entreprise_id?: string
+          id?: string
+          montant?: number
+          statut?: Database["public"]["Enums"]["devis_statut"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devis_appel_offre_id_fkey"
+            columns: ["appel_offre_id"]
+            isOneToOne: false
+            referencedRelation: "appels_offres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devis_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entreprises: {
+        Row: {
+          administrateur_id: string | null
+          adresse: string | null
+          categorie_principale: Database["public"]["Enums"]["entreprise_categorie"]
+          date_creation: string | null
+          email: string | null
+          id: string
+          logo: string | null
+          nom: string
+          nombre_avis: number | null
+          note_moyenne: number | null
+          pays: string | null
+          region: string | null
+          site_web: string | null
+          specialite: string
+          telephone: string | null
+          ville: string | null
+        }
+        Insert: {
+          administrateur_id?: string | null
+          adresse?: string | null
+          categorie_principale: Database["public"]["Enums"]["entreprise_categorie"]
+          date_creation?: string | null
+          email?: string | null
+          id?: string
+          logo?: string | null
+          nom: string
+          nombre_avis?: number | null
+          note_moyenne?: number | null
+          pays?: string | null
+          region?: string | null
+          site_web?: string | null
+          specialite: string
+          telephone?: string | null
+          ville?: string | null
+        }
+        Update: {
+          administrateur_id?: string | null
+          adresse?: string | null
+          categorie_principale?: Database["public"]["Enums"]["entreprise_categorie"]
+          date_creation?: string | null
+          email?: string | null
+          id?: string
+          logo?: string | null
+          nom?: string
+          nombre_avis?: number | null
+          note_moyenne?: number | null
+          pays?: string | null
+          region?: string | null
+          site_web?: string | null
+          specialite?: string
+          telephone?: string | null
+          ville?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_administrateur"
+            columns: ["administrateur_id"]
+            isOneToOne: false
+            referencedRelation: "utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messagerie: {
+        Row: {
+          date_envoi: string | null
+          destinataire_id: string
+          expediteur_id: string
+          id: string
+          lu: boolean | null
+          message: string
+        }
+        Insert: {
+          date_envoi?: string | null
+          destinataire_id: string
+          expediteur_id: string
+          id?: string
+          lu?: boolean | null
+          message: string
+        }
+        Update: {
+          date_envoi?: string | null
+          destinataire_id?: string
+          expediteur_id?: string
+          id?: string
+          lu?: boolean | null
+          message?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messagerie_destinataire_id_fkey"
+            columns: ["destinataire_id"]
+            isOneToOne: false
+            referencedRelation: "utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messagerie_expediteur_id_fkey"
+            columns: ["expediteur_id"]
+            isOneToOne: false
+            referencedRelation: "utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projets: {
+        Row: {
+          budget_estime: number | null
+          chiffres_cles: Json | null
+          date_debut: string | null
+          date_fin: string | null
+          description: string
+          id: string
+          localisation: string | null
+          maitre_ouvrage_id: string
+          nom: string
+          statut: Database["public"]["Enums"]["projet_statut"] | null
+          type_projet: string
+        }
+        Insert: {
+          budget_estime?: number | null
+          chiffres_cles?: Json | null
+          date_debut?: string | null
+          date_fin?: string | null
+          description: string
+          id?: string
+          localisation?: string | null
+          maitre_ouvrage_id: string
+          nom: string
+          statut?: Database["public"]["Enums"]["projet_statut"] | null
+          type_projet: string
+        }
+        Update: {
+          budget_estime?: number | null
+          chiffres_cles?: Json | null
+          date_debut?: string | null
+          date_fin?: string | null
+          description?: string
+          id?: string
+          localisation?: string | null
+          maitre_ouvrage_id?: string
+          nom?: string
+          statut?: Database["public"]["Enums"]["projet_statut"] | null
+          type_projet?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projets_maitre_ouvrage_id_fkey"
+            columns: ["maitre_ouvrage_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      utilisateurs: {
+        Row: {
+          date_inscription: string | null
+          derniere_connexion: string | null
+          email: string
+          entreprise_id: string | null
+          id: string
+          mot_de_passe: string
+          nom: string
+          photo_profil: string | null
+          prenom: string
+          role: Database["public"]["Enums"]["user_role"]
+          telephone: string | null
+        }
+        Insert: {
+          date_inscription?: string | null
+          derniere_connexion?: string | null
+          email: string
+          entreprise_id?: string | null
+          id?: string
+          mot_de_passe: string
+          nom: string
+          photo_profil?: string | null
+          prenom: string
+          role: Database["public"]["Enums"]["user_role"]
+          telephone?: string | null
+        }
+        Update: {
+          date_inscription?: string | null
+          derniere_connexion?: string | null
+          email?: string
+          entreprise_id?: string | null
+          id?: string
+          mot_de_passe?: string
+          nom?: string
+          photo_profil?: string | null
+          prenom?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          telephone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utilisateurs_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +359,25 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      appel_offre_statut: "Ouvert" | "Clôturé" | "Attribué"
+      devis_statut: "Soumis" | "Accepté" | "Refusé"
+      entreprise_categorie:
+        | "Architecte"
+        | "MOE_BET"
+        | "Construction"
+        | "Service"
+        | "Industriel"
+        | "Fournisseur"
+      projet_statut: "En cours" | "Clôturé" | "Attribué"
+      user_role:
+        | "admin"
+        | "entreprise"
+        | "MOE_BET"
+        | "architecte"
+        | "constructeur"
+        | "service"
+        | "industriel"
+        | "fournisseur"
     }
     CompositeTypes: {
       [_ in never]: never
