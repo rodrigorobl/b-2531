@@ -16,26 +16,52 @@ export function useProjectManagement() {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('project_management_summary')
-        .select('*');
+        .from('projets')
+        .select(`
+          id,
+          nom,
+          type_projet,
+          description,
+          localisation,
+          budget_estime,
+          statut,
+          date_debut,
+          date_fin,
+          entreprises(nom),
+          (
+            SELECT count(*) FROM appels_offres WHERE projet_id = projets.id
+          ) as tenders_count,
+          (
+            SELECT count(*) FROM appels_offres WHERE projet_id = projets.id AND statut = 'Attribué'
+          ) as tenders_assigned
+        `);
 
       if (error) throw error;
 
-      const formattedProjects: ProjectSummary[] = data.map(item => ({
-        id: item.id,
-        projectName: item.project_name,
-        projectType: item.project_type,
-        description: item.description,
-        location: item.location || 'Non spécifié',
-        budget: item.budget,
-        status: item.status as ProjectStatus,
-        startDate: item.start_date,
-        endDate: item.end_date,
-        tendersCount: item.tenders_count,
-        tendersAssigned: item.tenders_assigned,
-        progressPercentage: item.progress_percentage,
-        clientName: item.client_name || 'Non spécifié'
-      }));
+      const formattedProjects: ProjectSummary[] = data.map(item => {
+        // Calculate progress percentage
+        const tendersCount = item.tenders_count || 0;
+        const tendersAssigned = item.tenders_assigned || 0;
+        const progressPercentage = tendersCount > 0 
+          ? Math.round((tendersAssigned / tendersCount) * 100)
+          : 0;
+
+        return {
+          id: item.id,
+          projectName: item.nom,
+          projectType: item.type_projet,
+          description: item.description,
+          location: item.localisation || 'Non spécifié',
+          budget: item.budget_estime,
+          status: item.statut as ProjectStatus,
+          startDate: item.date_debut,
+          endDate: item.date_fin,
+          tendersCount,
+          tendersAssigned,
+          progressPercentage,
+          clientName: item.entreprises?.nom || 'Non spécifié'
+        };
+      });
 
       setProjects(formattedProjects);
       setError(null);
@@ -56,10 +82,21 @@ export function useProjectManagement() {
 
   const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
     try {
-      // First fetch the project summary
+      // First fetch the project
       const { data: projectData, error: projectError } = await supabase
-        .from('project_management_summary')
-        .select('*')
+        .from('projets')
+        .select(`
+          id,
+          nom,
+          type_projet,
+          description,
+          localisation,
+          budget_estime,
+          statut,
+          date_debut,
+          date_fin,
+          entreprises(nom)
+        `)
         .eq('id', projectId)
         .single();
 
@@ -73,20 +110,27 @@ export function useProjectManagement() {
 
       if (tendersError) throw tendersError;
 
+      // Calculate stats
+      const tendersCount = tendersData.length;
+      const tendersAssigned = tendersData.filter(t => t.statut === 'Attribué').length;
+      const progressPercentage = tendersCount > 0 
+        ? Math.round((tendersAssigned / tendersCount) * 100) 
+        : 0;
+
       const projectDetail: ProjectDetail = {
         id: projectData.id,
-        projectName: projectData.project_name,
-        projectType: projectData.project_type,
+        projectName: projectData.nom,
+        projectType: projectData.type_projet,
         description: projectData.description,
-        location: projectData.location || 'Non spécifié',
-        budget: projectData.budget,
-        status: projectData.status as ProjectStatus,
-        startDate: projectData.start_date,
-        endDate: projectData.end_date,
-        tendersCount: projectData.tenders_count,
-        tendersAssigned: projectData.tenders_assigned,
-        progressPercentage: projectData.progress_percentage,
-        clientName: projectData.client_name || 'Non spécifié',
+        location: projectData.localisation || 'Non spécifié',
+        budget: projectData.budget_estime,
+        status: projectData.statut as ProjectStatus,
+        startDate: projectData.date_debut,
+        endDate: projectData.date_fin,
+        tendersCount,
+        tendersAssigned,
+        progressPercentage,
+        clientName: projectData.entreprises?.nom || 'Non spécifié',
         tenders: tendersData.map(tender => ({
           id: tender.id,
           name: tender.lot,
