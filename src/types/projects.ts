@@ -21,6 +21,7 @@ export interface ProjectSummary {
 export interface ProjectTender {
   id: string;
   name: string;
+  description?: string; // Adding the missing description property
   type: string;
   status: TenderStatus;
   quotesReceived: number;
