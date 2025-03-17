@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProjectDetail, TenderStatus, ProjectTender } from '@/types/projects';
+import { ProjectData, TenderData, QuoteData } from '@/types/projectDetail';
 import { useProjectBase } from './useProjectBase';
 import { mapStatus } from '@/utils/tenderStatusUtils';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,10 +12,10 @@ export function useProjectDetail() {
   const navigate = useNavigate();
   const { isLoading, setIsLoading, error, setError, toast, getLocalDemoProjects } = useProjectBase();
   
-  // Add new state variables needed by ProjectDetailContainer
-  const [project, setProject] = useState<ProjectDetail | null>(null);
-  const [tenders, setTenders] = useState<ProjectTender[]>([]);
-  const [quotes, setQuotes] = useState<Record<string, any>>({});
+  // Use the correct ProjectData type that matches what the component expects
+  const [project, setProject] = useState<ProjectData | null>(null);
+  const [tenders, setTenders] = useState<TenderData[]>([]);
+  const [quotes, setQuotes] = useState<Record<string, QuoteData[]>>({});
   const [selectedTenderId, setSelectedTenderId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
   
@@ -23,24 +24,57 @@ export function useProjectDetail() {
     if (id) {
       fetchProjectDetails(id).then(projectData => {
         if (projectData) {
-          setProject(projectData);
-          setTenders(projectData.tenders);
+          // Convert ProjectDetail to ProjectData
+          const projectDataFormatted: ProjectData = {
+            id: projectData.id,
+            nom: projectData.projectName,
+            description: projectData.description,
+            type_projet: projectData.projectType,
+            localisation: projectData.location,
+            budget_estime: projectData.budget,
+            statut: projectData.status as any,
+            date_debut: projectData.startDate || null,
+            date_fin: projectData.endDate || null,
+            maitre_ouvrage_id: '', // Required field, but we don't have this data from ProjectDetail
+            maitre_ouvrage_nom: projectData.clientName,
+            progress_percentage: projectData.progressPercentage
+          };
+          
+          setProject(projectDataFormatted);
+          
+          // Convert ProjectTender[] to TenderData[]
+          const tendersDataFormatted: TenderData[] = projectData.tenders.map(tender => ({
+            id: tender.id,
+            lot: tender.name,
+            description: tender.description || '',
+            type_appel_offre: tender.type,
+            statut: tender.status === 'open' ? 'Ouvert' : tender.status === 'closed' ? 'Clôturé' : 'Attribué',
+            date_limite: tender.deadline,
+            budget: 0, // Default value since it's not in ProjectTender
+            quotes_received: tender.quotesReceived,
+            progress: tender.progress,
+            lots_total: tender.lotsTotal,
+            lots_assigned: tender.lotsAssigned,
+            projet_id: id
+          }));
+          
+          setTenders(tendersDataFormatted);
           
           // Initialize quotes object with empty arrays for each tender
-          const quotesObj: Record<string, any> = {};
-          projectData.tenders.forEach(tender => {
+          const quotesObj: Record<string, QuoteData[]> = {};
+          tendersDataFormatted.forEach(tender => {
             quotesObj[tender.id] = [];
           });
           setQuotes(quotesObj);
           
           // Set the first tender as selected if there are tenders
-          if (projectData.tenders.length > 0 && !selectedTenderId) {
-            setSelectedTenderId(projectData.tenders[0].id);
+          if (tendersDataFormatted.length > 0 && !selectedTenderId) {
+            setSelectedTenderId(tendersDataFormatted[0].id);
           }
         }
       });
     }
-  }, [id]);
+  }, [id, selectedTenderId]);
   
   const fetchProjectDetails = async (projectId: string): Promise<ProjectDetail | null> => {
     setIsLoading(true);
