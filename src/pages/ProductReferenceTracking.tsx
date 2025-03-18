@@ -32,6 +32,90 @@ const projectReferences = [
     quoteStatus: 'sent' as const,
     sentDate: "2024-03-15",
     productName: "Revêtement sol B2"
+  },
+  {
+    id: "3",
+    projectName: "Tour Horizon",
+    location: "Marseille",
+    projectManager: "Atelier Architecture Med",
+    contractor: {
+      name: "Construction du Sud",
+      contact: "info@constructionsud.fr",
+      phone: "04 91 23 45 67"
+    },
+    quoteStatus: 'signed' as const,
+    sentDate: "2024-02-28",
+    productName: "Vitrage intelligent V3"
+  },
+  {
+    id: "4",
+    projectName: "Éco-quartier Vert",
+    location: "Nantes",
+    projectManager: "Green Architects",
+    contractor: {
+      name: "Constructions Durables",
+      contact: "contact@constructions-durables.fr",
+      phone: "02 40 12 34 56"
+    },
+    quoteStatus: 'to-send' as const,
+    sentDate: null,
+    productName: "Panneaux solaires PS200"
+  },
+  {
+    id: "5",
+    projectName: "Centre Commercial Étoile",
+    location: "Bordeaux",
+    projectManager: "Bureau d'études Tech+",
+    contractor: {
+      name: "Grands Travaux SA",
+      contact: "devis@grands-travaux.fr",
+      phone: "05 56 78 90 12"
+    },
+    quoteStatus: 'sent' as const,
+    sentDate: "2024-03-10",
+    productName: "Système ventilation ECO+"
+  },
+  {
+    id: "6",
+    projectName: "Hôpital Saint-Louis",
+    location: "Lille",
+    projectManager: "Santé Architecture",
+    contractor: {
+      name: "BTP Nord",
+      contact: "commercial@btp-nord.fr",
+      phone: "03 20 45 67 89"
+    },
+    quoteStatus: 'to-send' as const,
+    sentDate: null,
+    productName: "Revêtement antimicrobien AM100"
+  },
+  {
+    id: "7",
+    projectName: "Résidence Élégance",
+    location: "Nice",
+    projectManager: "Côte d'Azur Architectes",
+    contractor: {
+      name: "Azur Construction",
+      contact: "contact@azur-construction.fr",
+      phone: "04 93 12 34 56"
+    },
+    quoteStatus: 'signed' as const,
+    sentDate: "2024-01-20",
+    productName: "Système domotique D500"
+  },
+  {
+    id: "8",
+    projectName: "Data Center Nord",
+    location: "Roubaix",
+    projectManager: "Digital Architecture",
+    contractor: {
+      name: "Tech Build",
+      contact: "projets@techbuild.fr",
+      phone: "03 59 12 34 56"
+    },
+    quoteStatus: 'sent' as const,
+    sentDate: "2024-03-01",
+    productName: "Climatisation haute performance CP400"
   }
 ];
 
