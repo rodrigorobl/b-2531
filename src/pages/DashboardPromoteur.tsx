@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -129,7 +128,7 @@ export default function DashboardPromoteur() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             <DashboardKPI title="Projets en cours" value={kpiData.projectsInProgress} icon={<Briefcase />} color="bg-primary/10 text-primary" linkTo="/projects" />
             <DashboardKPI title="Brouillons d'AO" value={kpiData.tenderDrafts} icon={<FileText />} color="bg-slate-500/10 text-slate-500" linkTo="/tender-management?filter=draft" />
-            <DashboardKPI title="AO actifs" value={kpiData.activeTenders} icon={<Bell />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-management?filter=active" />
+            <DashboardKPI title="Appels d'Offres en cours" value={kpiData.activeTenders} icon={<Bell />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-list" />
             <DashboardKPI title="Propositions reçues" value={kpiData.pendingProposals} icon={<CheckCircle2 />} color="bg-status-assigned/10 text-status-assigned" linkTo="/tender-management?filter=proposals" />
           </div>
         </header>
