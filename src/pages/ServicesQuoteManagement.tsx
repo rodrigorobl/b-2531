@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Layout from '@/components/Layout';
+import { Layout } from '@/components/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Quote, QuoteRequest } from '@/types/services-quotes';
 import { QuoteRequestsList } from '@/components/services-quotes/QuoteRequestsList';

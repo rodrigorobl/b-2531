@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Building, Calendar, ClipboardCheck, MessageSquare, FileText, ChevronRight, PenLine, Download } from 'lucide-react';
-import Layout from '@/components/Layout';
+import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
