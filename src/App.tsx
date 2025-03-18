@@ -19,6 +19,7 @@ import OpportunitiesSearch from "./pages/OpportunitiesSearch";
 import TenderDetail from "./pages/TenderDetail";
 import Company from "./pages/Company";
 import CompanyServices from "./pages/CompanyServices";
+import CompanyServicesEdit from "./pages/CompanyServicesEdit";
 import EditCompany from "./pages/EditCompany";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
@@ -78,6 +79,7 @@ const App = () => (
             <Route path="/company" element={<Company />} />
             <Route path="/company/edit" element={<EditCompany />} />
             <Route path="/company-services" element={<CompanyServices />} />
+            <Route path="/company-services/edit" element={<CompanyServicesEdit />} />
             <Route path="/services-details/:companyId" element={<ServicesDetails />} />
             <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
