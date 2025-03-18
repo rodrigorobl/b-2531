@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { Progress } from "@/components/ui/progress";
@@ -12,32 +11,26 @@ import CompanyPresentation from "@/components/edit-company/CompanyPresentation";
 import CompanyParticulars from "@/components/edit-company/CompanyParticulars";
 import CompanyContacts from "@/components/edit-company/CompanyContacts";
 import CompanyPreview from "@/components/edit-company/CompanyPreview";
-
 export default function EditCompany() {
   const navigate = useNavigate();
   const [completionPercentage, setCompletionPercentage] = useState(75);
   const [activeSection, setActiveSection] = useState("presentation");
-
   const handlePreview = () => {
     toast({
       title: "Prévisualisation",
       description: "Ouverture du mode prévisualisation de votre page entreprise."
     });
   };
-
   const handleSave = () => {
     toast({
       title: "Modifications enregistrées",
       description: "Vos modifications ont été enregistrées avec succès."
     });
   };
-
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
   };
-
-  return (
-    <div className="flex h-screen">
+  return <div className="flex h-screen">
       <Sidebar />
       <main className="flex-1 overflow-auto bg-background">
         {/* Header */}
@@ -52,18 +45,11 @@ export default function EditCompany() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Button 
-                  variant="outline" 
-                  className="flex items-center gap-2"
-                  onClick={handlePreview}
-                >
+                <Button variant="outline" className="flex items-center gap-2" onClick={handlePreview}>
                   <Eye size={16} />
                   Prévisualiser
                 </Button>
-                <Button 
-                  className="flex items-center gap-2"
-                  onClick={handleSave}
-                >
+                <Button className="flex items-center gap-2" onClick={handleSave}>
                   <Save size={16} />
                   Enregistrer
                 </Button>
@@ -85,55 +71,44 @@ export default function EditCompany() {
               {activeSection === "presentation" && <CompanyPresentation />}
               {activeSection === "particulars" && <CompanyParticulars />}
               {activeSection === "contacts" && <CompanyContacts />}
-              {activeSection === "projects" && (
-                <div className="bg-white p-6 rounded-lg shadow">
+              {activeSection === "projects" && <div className="bg-white p-6 rounded-lg shadow">
                   <h2 className="text-xl font-semibold mb-4">Projets réalisés</h2>
                   <p className="text-muted-foreground mb-4">Ajoutez vos projets réalisés pour mettre en valeur votre expertise.</p>
                   <Button className="flex items-center gap-2">
                     <PlusCircle size={16} />
                     Ajouter un projet
                   </Button>
-                </div>
-              )}
-              {activeSection === "certifications" && (
-                <div className="bg-white p-6 rounded-lg shadow">
+                </div>}
+              {activeSection === "certifications" && <div className="bg-white p-6 rounded-lg shadow">
                   <h2 className="text-xl font-semibold mb-4">Certifications et qualifications</h2>
                   <p className="text-muted-foreground mb-4">Ajoutez vos certifications pour mettre en avant votre professionnalisme.</p>
                   <Button className="flex items-center gap-2">
                     <PlusCircle size={16} />
                     Ajouter une certification
                   </Button>
-                </div>
-              )}
-              {activeSection === "testimonials" && (
-                <div className="bg-white p-6 rounded-lg shadow">
+                </div>}
+              {activeSection === "testimonials" && <div className="bg-white p-6 rounded-lg shadow">
                   <h2 className="text-xl font-semibold mb-4">Avis et recommandations</h2>
                   <p className="text-muted-foreground mb-4">Ajoutez des témoignages de clients satisfaits.</p>
                   <Button className="flex items-center gap-2">
                     <PlusCircle size={16} />
                     Ajouter un témoignage
                   </Button>
-                </div>
-              )}
-              {activeSection === "documents" && (
-                <div className="bg-white p-6 rounded-lg shadow">
+                </div>}
+              {activeSection === "documents" && <div className="bg-white p-6 rounded-lg shadow">
                   <h2 className="text-xl font-semibold mb-4">Documents</h2>
                   <p className="text-muted-foreground mb-4">Ajoutez des documents à télécharger (plaquettes, brochures, etc.).</p>
                   <Button className="flex items-center gap-2">
                     <Upload size={16} />
                     Ajouter un document
                   </Button>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Right column - Preview and validation */}
-            <div className="md:col-span-3">
-              <CompanyPreview />
-            </div>
+            
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 }
