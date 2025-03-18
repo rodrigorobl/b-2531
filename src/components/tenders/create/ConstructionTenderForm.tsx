@@ -18,8 +18,8 @@ const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form })
         <div className="space-y-2">
           <Label htmlFor="constructionType">Nature des travaux</Label>
           <Select
-            onValueChange={(value) => form.setValue("constructionType", value)}
-            defaultValue={form.getValues("constructionType")}
+            onValueChange={(value) => form.setValue("construction.constructionType", value as any)}
+            defaultValue={form.getValues("construction.constructionType")}
           >
             <SelectTrigger id="constructionType">
               <SelectValue placeholder="Sélectionnez la nature des travaux" />
@@ -41,7 +41,7 @@ const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form })
             id="area"
             type="text"
             placeholder="Ex: 2500"
-            {...form.register("area")}
+            {...form.register("construction.area")}
           />
         </div>
       </div>

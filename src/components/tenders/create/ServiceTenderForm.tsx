@@ -46,8 +46,8 @@ const ServiceTenderForm: React.FC<ServiceTenderFormProps> = ({ form }) => {
         <div className="space-y-2">
           <Label htmlFor="serviceScope">Périmètre d'intervention</Label>
           <Select
-            onValueChange={(value) => form.setValue("serviceScope", value)}
-            defaultValue={form.getValues("serviceScope")}
+            onValueChange={(value) => form.setValue("service.serviceScope", value as any)}
+            defaultValue={form.getValues("service.serviceScope")}
           >
             <SelectTrigger id="serviceScope">
               <SelectValue placeholder="Sélectionnez le périmètre" />
@@ -65,8 +65,8 @@ const ServiceTenderForm: React.FC<ServiceTenderFormProps> = ({ form }) => {
         <div className="space-y-2">
           <Label htmlFor="serviceDuration">Durée du contrat</Label>
           <Select
-            onValueChange={(value) => form.setValue("serviceDuration", value)}
-            defaultValue={form.getValues("serviceDuration")}
+            onValueChange={(value) => form.setValue("service.serviceDuration", value as any)}
+            defaultValue={form.getValues("service.serviceDuration")}
           >
             <SelectTrigger id="serviceDuration">
               <SelectValue placeholder="Sélectionnez la durée" />

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -12,7 +11,6 @@ import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 
-// Define specific schemas for each tender type
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
   area: z.string(),
@@ -29,15 +27,14 @@ const serviceTenderSchema = z.object({
 });
 
 const formSchema = z.object({
-  type: z.enum(['design', 'construction', 'service']).default('design'),
-  privacy: z.enum(['open', 'restricted', 'closed']).default('open'),
+  type: z.enum(['design', 'construction', 'service']),
+  privacy: z.enum(['open', 'restricted', 'closed']),
   projectName: z.string().min(2, {
     message: "Project name must be at least 2 characters.",
   }),
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
-  // Add specific fields based on tender type
   design: designTenderSchema.optional(),
   construction: constructionTenderSchema.optional(),
   service: serviceTenderSchema.optional(),
@@ -65,6 +62,18 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
       privacy: "open",
       projectName: "",
       description: "",
+      design: {
+        projectNature: "logement",
+        area: ""
+      },
+      construction: {
+        constructionType: "neuf",
+        area: ""
+      },
+      service: {
+        serviceScope: "local",
+        serviceDuration: "ponctuel"
+      },
       invitedCompanies: [],
     },
   });
@@ -73,11 +82,8 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     console.log("Form values:", data);
   }
 
-  // Load tender data when editing
   useEffect(() => {
     if (isEditing && tenderId) {
-      // In a real app, fetch the tender data and set form values
-      // For now, we'll just use mock data
       const mockTenderData = {
         type: "design",
         privacy: "open",
