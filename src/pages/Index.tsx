@@ -179,6 +179,10 @@ export default function Index() {
     navigate('/submit-quote/PRJ-2023-042'); // Using the project ID from projectData
   };
 
+  // Mock minimum price for survey
+  const minSurveyPrice = 1500;
+  const minSurveyDelivery = "4 jours";
+
   return (
     <div className="flex w-full min-h-screen bg-background">
       <Sidebar />
@@ -219,9 +223,14 @@ export default function Index() {
               <Upload className="mr-2 h-5 w-5" />
               Déposer une offre
             </Button>
-            <Button size="lg" variant="outline" className="w-full py-6">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="w-full py-6"
+              onClick={() => navigate('/quantity-survey-request?project=PRJ-2023-042&lot=lot-1')}
+            >
               <Ruler className="mr-2 h-5 w-5" />
-              Faire réaliser les métrés
+              Faire réaliser les métrés (à partir de {minSurveyPrice}€ HT - {minSurveyDelivery})
             </Button>
           </div>
         </div>

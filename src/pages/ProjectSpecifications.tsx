@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Calendar, FileText, Users, Building, MapPin, Clock, Download, Briefcase, Plus, MessageSquare } from 'lucide-react';
+import { Calendar, FileText, Users, Building, MapPin, Clock, Download, Briefcase, Plus, MessageSquare, Ruler } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
 
 export default function ProjectSpecifications() {
@@ -30,10 +30,10 @@ export default function ProjectSpecifications() {
     surface: '15,000 m²',
     description: 'Construction d\'un nouveau centre commercial sur 3 niveaux avec parking souterrain et espaces verts en toiture terrasse.',
     lots: [
-      { id: 'lot-1', name: 'Gros œuvre', budget: '850,000 €', deadline: '30/08/2023', minSurveyPrice: 1900 },
-      { id: 'lot-2', name: 'Menuiseries', budget: '450,000 €', deadline: '15/09/2023', minSurveyPrice: 1500 },
-      { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200 },
-      { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800 },
+      { id: 'lot-1', name: 'Gros œuvre', budget: '850,000 €', deadline: '30/08/2023', minSurveyPrice: 1900, minSurveyDelivery: '5 jours' },
+      { id: 'lot-2', name: 'Menuiseries', budget: '450,000 €', deadline: '15/09/2023', minSurveyPrice: 1500, minSurveyDelivery: '3 jours' },
+      { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours' },
+      { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours' },
     ]
   };
 
@@ -330,8 +330,8 @@ export default function ProjectSpecifications() {
                           <div className="flex gap-2">
                             <Link to={`/quantity-survey-request?project=${projectData.id}&lot=${lot.id}`}>
                               <Button variant="outline" size="sm">
-                                <FileText size={14} className="mr-2" />
-                                Faire réaliser les métrés (à partir de {lot.minSurveyPrice}€ HT)
+                                <Ruler size={14} className="mr-2" />
+                                Faire réaliser les métrés (à partir de {lot.minSurveyPrice}€ HT - {lot.minSurveyDelivery})
                               </Button>
                             </Link>
                             <Button variant="outline" size="sm">
