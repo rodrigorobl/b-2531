@@ -23,7 +23,8 @@ import {
   Archive, 
   Filter, 
   Users,
-  Plus
+  Plus,
+  ArrowUpDown
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { TenderManagementTable, Tender, TenderStatus } from '@/components/tenders/TenderManagementTable';
