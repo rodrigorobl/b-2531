@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 interface NavigationProps {
   activeProfile: ProfileType;
@@ -96,6 +97,12 @@ export const Navigation: React.FC<NavigationProps> = ({
               <Link to="/company-services/service-company-1" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <Wrench size={18} />
                 <span>Mes services</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/services-quote-management" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/services-quote') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <FileSpreadsheet size={18} />
+                <span>Gestion des devis</span>
               </Link>
             </li>
           </>}

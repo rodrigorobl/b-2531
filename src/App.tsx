@@ -42,6 +42,8 @@ import AlertManagement from "./pages/AlertManagement";
 import ConstructionSitesMap from "./pages/ConstructionSitesMap";
 import ConstructionSiteDetail from "./pages/ConstructionSiteDetail";
 import CompanyServices from "./pages/CompanyServices";
+import ServicesQuoteManagement from "./pages/ServicesQuoteManagement";
+import ServicesQuoteTracking from "./pages/ServicesQuoteTracking";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +94,8 @@ const App = () => (
             <Route path="/submit-quote" element={<SubmitQuote />} />
             <Route path="/submit-quote/:tenderId" element={<SubmitQuote />} />
             <Route path="/submit-quote/:tenderId/:lotId" element={<SubmitQuote />} />
+            <Route path="/services-quote-management" element={<ServicesQuoteManagement />} />
+            <Route path="/services-quote-tracking/:quoteId" element={<ServicesQuoteTracking />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
