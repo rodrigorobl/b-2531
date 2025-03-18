@@ -29,6 +29,7 @@ import LotAnalysis from "./pages/LotAnalysis";
 import TenderList from "./pages/TenderList";
 import QuotesToAnalyze from "./pages/QuotesToAnalyze";
 import QuoteDetail from "./pages/QuoteDetail";
+import SubmitQuote from "./pages/SubmitQuote";
 
 const queryClient = new QueryClient();
 
@@ -62,9 +63,10 @@ const App = () => (
             <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
             <Route path="/directory" element={<CompanyDirectory />} />
-            {/* New routes for quotes to analyze feature */}
+            {/* Quote related routes */}
             <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
             <Route path="/quote/:quoteId" element={<QuoteDetail />} />
+            <Route path="/submit-quote/:tenderId/:lotId?" element={<SubmitQuote />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
