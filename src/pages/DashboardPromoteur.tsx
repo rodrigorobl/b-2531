@@ -8,6 +8,7 @@ import ProjectsList from '@/components/ProjectsList';
 import ActivityFeed from '@/components/ActivityFeed';
 import PriorityActions from '@/components/PriorityActions';
 import Sidebar from '@/components/Sidebar';
+
 export default function DashboardPromoteur() {
   const navigate = useNavigate();
 
@@ -61,7 +62,7 @@ export default function DashboardPromoteur() {
     type: 'tender' as const
   }, {
     id: 'action-003',
-    title: 'Réunion maîtrise d\'œuvre',
+    title: 'Répondre remarques BET Fluides',
     project: 'Éco-quartier Les Saules',
     deadline: '25/05/2024',
     type: 'meeting' as const
@@ -73,20 +74,24 @@ export default function DashboardPromoteur() {
     title: 'Nouveau devis reçu',
     description: 'BTP Construction a soumis une offre pour Lot Gros Œuvre',
     timestamp: 'Il y a 2 heures',
-    type: 'quote' as const
+    type: 'quote' as const,
+    link: '/quotes-to-analyze'
   }, {
     id: 'activity-002',
-    title: 'Mise à jour planning',
-    description: 'Maître d\'œuvre a actualisé le planning de Résidence Les Cerisiers',
+    title: 'Clôture lot Carrelage',
+    description: 'Le lot Carrelage a été clôturé sur le chantier Résidence les Cerisiers',
     timestamp: 'Hier, 15:30',
-    type: 'update' as const
+    type: 'update' as const,
+    link: '/construction-site/site-001'
   }, {
     id: 'activity-003',
-    title: 'Permis de construire',
-    description: 'Permis de construire accepté pour Éco-quartier Les Saules',
+    title: 'Attribution lot Plomberie',
+    description: 'Le lot Plomberie a été attribué pour le projet Centre commercial Beau Rivage',
     timestamp: 'Hier, 09:45',
-    type: 'document' as const
+    type: 'document' as const,
+    link: '/projects/project-002'
   }];
+
   return <div className="flex min-h-screen bg-background">
       <Sidebar />
       

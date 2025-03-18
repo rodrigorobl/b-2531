@@ -1,7 +1,7 @@
-
 import React from 'react';
-import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink, CheckCircle } from 'lucide-react';
+import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink, CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface Activity {
   id: string;
@@ -90,24 +90,20 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
             {getActivityIcon(activity.type, activity.title)}
           </div>
           <div className="flex-1 min-w-0">
-            {activity.link ? (
-              <Link to={activity.link} className="group">
-                <h3 className="font-medium text-sm group-hover:text-primary flex items-center">
-                  {activity.title}
-                  <ExternalLink size={12} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
-              </Link>
-            ) : (
-              <>
-                <h3 className="font-medium text-sm">{activity.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
-              </>
-            )}
+            <h3 className="font-medium text-sm">{activity.title}</h3>
+            <p className="text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
             <div className="flex items-center mt-1 text-xs text-muted-foreground">
               <Clock size={12} className="mr-1" />
               <span>{activity.timestamp}</span>
             </div>
+          </div>
+          <div className="ml-3 flex items-center">
+            <Button variant="outline" size="sm" asChild>
+              <Link to={activity.link || `/activity/${activity.id}`}>
+                Détails
+                <ArrowRight size={14} className="ml-1" />
+              </Link>
+            </Button>
           </div>
         </div>
       ))}

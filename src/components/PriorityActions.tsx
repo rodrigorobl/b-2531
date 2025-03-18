@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Calendar, MessageSquare, Upload, FileText, ShoppingCart, CalendarCheck, Package, Wrench, Building } from 'lucide-react';
+import { Calendar, MessageSquare, Upload, FileText, ShoppingCart, CalendarCheck, Package, Wrench, Building, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PriorityAction {
@@ -41,71 +40,6 @@ export default function PriorityActions({ actions }: PriorityActionsProps) {
     }
   };
 
-  const getActionButton = (type: string, id: string) => {
-    switch (type) {
-      case 'quote':
-        return (
-          <Button variant="outline" size="sm">
-            Déposer
-          </Button>
-        );
-      case 'document':
-        return (
-          <Button variant="outline" size="sm">
-            Télécharger
-          </Button>
-        );
-      case 'message':
-        return (
-          <Button variant="outline" size="sm">
-            Répondre
-          </Button>
-        );
-      case 'tender':
-        return (
-          <Button variant="outline" size="sm">
-            Participer
-          </Button>
-        );
-      case 'meeting':
-        return (
-          <Button variant="outline" size="sm">
-            Planifier
-          </Button>
-        );
-      case 'purchase':
-        return (
-          <Button variant="outline" size="sm">
-            Commander
-          </Button>
-        );
-      case 'planning':
-        return (
-          <Button variant="outline" size="sm">
-            Organiser
-          </Button>
-        );
-      case 'delivery':
-        return (
-          <Button variant="outline" size="sm">
-            Expédier
-          </Button>
-        );
-      case 'service':
-        return (
-          <Button variant="outline" size="sm">
-            Intervenir
-          </Button>
-        );
-      default:
-        return (
-          <Button variant="outline" size="sm">
-            Voir
-          </Button>
-        );
-    }
-  };
-
   return (
     <div className="space-y-3">
       {actions.map((action) => (
@@ -122,7 +56,10 @@ export default function PriorityActions({ actions }: PriorityActionsProps) {
             </div>
           </div>
           <div className="ml-3">
-            {getActionButton(action.type, action.id)}
+            <Button variant="outline" size="sm">
+              <Eye size={16} className="mr-1" />
+              Voir
+            </Button>
           </div>
         </div>
       ))}
