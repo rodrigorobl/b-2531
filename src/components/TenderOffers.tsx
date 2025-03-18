@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileDown, CheckCircle, Download, AlertCircle, Upload, DollarSign, Calendar, Hash, Info } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
@@ -48,7 +50,11 @@ export default function TenderOffers({
       </div>
       
       <Tabs defaultValue="pending" className="w-full">
-        
+        <TabsList className="mb-4">
+          <TabsTrigger value="pending">En attente</TabsTrigger>
+          <TabsTrigger value="submitted">Soumis</TabsTrigger>
+          <TabsTrigger value="completed">Terminés</TabsTrigger>
+        </TabsList>
         
         <div className="column-content">
           <TabsContent value="pending" className="m-0 h-full">
@@ -126,15 +132,29 @@ function OffersTable({
             
             <TableCell>
               <div className="flex items-center gap-2">
-                {type === 'pending'}
+                {type === 'pending' && (
+                  <Button size="sm" className="h-8" variant="outline">
+                    <Upload size={14} className="mr-1" />
+                    Soumettre
+                  </Button>
+                )}
                 
-                {type !== 'pending' && <Button size="sm" className="h-8" variant="outline">
+                {type !== 'pending' && (
+                  <Button size="sm" className="h-8" variant="outline">
                     <FileDown size={14} className="mr-1" />
                     Voir devis
-                  </Button>}
+                  </Button>
+                )}
                 
-                <Button size="sm" variant="ghost" className="h-8">
-                  Détails
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-8"
+                  asChild
+                >
+                  <Link to={`/company-details-tender/quote-${offer.id}`}>
+                    Détails
+                  </Link>
                 </Button>
               </div>
             </TableCell>
