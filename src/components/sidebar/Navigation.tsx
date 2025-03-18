@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet } from 'lucide-react';
@@ -33,6 +32,16 @@ export const Navigation: React.FC<NavigationProps> = ({
   const isActiveDashboard = () => {
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
+  };
+
+  const getCompanyLink = () => {
+    return activeProfile === 'entreprise-services' ? '/company-services' : '/company';
+  };
+  
+  const isCompanyLinkActive = () => {
+    const link = getCompanyLink();
+    return location.pathname === link || 
+           (activeProfile === 'entreprise-services' && location.pathname === '/company-services');
   };
   
   return <nav className="flex-1 overflow-y-auto p-4">
@@ -159,7 +168,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           </Link>
         </li>
         <li>
-          <Link to="/company" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/company' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+          <Link to={getCompanyLink()} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${isCompanyLinkActive() ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <Building size={18} />
             <span>Mon entreprise</span>
           </Link>
