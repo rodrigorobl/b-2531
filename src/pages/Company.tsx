@@ -74,10 +74,7 @@ export default function Company() {
   };
 
   const handleViewAsVisitor = () => {
-    toast({
-      title: "Affichage en tant que visiteur",
-      description: "Cette fonctionnalité vous permettrait de voir votre page comme un visiteur externe."
-    });
+    navigate("/view-company");
   };
 
   const handleEditCompany = () => {
