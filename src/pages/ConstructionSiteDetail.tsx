@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useParams, Link } from 'react-router-dom';
@@ -16,9 +15,9 @@ import { ArrowLeft, MapPin, Building, Calendar, MessageSquare, ClipboardList } f
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import CommunicationHistory from '@/components/product-reference/CommunicationHistory';
+import Communication from '@/components/Communication';
+import { useToast } from '@/hooks/use-toast';
 
-// Mock construction site data (would be fetched from API in real app)
 const getSiteData = (id: string) => ({
   id,
   name: 'Résidence Les Cerisiers',
@@ -121,7 +120,6 @@ const getSiteData = (id: string) => ({
   ]
 });
 
-// Mock messages for the communication history
 const mockMessages = [
   {
     id: 'msg1',
@@ -165,8 +163,9 @@ export default function ConstructionSiteDetail() {
   const { siteId } = useParams<{ siteId: string }>();
   const site = getSiteData(siteId || 'unknown');
   const [activeTab, setActiveTab] = useState('info');
+  const [messages, setMessages] = useState(mockMessages);
+  const { toast } = useToast();
   
-  // Format contact data for the CommunicationHistory component
   const promoterContacts = [
     { name: site.promoter.contact, role: 'Promoteur', company: site.promoter.name, email: site.promoter.email, phone: site.promoter.phone }
   ];
@@ -184,6 +183,67 @@ export default function ConstructionSiteDetail() {
     phone: contractor.phone 
   }));
   
+  const handleSendMessage = (content: string) => {
+    const newMessage = {
+      id: `msg${messages.length + 1}`,
+      date: new Date().toLocaleString('fr-FR'),
+      sender: 'Mon Équipe',
+      senderRole: 'Chef de projet',
+      content: content,
+      isRead: true,
+      recipient: 'promoter'
+    };
+    
+    setMessages([...messages, newMessage]);
+    toast({
+      title: "Message envoyé",
+      description: "Votre message a été envoyé avec succès."
+    });
+  };
+  
+  const handleSendQuote = (quoteData: {
+    message: string;
+    service: string;
+    price: string;
+    document?: File;
+  }) => {
+    const newMessage = {
+      id: `msg${messages.length + 1}`,
+      sender: {
+        name: 'Mon Équipe',
+        role: 'Chef de projet'
+      },
+      content: quoteData.message,
+      timestamp: new Date().toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      quoteInfo: {
+        service: quoteData.service,
+        price: quoteData.price
+      },
+      attachments: quoteData.document ? [
+        {
+          name: quoteData.document.name,
+          size: `${Math.round(quoteData.document.size / 1024)} Ko`,
+          type: 'PDF'
+        }
+      ] : undefined
+    };
+    
+    setMessages([...messages, newMessage]);
+    
+    console.log('Quote sent, would be tracked in services-quote-management:', quoteData);
+    
+    toast({
+      title: "Devis envoyé",
+      description: "Votre devis a été envoyé avec succès et sera suivi dans la gestion des devis."
+    });
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-8 px-4">
@@ -202,7 +262,6 @@ export default function ConstructionSiteDetail() {
           </div>
         </div>
         
-        {/* Status bar */}
         <div className="flex flex-wrap gap-2 mb-6">
           <Badge className="bg-blue-500">{site.type}</Badge>
           <Badge className="bg-status-in-progress">En cours</Badge>
@@ -216,7 +275,6 @@ export default function ConstructionSiteDetail() {
           </div>
         </div>
         
-        {/* Main content with tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <TabsList className="grid grid-cols-4 w-full max-w-md">
             <TabsTrigger value="info">
@@ -284,7 +342,6 @@ export default function ConstructionSiteDetail() {
           
           <TabsContent value="team" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Promoteur */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg">Promoteur</CardTitle>
@@ -310,7 +367,6 @@ export default function ConstructionSiteDetail() {
                 </CardContent>
               </Card>
               
-              {/* Maître d'œuvre */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg">Maître d'œuvre</CardTitle>
@@ -336,7 +392,6 @@ export default function ConstructionSiteDetail() {
                 </CardContent>
               </Card>
               
-              {/* Bureaux d'études */}
               {site.bet.map((bet, index) => (
                 <Card key={index}>
                   <CardHeader className="pb-3">
@@ -365,7 +420,6 @@ export default function ConstructionSiteDetail() {
               ))}
             </div>
             
-            {/* Entreprises titulaires */}
             <h2 className="text-xl font-semibold mt-8 mb-4">Entreprises titulaires</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {site.contractors.map((contractor, index) => (
@@ -399,11 +453,12 @@ export default function ConstructionSiteDetail() {
           
           <TabsContent value="communications">
             <div className="max-w-4xl mx-auto">
-              <CommunicationHistory
-                messages={mockMessages}
-                promoterContacts={promoterContacts}
-                betContacts={betContacts}
-                contractorContacts={contractorContacts}
+              <Communication
+                messages={messages}
+                notifications={[]} // You could add real notifications here
+                documents={site.documents}
+                onSendMessage={handleSendMessage}
+                onSendQuote={handleSendQuote}
               />
             </div>
           </TabsContent>

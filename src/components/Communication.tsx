@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SendHorizontal, File, Download, User, Clock, Paperclip } from 'lucide-react';
+import { SendHorizontal, File, Download, User, Clock, Paperclip, FileText, DollarSign } from 'lucide-react';
+import { QuoteMessageDialog } from './construction-site/QuoteMessageDialog';
 
 interface Message {
   id: string;
@@ -17,6 +18,10 @@ interface Message {
     size: string;
     type: string;
   }>;
+  quoteInfo?: {
+    service: string;
+    price: string;
+  };
 }
 
 interface Notification {
@@ -40,9 +45,38 @@ interface CommunicationProps {
   messages: Message[];
   notifications: Notification[];
   documents: Document[];
+  onSendMessage?: (content: string, attachments?: any[]) => void;
+  onSendQuote?: (quoteData: {
+    message: string;
+    service: string;
+    price: string;
+    document?: File;
+  }) => void;
 }
 
-export default function Communication({ messages, notifications, documents }: CommunicationProps) {
+export default function Communication({ 
+  messages, 
+  notifications, 
+  documents, 
+  onSendMessage,
+  onSendQuote 
+}: CommunicationProps) {
+  const [messageText, setMessageText] = React.useState('');
+  
+  const handleSendMessage = () => {
+    if (messageText.trim() && onSendMessage) {
+      onSendMessage(messageText);
+      setMessageText('');
+    }
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="column h-full animate-fade-in" style={{ animationDelay: '0.2s' }}>
       <h2 className="column-header">Communication et suivi</h2>
@@ -86,17 +120,27 @@ export default function Communication({ messages, notifications, documents }: Co
                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-primary pr-10 resize-none"
                   placeholder="Écrivez votre message..."
                   rows={2}
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
-                <button className="absolute right-3 bottom-3 text-primary hover:text-primary/80 transition-colors">
+                <button 
+                  className="absolute right-3 bottom-3 text-primary hover:text-primary/80 transition-colors"
+                  onClick={handleSendMessage}
+                >
                   <SendHorizontal size={18} />
                 </button>
               </div>
               <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-                <div>
+                <div className="flex items-center gap-2">
                   <button className="hover:text-foreground transition-colors">
                     <Paperclip size={14} className="inline mr-1" />
                     Joindre un fichier
                   </button>
+                  
+                  {onSendQuote && (
+                    <QuoteMessageDialog onSendQuote={onSendQuote} />
+                  )}
                 </div>
                 <div>Destinataire: Maître d'ouvrage</div>
               </div>
@@ -154,6 +198,20 @@ function MessageItem({ message }: { message: Message }) {
           </div>
           
           <div className="text-sm">{message.content}</div>
+          
+          {/* Show quote information if this is a quote message */}
+          {message.quoteInfo && (
+            <div className="mt-2 p-3 bg-primary/5 rounded-md border border-primary/20">
+              <div className="flex items-center mb-1">
+                <FileText size={14} className="text-primary mr-1" />
+                <span className="text-sm font-medium">Devis: {message.quoteInfo.service}</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <DollarSign size={14} className="text-primary mr-1" />
+                <span>Prix: {message.quoteInfo.price} €</span>
+              </div>
+            </div>
+          )}
           
           {message.attachments && message.attachments.length > 0 && (
             <div className="mt-2 pt-2 border-t">
