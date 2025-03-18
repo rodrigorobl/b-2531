@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -13,9 +12,10 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { BellRing, Filter, Mail, Bell, Clock, Map, Building, Euro } from 'lucide-react';
+import { BellRing, Filter, Mail, Bell, Clock, Map, Building, Euro, Search } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
 
 interface AlertFormValues {
   name: string;
@@ -24,6 +24,7 @@ interface AlertFormValues {
   location: string;
   sector: string[];
   budgetRange: number[];
+  keywords: string;
   frequency: 'instant' | 'daily' | 'weekly' | 'monthly';
   notificationMethod: 'email' | 'both';
   isActive: boolean;
@@ -41,6 +42,7 @@ export default function TenderAlert() {
       location: '',
       sector: [],
       budgetRange: [0, 10000000],
+      keywords: '',
       frequency: 'weekly',
       notificationMethod: 'email',
       isActive: true,
@@ -228,6 +230,43 @@ export default function TenderAlert() {
                           <span>{formatBudget(maxBudget[0])}</span>
                           <span>{formatBudget(maxBudget[1])}</span>
                         </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <Search className="h-4 w-4 mr-2 text-muted-foreground" />
+                          <Label>Mots-clés dans les DCE</Label>
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="keywords"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Entrez des mots-clés spécifiques, séparés par des virgules"
+                                  className="min-h-[80px]"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription className="mt-2">
+                                <div className="text-sm text-muted-foreground">
+                                  <p className="mb-2">Il est nécessaire d'ajouter des mots-clés précis afin d'éviter d'obtenir trop de résultats.</p>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                                    <div className="rounded-md bg-green-50 p-2 border border-green-200">
+                                      <p className="text-xs font-medium text-green-800">Bon exemple:</p>
+                                      <p className="text-xs text-green-700">chauffage géothermique</p>
+                                    </div>
+                                    <div className="rounded-md bg-red-50 p-2 border border-red-200">
+                                      <p className="text-xs font-medium text-red-800">Mauvais exemple:</p>
+                                      <p className="text-xs text-red-700">béton armé</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </FormDescription>
+                            </FormItem>
+                          )}
+                        />
                       </div>
                     </div>
                   </CardContent>
