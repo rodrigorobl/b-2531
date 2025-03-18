@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +16,7 @@ import ServiceTenderForm from "@/components/tenders/create/ServiceTenderForm";
 import TenderPublishOptions from "@/components/tenders/create/TenderPublishOptions";
 import TenderCompanyInvitation from "@/components/tenders/create/TenderCompanyInvitation";
 import TenderAdminDocuments from "@/components/tenders/create/TenderAdminDocuments";
+import TenderContactsManager from "@/components/tenders/create/TenderContactsManager";
 
 export type TenderType = 'design' | 'construction' | 'service';
 export type TenderPrivacy = 'open' | 'restricted' | 'closed';
@@ -27,13 +27,11 @@ const tenderSchema = z.object({
   privacy: z.enum(["open", "restricted", "closed"] as const),
   title: z.string().min(5, "Le titre doit contenir au moins 5 caractères"),
   description: z.string().optional(),
-  // Common fields will be required for all tender types
   location: z.string().min(3, "Veuillez indiquer une adresse valide"),
   budget: z.string().min(1, "Veuillez indiquer un budget estimatif"),
   deadline: z.date({
     required_error: "Veuillez sélectionner une date limite"
   }),
-  // Optional fields depending on tender type
   projectNature: z.string().optional(),
   area: z.string().optional(),
   constructionType: z.string().optional(),
@@ -51,14 +49,27 @@ const tenderSchema = z.object({
     id: z.string(),
     name: z.string(),
     selected: z.boolean().optional()
-  })).optional()
+  })).optional(),
+  contacts: z.object({
+    internal: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      role: z.string()
+    })).optional(),
+    external: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      role: z.string(),
+      mission: z.string()
+    })).optional()
+  }).optional()
 });
 
 export type TenderFormValues = z.infer<typeof tenderSchema>;
 
 export default function CreateTender() {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 8; // Updated total steps
+  const totalSteps = 9; // Updated total steps
   const navigate = useNavigate();
   
   const form = useForm<TenderFormValues>({
@@ -72,7 +83,11 @@ export default function CreateTender() {
       budget: "",
       documents: [],
       adminDocuments: [],
-      invitedCompanies: []
+      invitedCompanies: [],
+      contacts: {
+        internal: [],
+        external: []
+      }
     }
   });
   
@@ -91,16 +106,12 @@ export default function CreateTender() {
   };
   
   const handleSaveDraft = () => {
-    // In a real app, this would save the current state to a database
     console.log("Saved as draft:", form.getValues());
-    // Show success toast
     window.alert("Brouillon enregistré avec succès!");
   };
   
   const onSubmit = (data: TenderFormValues) => {
     console.log("Form submitted:", data);
-    // In a real app, this would submit the data to the server
-    // and redirect to the tender details page
     navigate("/tender-management");
   };
   
@@ -108,7 +119,6 @@ export default function CreateTender() {
       <Sidebar />
       
       <div className="flex flex-col flex-1 overflow-y-auto">
-        {/* Header */}
         <header className="sticky top-0 z-10 border-b bg-background p-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -131,14 +141,12 @@ export default function CreateTender() {
             </div>
           </div>
           
-          {/* Progress indicator */}
           <TenderFormNav currentStep={currentStep} totalSteps={totalSteps} onStepClick={setCurrentStep} />
         </header>
         
         <main className="flex-1 p-4 md:p-6">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Step 1: Type selection */}
               {currentStep === 1 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
@@ -148,7 +156,6 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 2: Privacy selection */}
               {currentStep === 2 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
@@ -158,7 +165,6 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 3: General information */}
               {currentStep === 3 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
@@ -201,7 +207,6 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 4: Tender details based on type */}
               {currentStep === 4 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
@@ -218,7 +223,6 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 5: DCE (renamed from Documents upload) */}
               {currentStep === 5 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
@@ -250,7 +254,6 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 6: New administrative documents step */}
               {currentStep === 6 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
@@ -260,8 +263,16 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 7: Company invitation (moved from step 6) */}
               {currentStep === 7 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Gestion des contacts</h2>
+                    <TenderContactsManager form={form} />
+                  </CardContent>
+                </Card>
+              }
+              
+              {currentStep === 8 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Invitation des entreprises</h2>
@@ -270,8 +281,7 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 8: Publication options (moved from step 7) */}
-              {currentStep === 8 && <>
+              {currentStep === 9 && <>
                   <Card className="md:col-span-2">
                     <CardContent className="p-6">
                       <h2 className="text-xl font-semibold mb-4">Prévisualisation de l'appel d'offres</h2>
@@ -357,7 +367,6 @@ export default function CreateTender() {
                 </>}
             </div>
             
-            {/* Bottom navigation */}
             <div className="flex justify-between items-center pt-4">
               {currentStep > 1 ? <Button type="button" variant="outline" onClick={handlePrevious}>
                   <ArrowLeft className="mr-1 h-4 w-4" />
