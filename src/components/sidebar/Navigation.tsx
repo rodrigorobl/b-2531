@@ -12,7 +12,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
   const location = useLocation();
-
+  
   // Get the dashboard route based on the active profile
   const getDashboardRoute = () => {
     switch (activeProfile) {
@@ -101,7 +101,10 @@ export const Navigation: React.FC<NavigationProps> = ({
           </li>
         )}
         <li>
-          <Link to="/directory" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+          <Link 
+            to={activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre' ? '/quoted-directory' : '/directory'} 
+            className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quoted-directory' || location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
+          >
             <BookOpen size={18} />
             <span>Annuaire</span>
           </Link>
