@@ -2,16 +2,17 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { TenderStatus } from './TenderManagementTable';
+import StatusBadge from '@/components/StatusBadge';
 
 // Helper function to render the status badge
 export const renderStatusBadge = (status: TenderStatus) => {
   switch (status) {
     case 'open':
-      return <Badge className="bg-amber-500">En cours</Badge>;
+      return <StatusBadge status="in-progress" />;
     case 'closed':
-      return <Badge className="bg-gray-500">Clôturé</Badge>;
+      return <StatusBadge status="closed" />;
     case 'assigned':
-      return <Badge className="bg-green-600">Attribué</Badge>;
+      return <StatusBadge status="assigned" />;
     default:
       return <Badge>Inconnu</Badge>;
   }

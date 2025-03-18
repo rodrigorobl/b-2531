@@ -11,7 +11,9 @@ import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import StatusBadge from '@/components/StatusBadge';
 import { Link } from 'react-router-dom';
+
 interface Lot {
   id: string;
   name: string;
@@ -19,6 +21,7 @@ interface Lot {
   quotesReceived: number;
   budget: string;
 }
+
 interface Project {
   id: string;
   name: string;
@@ -30,6 +33,7 @@ interface Project {
   progress: number;
   estimatedBudget: string;
 }
+
 export default function ProjectsList() {
   const [projects, setProjects] = useState<Project[]>([{
     id: "1",
@@ -122,6 +126,7 @@ export default function ProjectsList() {
       budget: "350,000 €"
     }]
   }]);
+
   const getProjectTypeLabel = (type: string) => {
     switch (type) {
       case 'conception':
@@ -134,18 +139,11 @@ export default function ProjectsList() {
         return type;
     }
   };
+
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'in-progress':
-        return <Badge className="bg-blue-500">En cours</Badge>;
-      case 'closed':
-        return <Badge className="bg-red-500">Clôturé</Badge>;
-      case 'assigned':
-        return <Badge className="bg-green-600">Attribué</Badge>;
-      default:
-        return <Badge>Inconnu</Badge>;
-    }
+    return <StatusBadge status={status as any} />;
   };
+
   const getLotStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -160,6 +158,7 @@ export default function ProjectsList() {
         return <Badge variant="outline">Inconnu</Badge>;
     }
   };
+
   return <Layout>
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">

@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-type StatusType = 'in-progress' | 'completed' | 'assigned' | 'pending' | 'closed';
+type StatusType = 'in-progress' | 'completed' | 'assigned' | 'pending' | 'closed' | 'draft';
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -12,7 +12,7 @@ interface StatusBadgeProps {
 const statusConfig = {
   'in-progress': {
     label: 'En cours',
-    color: 'bg-status-in-progress text-white',
+    color: 'bg-blue-500 text-white',
   },
   'completed': {
     label: 'Terminé',
@@ -28,7 +28,11 @@ const statusConfig = {
   },
   'closed': {
     label: 'Clôturé',
-    color: 'bg-status-closed text-white',
+    color: 'bg-green-500 text-white',
+  },
+  'draft': {
+    label: 'Brouillon',
+    color: 'bg-gray-500 text-white',
   },
 };
 
