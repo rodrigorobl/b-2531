@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TenderFormValues } from '@/pages/CreateTender';
@@ -17,7 +18,266 @@ interface TenderCompanyInvitationProps {
 
 // Données fictives d'entreprises pour la démonstration
 const dummyCompanies = [
-  // ... keep existing code (dummyCompanies array)
+  {
+    id: "company1",
+    name: "Architect & Partners",
+    specialty: ["architecte", "economiste"],
+    recommendation: 95,
+    info: {
+      address: "15 rue de la République, Paris",
+      employees: 45,
+      founded: 2005,
+      projects: 132,
+      description: "Cabinet d'architectes spécialisé dans les projets résidentiels haut de gamme et tertiaires."
+    }
+  },
+  {
+    id: "company2",
+    name: "Structures Modernes",
+    specialty: ["bet-structure"],
+    recommendation: 92,
+    info: {
+      address: "8 avenue des Ingénieurs, Lyon",
+      employees: 28,
+      founded: 2010,
+      projects: 87,
+      description: "Bureau d'études techniques spécialisé dans les structures complexes et les bâtiments de grande hauteur."
+    }
+  },
+  {
+    id: "company3",
+    name: "Fluid Systems",
+    specialty: ["bet-fluides", "bet-hqe"],
+    recommendation: 88,
+    info: {
+      address: "22 rue de l'Innovation, Bordeaux",
+      employees: 35,
+      founded: 2008,
+      projects: 115,
+      description: "Expert en ingénierie des fluides et solutions environnementales pour bâtiments performants."
+    }
+  },
+  {
+    id: "company4",
+    name: "Acoustic Design",
+    specialty: ["acousticien"],
+    recommendation: 96,
+    info: {
+      address: "11 rue du Son, Nantes",
+      employees: 12,
+      founded: 2014,
+      projects: 64,
+      description: "Spécialiste en solutions acoustiques pour tous types de bâtiments, de l'auditorium à l'habitation."
+    }
+  },
+  {
+    id: "company5",
+    name: "Budget Construction",
+    specialty: ["economiste"],
+    recommendation: 89,
+    info: {
+      address: "4 rue des Finances, Marseille",
+      employees: 18,
+      founded: 2011,
+      projects: 93,
+      description: "Cabinet d'économistes de la construction offrant des services de chiffrage précis et d'optimisation budgétaire."
+    }
+  },
+  {
+    id: "company6",
+    name: "Eco Building Solutions",
+    specialty: ["bet-hqe", "architecte"],
+    recommendation: 91,
+    info: {
+      address: "30 rue Verte, Toulouse",
+      employees: 22,
+      founded: 2012,
+      projects: 76,
+      description: "Experts en conception de bâtiments écologiques et certifications environnementales."
+    }
+  },
+  {
+    id: "company7", 
+    name: "Construction Générale SA",
+    specialty: ["gros-oeuvre", "demolition"],
+    recommendation: 94,
+    info: {
+      address: "52 rue du Bâtiment, Lille",
+      employees: 120,
+      founded: 1998,
+      projects: 215,
+      description: "Entreprise de construction générale spécialisée dans les ouvrages complexes et les grandes infrastructures."
+    }
+  },
+  {
+    id: "company8",
+    name: "Façades & Design",
+    specialty: ["facades", "isolation"],
+    recommendation: 87,
+    info: {
+      address: "17 avenue de l'Architecture, Nice",
+      employees: 45,
+      founded: 2007,
+      projects: 128,
+      description: "Spécialiste des façades innovantes et solutions d'isolation thermique performantes."
+    }
+  },
+  {
+    id: "company9",
+    name: "Electricité Pro",
+    specialty: ["electricite"],
+    recommendation: 93,
+    info: {
+      address: "9 rue de l'Énergie, Strasbourg",
+      employees: 65,
+      founded: 2001,
+      projects: 176,
+      description: "Entreprise d'électricité générale pour projets tertiaires, industriels et résidentiels de grande envergure."
+    }
+  },
+  {
+    id: "company10",
+    name: "Plomberie & Fluides",
+    specialty: ["plomberie", "cvc"],
+    recommendation: 90,
+    info: {
+      address: "14 rue des Canalisations, Rennes",
+      employees: 38,
+      founded: 2009,
+      projects: 104,
+      description: "Expert en installations de plomberie et systèmes de fluides pour tous types de constructions."
+    }
+  },
+  {
+    id: "company11",
+    name: "Peinture Décoration Plus",
+    specialty: ["peinture"],
+    recommendation: 91,
+    info: {
+      address: "6 rue des Couleurs, Montpellier",
+      employees: 29,
+      founded: 2013,
+      projects: 83,
+      description: "Entreprise de peinture et décoration pour projets haut de gamme et espaces professionnels."
+    }
+  },
+  {
+    id: "company12",
+    name: "Bois & Menuiserie",
+    specialty: ["menuiserie", "charpente"],
+    recommendation: 95,
+    info: {
+      address: "25 rue du Bois, Grenoble",
+      employees: 42,
+      founded: 2004,
+      projects: 137,
+      description: "Artisans spécialisés dans les ouvrages en bois, la menuiserie sur mesure et les charpentes complexes."
+    }
+  },
+  {
+    id: "company13",
+    name: "Climatisation Expertise",
+    specialty: ["cvc"],
+    recommendation: 88,
+    info: {
+      address: "31 rue du Confort, Dijon",
+      employees: 26,
+      founded: 2011,
+      projects: 92,
+      description: "Spécialiste des systèmes CVC innovants et solutions de confort thermique pour tous bâtiments."
+    }
+  },
+  {
+    id: "company14",
+    name: "Rénovation Bâtiment",
+    specialty: ["gros-oeuvre", "renovation"],
+    recommendation: 86,
+    info: {
+      address: "12 rue de la Réhabilitation, Tours",
+      employees: 35,
+      founded: 2008,
+      projects: 98,
+      description: "Entreprise spécialisée dans la rénovation de bâtiments anciens et la réhabilitation d'espaces."
+    }
+  },
+  {
+    id: "company15",
+    name: "Élévateurs Modernes",
+    specialty: ["ascenseurs"],
+    recommendation: 92,
+    info: {
+      address: "8 rue de la Mobilité, Angers",
+      employees: 19,
+      founded: 2012,
+      projects: 64,
+      description: "Installation et maintenance d'ascenseurs et systèmes d'élévation pour tous types de bâtiments."
+    }
+  },
+  {
+    id: "company16",
+    name: "VRD Solutions",
+    specialty: ["vrd"],
+    recommendation: 89,
+    info: {
+      address: "43 route des Réseaux, Clermont-Ferrand",
+      employees: 48,
+      founded: 2005,
+      projects: 121,
+      description: "Spécialiste des travaux de voirie, réseaux divers et aménagements extérieurs."
+    }
+  },
+  {
+    id: "company17",
+    name: "Service Entretien Pro",
+    specialty: ["maintenance", "entretien"],
+    recommendation: 93,
+    info: {
+      address: "16 rue de la Maintenance, Paris",
+      employees: 75,
+      founded: 2002,
+      projects: 240,
+      description: "Entreprise spécialisée dans les services de maintenance et d'entretien régulier de bâtiments."
+    }
+  },
+  {
+    id: "company18",
+    name: "Sécurité Bâtiment",
+    specialty: ["securite"],
+    recommendation: 94,
+    info: {
+      address: "28 rue de la Protection, Lyon",
+      employees: 52,
+      founded: 2007,
+      projects: 186,
+      description: "Expert en installation de systèmes de sécurité et surveillance pour bâtiments professionnels."
+    }
+  },
+  {
+    id: "company19",
+    name: "Propreté & Services",
+    specialty: ["nettoyage"],
+    recommendation: 90,
+    info: {
+      address: "9 avenue de la Propreté, Marseille",
+      employees: 128,
+      founded: 1999,
+      projects: 312,
+      description: "Société de nettoyage professionnel pour bureaux, commerces et espaces industriels."
+    }
+  },
+  {
+    id: "company20",
+    name: "Espaces Verts Concept",
+    specialty: ["entretien"],
+    recommendation: 91,
+    info: {
+      address: "17 rue des Jardins, Bordeaux",
+      employees: 34,
+      founded: 2010,
+      projects: 109,
+      description: "Conception, aménagement et entretien d'espaces verts pour projets résidentiels et tertiaires."
+    }
+  }
 ];
 
 // Lots pour les différents types d'appels d'offres
