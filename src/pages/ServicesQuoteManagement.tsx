@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileSpreadsheet, FileText, Filter, FilePlus2, Download, Calendar, Building, Search } from 'lucide-react';
+import { FileSpreadsheet, FileText, Filter, FilePlus2, Search, ExternalLink, SendIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -155,6 +155,17 @@ export default function ServicesQuoteManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRequests, setFilteredRequests] = useState<QuoteRequest[]>(mockQuoteRequests);
   const [filteredQuotes, setFilteredQuotes] = useState<Quote[]>(mockQuotes);
+  const [quoteTypeFilter, setQuoteTypeFilter] = useState<'all' | 'requested' | 'voluntary'>('all');
+
+  // Filter quotes by type (requested or voluntary)
+  const getFilteredQuotesByType = () => {
+    if (quoteTypeFilter === 'all') return filteredQuotes;
+    return filteredQuotes.filter(quote => 
+      quoteTypeFilter === 'requested' 
+        ? !quote.isVoluntary 
+        : quote.isVoluntary
+    );
+  };
 
   // Handle search and filtering
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,8 +243,14 @@ export default function ServicesQuoteManagement() {
 
         <Tabs defaultValue="requests" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="requests">Demandes de devis reçues</TabsTrigger>
-            <TabsTrigger value="quotes">Devis envoyés</TabsTrigger>
+            <TabsTrigger value="requests">
+              <ExternalLink size={16} className="mr-2" />
+              Demandes de devis reçues
+            </TabsTrigger>
+            <TabsTrigger value="quotes">
+              <SendIcon size={16} className="mr-2" />
+              Devis envoyés
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="requests">
@@ -253,13 +270,52 @@ export default function ServicesQuoteManagement() {
           <TabsContent value="quotes">
             <Card>
               <CardHeader>
-                <CardTitle>Devis envoyés</CardTitle>
-                <CardDescription>
-                  Suivez l'état de vos devis envoyés, qu'ils soient en réponse à une demande ou envoyés spontanément
-                </CardDescription>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <CardTitle>Devis envoyés</CardTitle>
+                    <CardDescription>
+                      Suivez l'état de vos devis envoyés, qu'ils soient en réponse à une demande ou envoyés spontanément
+                    </CardDescription>
+                  </div>
+                  
+                  <div className="inline-flex p-1 rounded-md bg-muted">
+                    <Button 
+                      variant={quoteTypeFilter === 'all' ? 'default' : 'ghost'} 
+                      size="sm" 
+                      onClick={() => setQuoteTypeFilter('all')}
+                      className="relative flex-1"
+                    >
+                      Tous les devis
+                    </Button>
+                    <Button 
+                      variant={quoteTypeFilter === 'requested' ? 'default' : 'ghost'} 
+                      size="sm" 
+                      onClick={() => setQuoteTypeFilter('requested')}
+                      className="relative flex-1"
+                    >
+                      <ExternalLink size={14} className="mr-1" />
+                      Sur demande
+                      <Badge variant="outline" className="ml-2 bg-blue-50 hover:bg-blue-50">
+                        {mockQuotes.filter(q => !q.isVoluntary).length}
+                      </Badge>
+                    </Button>
+                    <Button 
+                      variant={quoteTypeFilter === 'voluntary' ? 'default' : 'ghost'} 
+                      size="sm" 
+                      onClick={() => setQuoteTypeFilter('voluntary')}
+                      className="relative flex-1"
+                    >
+                      <SendIcon size={14} className="mr-1" />
+                      Démarchage actif
+                      <Badge variant="outline" className="ml-2 bg-emerald-50 hover:bg-emerald-50">
+                        {mockQuotes.filter(q => q.isVoluntary).length}
+                      </Badge>
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <QuotesList quotes={filteredQuotes} />
+                <QuotesList quotes={getFilteredQuotesByType()} />
               </CardContent>
             </Card>
           </TabsContent>
