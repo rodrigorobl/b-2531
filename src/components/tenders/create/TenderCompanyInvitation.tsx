@@ -54,7 +54,8 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
     name: string;
     selected: boolean;
   }>>(invitedCompanies.map(company => ({
-    ...company,
+    id: company.id,
+    name: company.name,
     selected: true
   })));
 
@@ -76,7 +77,11 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
         c.id === company.id ? { ...c, selected: !c.selected } : c
       );
     } else {
-      updatedCompanies = [...selectedCompanies, { ...company, selected: true }];
+      updatedCompanies = [...selectedCompanies, { 
+        id: company.id, 
+        name: company.name, 
+        selected: true 
+      }];
     }
     
     setSelectedCompanies(updatedCompanies);
