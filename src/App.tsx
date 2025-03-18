@@ -41,6 +41,7 @@ import TenderAlert from "./pages/TenderAlert";
 import AlertManagement from "./pages/AlertManagement";
 import ConstructionSitesMap from "./pages/ConstructionSitesMap";
 import ConstructionSiteDetail from "./pages/ConstructionSiteDetail";
+import CompanyServices from "./pages/CompanyServices";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/projects-search" element={<ProjectsSearch />} />
             <Route path="/company" element={<Company />} />
             <Route path="/company/edit" element={<EditCompany />} />
+            <Route path="/company-services/:companyId" element={<CompanyServices />} />
             <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
             <Route path="/directory" element={<CompanyDirectory />} />
