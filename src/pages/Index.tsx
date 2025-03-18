@@ -175,6 +175,10 @@ export default function Index() {
     navigate(-1);
   };
 
+  const handleSubmitQuote = () => {
+    navigate('/submit-quote/PRJ-2023-042'); // Using the project ID from projectData
+  };
+
   return (
     <div className="flex w-full min-h-screen bg-background">
       <Sidebar />
@@ -206,7 +210,12 @@ export default function Index() {
             </Button>
           </div>
           <div className="space-y-4">
-            <Button size="lg" variant="default" className="w-full py-6 bg-green-600 hover:bg-green-700">
+            <Button 
+              size="lg" 
+              variant="default" 
+              className="w-full py-6 bg-green-600 hover:bg-green-700"
+              onClick={handleSubmitQuote}
+            >
               <Upload className="mr-2 h-5 w-5" />
               Déposer une offre
             </Button>
