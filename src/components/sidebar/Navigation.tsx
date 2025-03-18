@@ -1,14 +1,18 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
+
 interface NavigationProps {
   activeProfile: ProfileType;
 }
+
 export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
   const location = useLocation();
+  
   const getDashboardRoute = () => {
     switch (activeProfile) {
       case 'promoteur':
@@ -25,10 +29,19 @@ export const Navigation: React.FC<NavigationProps> = ({
         return '/dashboard';
     }
   };
+  
   const isActiveDashboard = () => {
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
   };
+
+  const getCompanyRoute = () => {
+    if (activeProfile === 'entreprise-services') {
+      return '/company-services';
+    }
+    return '/company';
+  };
+  
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
         {getProfileName(activeProfile)}
@@ -87,18 +100,6 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
             <li>
-              <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <HardHat size={18} />
-                <span>Devis en attente</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/company-services/service-company-1" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <Wrench size={18} />
-                <span>Mes services</span>
-              </Link>
-            </li>
-            <li>
               <Link to="/services-quote-management" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/services-quote') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <FileSpreadsheet size={18} />
                 <span>Gestion des devis</span>
@@ -135,7 +136,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           </Link>
         </li>
         <li>
-          <Link to="/company" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/company' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+          <Link to={getCompanyRoute()} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/company' || location.pathname === '/company-services' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <Building size={18} />
             <span>Mon entreprise</span>
           </Link>
