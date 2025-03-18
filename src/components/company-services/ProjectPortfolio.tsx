@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Image, Star, FileText } from 'lucide-react';
+import { FileText, Star } from 'lucide-react';
 import { Project, Service } from "@/types/company-services";
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -32,16 +32,6 @@ export function ProjectPortfolio({ projects, services }: ProjectPortfolioProps) 
         <div className="space-y-6">
           {projects.map((project) => (
             <div key={project.id} className="border rounded-lg overflow-hidden">
-              {project.images && project.images.length > 0 && (
-                <div className="aspect-video bg-muted relative overflow-hidden">
-                  <img 
-                    src={project.images[0]} 
-                    alt={project.name}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              )}
-              
               <div className="p-4">
                 <h3 className="text-lg font-medium mb-1">{project.name}</h3>
                 <div className="text-sm text-muted-foreground mb-3">
