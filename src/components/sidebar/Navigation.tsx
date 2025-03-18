@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 
 interface NavigationProps {
@@ -91,6 +91,20 @@ export const Navigation: React.FC<NavigationProps> = ({
               <Link to="/tender-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tender-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <Search size={18} />
                 <span>Recherche AO</span>
+              </Link>
+            </li>
+          </>}
+        {activeProfile === 'entreprise-services' && <>
+            <li>
+              <Link to="/construction-sites-map" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/construction-sites-map' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <MapPin size={18} />
+                <span>Carte des chantiers</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <HardHat size={18} />
+                <span>Devis en attente</span>
               </Link>
             </li>
           </>}
