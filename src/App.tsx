@@ -34,6 +34,7 @@ import TenderList from "./pages/TenderList";
 import MoeList from "./pages/MoeList";
 import QuotesToAnalyze from "./pages/QuotesToAnalyze";
 import QuoteDetail from "./pages/QuoteDetail";
+import QuoteAnalysis from "./pages/QuoteAnalysis";
 import SubmitQuote from "./pages/SubmitQuote";
 import ProjectSpecifications from "./pages/ProjectSpecifications";
 import ProductReferenceTracking from "./pages/ProductReferenceTracking";
@@ -106,6 +107,7 @@ const App = () => (
             <Route path="/services-quote-management" element={<ServicesQuoteManagement />} />
             <Route path="/services-quote-tracking/:quoteId" element={<ServicesQuoteTracking />} />
             <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
+            <Route path="/quote-analysis/:quoteId" element={<QuoteAnalysis />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
