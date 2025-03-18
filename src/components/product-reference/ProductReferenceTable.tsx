@@ -3,7 +3,7 @@ import React from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building, Mail, Phone, ExternalLink, Send, Clock, CheckCircle, Eye } from 'lucide-react';
+import { MapPin, Building, Mail, Phone, Send, Clock, CheckCircle, Eye } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
 
@@ -59,6 +59,7 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
               <TableHead>Statut du devis</TableHead>
               <TableHead>Date d'envoi</TableHead>
               <TableHead>Actions</TableHead>
+              <TableHead>Détails</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,20 +113,20 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
                   {reference.sentDate ? reference.sentDate : '-'}
                 </TableCell>
                 <TableCell>
-                  <div className="flex gap-2">
-                    {reference.quoteStatus === 'to-send' ? (
-                      <Button size="sm">
-                        <Send className="h-4 w-4 mr-2" />
-                        Envoyer un devis
-                      </Button>
-                    ) : null}
-                    <Button size="sm" variant="outline" asChild>
-                      <Link to={`/product-reference/${reference.id}`}>
-                        <Eye className="h-4 w-4 mr-2" />
-                        Voir détails
-                      </Link>
+                  {reference.quoteStatus === 'to-send' ? (
+                    <Button size="sm">
+                      <Send className="h-4 w-4 mr-2" />
+                      Envoyer un devis
                     </Button>
-                  </div>
+                  ) : null}
+                </TableCell>
+                <TableCell>
+                  <Button size="sm" variant="outline" asChild>
+                    <Link to={`/product-reference/${reference.id}`}>
+                      <Eye className="h-4 w-4 mr-2" />
+                      Voir détails
+                    </Link>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
