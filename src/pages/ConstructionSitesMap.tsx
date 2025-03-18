@@ -93,6 +93,13 @@ export default function ConstructionSitesMap() {
     
     return true;
   });
+
+  const handleSiteClick = (siteId: string) => {
+    const site = CONSTRUCTION_SITES.find(s => s.id === siteId);
+    if (site) {
+      setSelectedSite(site);
+    }
+  };
   
   return (
     <Layout>
@@ -155,7 +162,7 @@ export default function ConstructionSitesMap() {
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left sidebar - list of sites */}
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[750px] overflow-y-auto">
             <h2 className="text-lg font-semibold mb-4">Chantiers ({filteredSites.length})</h2>
             
             {filteredSites.map((site) => (
@@ -205,17 +212,12 @@ export default function ConstructionSitesMap() {
           
           {/* Map and details */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="h-[500px] border rounded-lg overflow-hidden">
-              {/* If a site is selected, center the map on it, otherwise show all sites */}
-              {selectedSite ? (
-                <ProjectMap location={selectedSite.location} />
-              ) : filteredSites.length > 0 ? (
-                <ProjectMap location={filteredSites[0].location} />
-              ) : (
-                <div className="h-full flex items-center justify-center bg-muted">
-                  <p className="text-muted-foreground">Aucun chantier trouvé</p>
-                </div>
-              )}
+            <div className="h-[600px] border rounded-lg overflow-hidden">
+              <ProjectMap 
+                sites={filteredSites} 
+                onSiteClick={handleSiteClick}
+                selectedSiteId={selectedSite?.id}
+              />
             </div>
             
             {selectedSite && (
