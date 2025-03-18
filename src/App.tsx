@@ -24,6 +24,8 @@ import UserProfile from "./pages/UserProfile";
 import UserProfileSettings from "./pages/UserProfileSettings";
 import CreateTender from "./pages/CreateTender";
 import CompanyDirectory from "./pages/CompanyDirectory";
+import QuotedDirectory from "./pages/QuotedDirectory";
+import CompanyDetail from "./pages/CompanyDetail";
 import ProjectsList from "./pages/ProjectsList";
 import LotAnalysis from "./pages/LotAnalysis";
 import TenderList from "./pages/TenderList";
@@ -65,6 +67,8 @@ const App = () => (
             <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
             <Route path="/directory" element={<CompanyDirectory />} />
+            <Route path="/quoted-directory" element={<QuotedDirectory />} />
+            <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
             {/* Quote related routes */}
             <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
             <Route path="/quote/:quoteId" element={<QuoteDetail />} />

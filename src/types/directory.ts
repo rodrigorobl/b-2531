@@ -34,4 +34,33 @@ export interface Company {
     website?: string;
   };
   certifications: string[];
+  presentation?: string;
+  financials?: {
+    solvabilityScore: number;
+    administrativeScore: number;
+    lastUpdated: string;
+  };
+}
+
+export interface TeamMember {
+  id: number;
+  name: string;
+  title: string;
+  email: string;
+  phone: string;
+  isAdmin: boolean;
+  avatar: string;
+}
+
+export interface Rating {
+  id: string;
+  overall: number;
+  commercial: number;
+  projectManagement: number;
+  customerService: number;
+  comment: string;
+  author: string;
+  authorRole: string;
+  date: string;
+  isPositive: boolean;
 }
