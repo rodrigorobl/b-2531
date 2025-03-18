@@ -127,8 +127,8 @@ export default function ProductReferenceDetail() {
     promoter: {
       name: "Immobilier Moderne",
       contacts: [
-        { name: "Jean Dupont", role: "Directeur de projet", email: "j.dupont@immobilier-moderne.fr", phone: "06 12 34 56 78" },
-        { name: "Marie Martin", role: "Responsable technique", email: "m.martin@immobilier-moderne.fr", phone: "06 23 45 67 89" }
+        { name: "Jean Dupont", role: "Directeur de projet", company: "Immobilier Moderne", email: "j.dupont@immobilier-moderne.fr", phone: "06 12 34 56 78" },
+        { name: "Marie Martin", role: "Responsable technique", company: "Immobilier Moderne", email: "m.martin@immobilier-moderne.fr", phone: "06 23 45 67 89" }
       ]
     },
     technicalOffices: [
@@ -136,31 +136,31 @@ export default function ProductReferenceDetail() {
         name: "Cabinet Architecture XYZ",
         role: "Architecte",
         contacts: [
-          { name: "Pierre Leroy", role: "Architecte principal", email: "p.leroy@cabinet-xyz.fr", phone: "06 34 56 78 90" }
+          { name: "Pierre Leroy", role: "Architecte principal", company: "Cabinet Architecture XYZ", email: "p.leroy@cabinet-xyz.fr", phone: "06 34 56 78 90" }
         ]
       },
       {
         name: "BET Thermique SA",
         role: "Bureau d'études thermiques",
         contacts: [
-          { name: "Sophie Blanc", role: "Ingénieure thermicienne", email: "s.blanc@bet-thermique.fr", phone: "06 45 67 89 01" }
+          { name: "Sophie Blanc", role: "Ingénieure thermicienne", company: "BET Thermique SA", email: "s.blanc@bet-thermique.fr", phone: "06 45 67 89 01" }
         ]
       }
     ],
     contractor: {
       name: "Entreprise Construction ABC",
       contacts: [
-        { name: "Thomas Noir", role: "Chef de projet", email: "t.noir@construction-abc.fr", phone: "06 56 78 90 12" },
-        { name: "Julie Vert", role: "Responsable achats", email: "j.vert@construction-abc.fr", phone: "06 67 89 01 23" }
+        { name: "Thomas Noir", role: "Chef de projet", company: "Entreprise Construction ABC", email: "t.noir@construction-abc.fr", phone: "06 56 78 90 12" },
+        { name: "Julie Vert", role: "Responsable achats", company: "Entreprise Construction ABC", email: "j.vert@construction-abc.fr", phone: "06 67 89 01 23" }
       ]
     },
     timeline: [
-      { date: "2024-01-10", title: "Première présentation du produit", description: "Présentation des panneaux isolants A+ au cabinet d'architecture", status: "completed" },
-      { date: "2024-02-15", title: "Validation technique par le BET", description: "Le bureau d'études thermiques a validé la conformité du produit", status: "completed" },
-      { date: "2024-03-05", title: "Demande de devis", description: "L'entreprise Construction ABC a demandé un devis pour les panneaux", status: "completed" },
-      { date: "2024-03-15", title: "Envoi du devis", description: "Devis envoyé à l'entreprise Construction ABC", status: "completed" },
-      { date: "2024-04-01", title: "Signature du devis prévue", description: "Date prévisionnelle pour la signature du devis", status: "pending" },
-      { date: "2024-05-15", title: "Début des travaux", description: "Date prévisionnelle pour le début de l'installation", status: "pending" }
+      { date: "2024-01-10", title: "Première présentation du produit", description: "Présentation des panneaux isolants A+ au cabinet d'architecture", status: "completed" as const },
+      { date: "2024-02-15", title: "Validation technique par le BET", description: "Le bureau d'études thermiques a validé la conformité du produit", status: "completed" as const },
+      { date: "2024-03-05", title: "Demande de devis", description: "L'entreprise Construction ABC a demandé un devis pour les panneaux", status: "completed" as const },
+      { date: "2024-03-15", title: "Envoi du devis", description: "Devis envoyé à l'entreprise Construction ABC", status: "completed" as const },
+      { date: "2024-04-01", title: "Signature du devis prévue", description: "Date prévisionnelle pour la signature du devis", status: "pending" as const },
+      { date: "2024-05-15", title: "Début des travaux", description: "Date prévisionnelle pour le début de l'installation", status: "pending" as const }
     ],
     messages: [
       { 
@@ -169,7 +169,8 @@ export default function ProductReferenceDetail() {
         sender: "Pierre Leroy", 
         senderRole: "Architecte principal", 
         content: "Bonjour, suite à notre réunion, pourriez-vous m'envoyer les fiches techniques détaillées de vos panneaux isolants A+ ?",
-        isRead: true 
+        isRead: true,
+        recipient: "bet"
       },
       { 
         id: "2", 
@@ -177,7 +178,8 @@ export default function ProductReferenceDetail() {
         sender: "Mon Équipe", 
         senderRole: "Responsable commercial", 
         content: "Bonjour Pierre, voici les fiches techniques demandées. N'hésitez pas si vous avez besoin d'informations complémentaires.",
-        isRead: true 
+        isRead: true,
+        recipient: "bet"
       },
       { 
         id: "3", 
@@ -185,7 +187,8 @@ export default function ProductReferenceDetail() {
         sender: "Sophie Blanc", 
         senderRole: "Ingénieure thermicienne", 
         content: "Après analyse, vos panneaux isolants répondent parfaitement aux exigences thermiques du projet. Pourriez-vous nous préciser les délais de livraison pour une commande en mai ?",
-        isRead: true 
+        isRead: true,
+        recipient: "bet"
       },
       { 
         id: "4", 
@@ -193,7 +196,35 @@ export default function ProductReferenceDetail() {
         sender: "Thomas Noir", 
         senderRole: "Chef de projet", 
         content: "Suite à la validation du BET, nous souhaiterions recevoir un devis pour l'ensemble des panneaux nécessaires au projet, selon le métré joint.",
-        isRead: true 
+        isRead: true,
+        recipient: "contractor"
+      },
+      { 
+        id: "5", 
+        date: "2024-03-02", 
+        sender: "Mon Équipe", 
+        senderRole: "Responsable commercial", 
+        content: "Bonjour Thomas, je vous prépare ce devis dans les meilleurs délais. Avez-vous des contraintes particulières concernant les délais de livraison ?",
+        isRead: true,
+        recipient: "contractor"
+      },
+      { 
+        id: "6", 
+        date: "2024-02-05", 
+        sender: "Jean Dupont", 
+        senderRole: "Directeur de projet", 
+        content: "Pouvez-vous nous indiquer si vos produits sont compatibles avec la certification HQE que nous visons sur ce projet ?",
+        isRead: true,
+        recipient: "promoter"
+      },
+      { 
+        id: "7", 
+        date: "2024-02-06", 
+        sender: "Mon Équipe", 
+        senderRole: "Directeur technique", 
+        content: "Bonjour Jean, nos panneaux disposent de toutes les certifications nécessaires pour les projets HQE. Je vous fais parvenir les documents correspondants.",
+        isRead: true,
+        recipient: "promoter"
       }
     ],
     documents: [
@@ -203,6 +234,20 @@ export default function ProductReferenceDetail() {
       { id: "doc4", name: "Devis Panneaux A+ v1.pdf", type: "quote", uploadDate: "2024-03-15", size: "1.8 MB" }
     ]
   };
+
+  // Extract all contacts from the project data
+  const promoterContacts = projectData.promoter.contacts;
+  
+  const betContacts = projectData.technicalOffices.flatMap(office => 
+    office.contacts.map(contact => ({
+      ...contact,
+      company: office.name
+    }))
+  );
+  
+  const contractorContacts = projectData.type === 'realisation' && projectData.contractor 
+    ? projectData.contractor.contacts 
+    : [];
 
   return (
     <Layout>
@@ -436,7 +481,12 @@ export default function ProductReferenceDetail() {
           </TabsContent>
           
           <TabsContent value="communications">
-            <CommunicationHistory messages={projectData.messages} />
+            <CommunicationHistory 
+              messages={projectData.messages} 
+              promoterContacts={promoterContacts}
+              betContacts={betContacts}
+              contractorContacts={contractorContacts}
+            />
           </TabsContent>
           
           <TabsContent value="documents">
