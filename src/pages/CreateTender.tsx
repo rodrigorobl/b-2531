@@ -84,11 +84,16 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
 
   useEffect(() => {
     if (isEditing && tenderId) {
-      const mockTenderData = {
+      const mockTenderData: TenderFormValues = {
         type: "design",
         privacy: "open",
         projectName: "Mock Project Name",
         description: "This is a mock tender description for testing purposes.",
+        design: {
+          projectNature: "logement",
+          area: ""
+        },
+        invitedCompanies: []
       };
       form.reset(mockTenderData);
     }

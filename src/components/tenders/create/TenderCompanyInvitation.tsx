@@ -48,11 +48,11 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
   form
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCompanies, setSelectedCompanies] = useState<{
+  const [selectedCompanies, setSelectedCompanies] = useState<Array<{
     id: string;
     name: string;
-    selected?: boolean;
-  }[]>(form.getValues("invitedCompanies") || []);
+    selected: boolean;
+  }>>(form.getValues("invitedCompanies") || []);
 
   // Filtrer les entreprises en fonction du terme de recherche
   const filteredCompanies = dummyCompanies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -63,9 +63,10 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
   };
 
   // Gérer la sélection d'une entreprise
-  const handleCompanySelection = (company: { id: string; name: string; }) => {
+  const handleCompanySelection = (company: { id: string; name: string }) => {
     const companyExists = selectedCompanies.find(c => c.id === company.id);
-    let updatedCompanies;
+    let updatedCompanies: Array<{ id: string; name: string; selected: boolean }>;
+    
     if (companyExists) {
       updatedCompanies = selectedCompanies.map(c => 
         c.id === company.id ? { ...c, selected: !c.selected } : c
