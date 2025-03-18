@@ -32,6 +32,7 @@ import QuotesToAnalyze from "./pages/QuotesToAnalyze";
 import QuoteDetail from "./pages/QuoteDetail";
 import SubmitQuote from "./pages/SubmitQuote";
 import ProjectSpecifications from "./pages/ProjectSpecifications";
+import ProductReferenceTracking from "./pages/ProductReferenceTracking";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/quoted-directory" element={<QuotedDirectory />} />
             <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
             <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing />} />
+            <Route path="/product-reference" element={<ProductReferenceTracking />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

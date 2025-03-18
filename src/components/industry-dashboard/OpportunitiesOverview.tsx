@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Star } from 'lucide-react';
+import { Bell, Star, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface Opportunity {
   id: string;
@@ -26,6 +26,12 @@ export default function OpportunitiesOverview({ opportunities }: OpportunitiesOv
           <Star className="h-5 w-5 text-primary" />
           Mes opportunités
         </CardTitle>
+        <Button variant="outline" size="sm" asChild>
+          <Link to="/product-reference">
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Suivi des référencements
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
