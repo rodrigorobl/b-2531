@@ -94,7 +94,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
             <li>
-              <Link to="/company-services/service-company-1" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+              <Link to="/company-services" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/company-services' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <Wrench size={18} />
                 <span>Mes services</span>
               </Link>

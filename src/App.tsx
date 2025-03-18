@@ -18,6 +18,7 @@ import TenderSearch from "./pages/TenderSearch";
 import OpportunitiesSearch from "./pages/OpportunitiesSearch";
 import TenderDetail from "./pages/TenderDetail";
 import Company from "./pages/Company";
+import CompanyServices from "./pages/CompanyServices";
 import EditCompany from "./pages/EditCompany";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
@@ -41,7 +42,7 @@ import TenderAlert from "./pages/TenderAlert";
 import AlertManagement from "./pages/AlertManagement";
 import ConstructionSitesMap from "./pages/ConstructionSitesMap";
 import ConstructionSiteDetail from "./pages/ConstructionSiteDetail";
-import CompanyServices from "./pages/CompanyServices";
+import ServicesDetails from "./pages/ServicesDetails";
 import ServicesQuoteManagement from "./pages/ServicesQuoteManagement";
 import ServicesQuoteTracking from "./pages/ServicesQuoteTracking";
 
@@ -76,7 +77,8 @@ const App = () => (
             <Route path="/projects-search" element={<ProjectsSearch />} />
             <Route path="/company" element={<Company />} />
             <Route path="/company/edit" element={<EditCompany />} />
-            <Route path="/company-services/:companyId" element={<CompanyServices />} />
+            <Route path="/company-services" element={<CompanyServices />} />
+            <Route path="/services-details/:companyId" element={<ServicesDetails />} />
             <Route path="/profile" element={<UserProfileSettings />} />
             <Route path="/profile/user/:userId" element={<UserProfile />} />
             <Route path="/directory" element={<CompanyDirectory />} />
@@ -90,7 +92,6 @@ const App = () => (
             <Route path="/alerte-management" element={<AlertManagement />} />
             <Route path="/construction-sites-map" element={<ConstructionSitesMap />} />
             <Route path="/construction-site/:siteId" element={<ConstructionSiteDetail />} />
-            <Route path="/company-services/:companyId" element={<CompanyServices />} />
             <Route path="/submit-quote" element={<SubmitQuote />} />
             <Route path="/submit-quote/:tenderId" element={<SubmitQuote />} />
             <Route path="/submit-quote/:tenderId/:lotId" element={<SubmitQuote />} />
