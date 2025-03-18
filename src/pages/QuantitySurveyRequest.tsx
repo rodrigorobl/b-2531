@@ -1,17 +1,14 @@
-
 import React, { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
-import { Calendar, FileText, Users, Building, MapPin, Clock, Star, MessageSquare, Filter, ArrowUpDown, CheckCircle2, HelpCircle, Send, DollarSign } from 'lucide-react';
+import { Building, MapPin, Clock, Star, MessageSquare, ArrowUpDown, HelpCircle, Send, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -22,10 +19,10 @@ interface SurveyProvider {
   id: string;
   name: string;
   price: number;
-  estimatedDelivery: string; // "X jours"
+  estimatedDelivery: string; 
   rating: number;
   isAvailable: boolean;
-  hasBeenUsedByCompetitor?: string; // Name of competitor if applicable
+  hasBeenUsedByCompetitor?: string; 
 }
 
 const messageSchema = z.object({
@@ -52,7 +49,6 @@ export default function QuantitySurveyRequest() {
     }
   });
 
-  // Mock data for the project
   const projectData = {
     id: projectId || 'unknown',
     name: 'Centre Commercial Riviera',
@@ -66,7 +62,6 @@ export default function QuantitySurveyRequest() {
     client: 'Unibail-Rodamco',
   };
 
-  // Mock data for survey providers
   const surveyProviders: SurveyProvider[] = [
     {
       id: 'provider-1',
@@ -111,7 +106,6 @@ export default function QuantitySurveyRequest() {
     },
   ];
 
-  // Sort providers based on current sort criteria
   const sortedProviders = [...surveyProviders].sort((a, b) => {
     if (sortBy === 'price') {
       return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
@@ -146,14 +140,11 @@ export default function QuantitySurveyRequest() {
   };
 
   const confirmProviderSelection = () => {
-    // Handle provider selection (would be an API call in a real app)
     setShowConfirmation(false);
-    // Show success message or redirect
   };
 
   const onSendMessage = (data: MessageFormValues) => {
     console.log("Sending message:", data.message);
-    // Here you would handle sending the message
     setShowContactDialog(false);
     messageForm.reset();
   };
@@ -278,7 +269,7 @@ export default function QuantitySurveyRequest() {
                                 {provider.name}
                                 {provider.hasBeenUsedByCompetitor && (
                                   <Badge variant="outline" className="text-amber-500 border-amber-500">
-                                    Déjà exploité par {provider.hasBeenUsedByCompetitor}
+                                    Déjà exploité
                                   </Badge>
                                 )}
                               </h3>
@@ -332,26 +323,6 @@ export default function QuantitySurveyRequest() {
                     <p className="text-muted-foreground">
                       Le partage des frais vous permet de réduire le coût de la prestation de métrés en le partageant avec d'autres entreprises concurrentes.
                     </p>
-                    
-                    <div className="p-4 bg-muted rounded-lg">
-                      <h3 className="font-medium">Entreprises potentiellement intéressées</h3>
-                      <div className="mt-2 space-y-2">
-                        <div className="flex items-center justify-between p-2 border rounded-md bg-background">
-                          <div>
-                            <p className="font-medium">Entreprise Durand</p>
-                            <p className="text-sm text-muted-foreground">Spécialiste en gros œuvre</p>
-                          </div>
-                          <Button variant="outline" size="sm">Inviter</Button>
-                        </div>
-                        <div className="flex items-center justify-between p-2 border rounded-md bg-background">
-                          <div>
-                            <p className="font-medium">Construction Martin</p>
-                            <p className="text-sm text-muted-foreground">Entreprise générale de bâtiment</p>
-                          </div>
-                          <Button variant="outline" size="sm">Inviter</Button>
-                        </div>
-                      </div>
-                    </div>
                     
                     <Separator />
                     
@@ -439,7 +410,6 @@ export default function QuantitySurveyRequest() {
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
         <DialogContent>
           <DialogHeader>
@@ -477,7 +447,6 @@ export default function QuantitySurveyRequest() {
         </DialogContent>
       </Dialog>
 
-      {/* Contact Dialog */}
       <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
         <DialogContent>
           <DialogHeader>
