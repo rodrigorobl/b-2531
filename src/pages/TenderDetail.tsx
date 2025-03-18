@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -7,6 +8,7 @@ import { TenderOverviewTab } from '@/components/tenders/TenderOverviewTab';
 import { TenderQuotesTab } from '@/components/tenders/TenderQuotesTab';
 import { TenderMessagesTab } from '@/components/tenders/TenderMessagesTab';
 import { TenderDocumentsTab } from '@/components/tenders/TenderDocumentsTab';
+import { TenderContactsTab } from '@/components/tenders/TenderContactsTab';
 
 // Types
 interface Tender {
@@ -304,6 +306,7 @@ export default function TenderDetail() {
             </TabsTrigger>
             <TabsTrigger value="messages">Messages ({tender.messages.length})</TabsTrigger>
             <TabsTrigger value="documents">Documents ({tender.documents.length})</TabsTrigger>
+            <TabsTrigger value="contacts">Contacts</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -340,6 +343,11 @@ export default function TenderDetail() {
               documents={tender.documents}
               categories={tender.categories}
             />
+          </TabsContent>
+
+          {/* Contacts Tab */}
+          <TabsContent value="contacts">
+            <TenderContactsTab tenderId={tenderId || ''} />
           </TabsContent>
         </Tabs>
       </main>
