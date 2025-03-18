@@ -13,6 +13,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 import { Calendar, FileText, Users, Building, MapPin, Clock, Star, MessageSquare, Filter, ArrowUpDown, CheckCircle2, HelpCircle, Send, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Textarea } from '@/components/ui/textarea';
 
 interface SurveyProvider {
   id: string;
@@ -24,6 +28,12 @@ interface SurveyProvider {
   hasBeenUsedByCompetitor?: string; // Name of competitor if applicable
 }
 
+const messageSchema = z.object({
+  message: z.string().min(1, "Le message ne peut pas être vide")
+});
+
+type MessageFormValues = z.infer<typeof messageSchema>;
+
 export default function QuantitySurveyRequest() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project');
@@ -34,6 +44,13 @@ export default function QuantitySurveyRequest() {
   const [selectedProvider, setSelectedProvider] = useState<SurveyProvider | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  
+  const messageForm = useForm<MessageFormValues>({
+    resolver: zodResolver(messageSchema),
+    defaultValues: {
+      message: ''
+    }
+  });
 
   // Mock data for the project
   const projectData = {
@@ -120,6 +137,7 @@ export default function QuantitySurveyRequest() {
   const handleContactProvider = (provider: SurveyProvider) => {
     setSelectedProvider(provider);
     setShowContactDialog(true);
+    messageForm.reset();
   };
 
   const handleSelectProvider = (provider: SurveyProvider) => {
@@ -131,6 +149,13 @@ export default function QuantitySurveyRequest() {
     // Handle provider selection (would be an API call in a real app)
     setShowConfirmation(false);
     // Show success message or redirect
+  };
+
+  const onSendMessage = (data: MessageFormValues) => {
+    console.log("Sending message:", data.message);
+    // Here you would handle sending the message
+    setShowContactDialog(false);
+    messageForm.reset();
   };
 
   const renderStarRating = (rating: number) => {
@@ -464,34 +489,39 @@ export default function QuantitySurveyRequest() {
                 Envoyez un message au prestataire pour obtenir plus d'informations sur ses services.
               </p>
               
-              <Form>
-                <FormField
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Votre message</FormLabel>
-                      <FormControl>
-                        <textarea 
-                          className="w-full min-h-[100px] p-2 border rounded-md" 
-                          placeholder="Décrivez votre besoin ou posez vos questions..."
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Soyez précis dans votre demande pour obtenir une réponse adaptée.
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
+              <Form {...messageForm}>
+                <form onSubmit={messageForm.handleSubmit(onSendMessage)} className="space-y-4">
+                  <FormField
+                    control={messageForm.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Votre message</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            {...field}
+                            className="min-h-[100px]" 
+                            placeholder="Décrivez votre besoin ou posez vos questions..."
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Soyez précis dans votre demande pour obtenir une réponse adaptée.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => setShowContactDialog(false)}>Annuler</Button>
+                    <Button type="submit">
+                      <Send size={14} className="mr-2" />
+                      Envoyer
+                    </Button>
+                  </DialogFooter>
+                </form>
               </Form>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowContactDialog(false)}>Annuler</Button>
-            <Button>
-              <Send size={14} className="mr-2" />
-              Envoyer
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
