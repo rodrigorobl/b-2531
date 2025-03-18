@@ -97,6 +97,7 @@ const App = () => (
             <Route path="/submit-quote/:tenderId/:lotId" element={<SubmitQuote />} />
             <Route path="/services-quote-management" element={<ServicesQuoteManagement />} />
             <Route path="/services-quote-tracking/:quoteId" element={<ServicesQuoteTracking />} />
+            <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
