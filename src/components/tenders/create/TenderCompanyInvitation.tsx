@@ -48,11 +48,15 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
   form
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const invitedCompanies = form.getValues("invitedCompanies") || [];
   const [selectedCompanies, setSelectedCompanies] = useState<Array<{
     id: string;
     name: string;
     selected: boolean;
-  }>>(form.getValues("invitedCompanies") || []);
+  }>>(invitedCompanies.map(company => ({
+    ...company,
+    selected: true
+  })));
 
   // Filtrer les entreprises en fonction du terme de recherche
   const filteredCompanies = dummyCompanies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -74,8 +78,9 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
     } else {
       updatedCompanies = [...selectedCompanies, { ...company, selected: true }];
     }
+    
     setSelectedCompanies(updatedCompanies);
-    form.setValue("invitedCompanies", updatedCompanies);
+    form.setValue("invitedCompanies", updatedCompanies.filter(c => c.selected));
   };
 
   return <div className="space-y-6">

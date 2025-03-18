@@ -38,11 +38,13 @@ const formSchema = z.object({
   design: designTenderSchema.optional(),
   construction: constructionTenderSchema.optional(),
   service: serviceTenderSchema.optional(),
-  invitedCompanies: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    selected: z.boolean().optional(),
-  })).optional(),
+  invitedCompanies: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      selected: z.boolean()
+    })
+  ),
 });
 
 export type TenderFormValues = z.infer<typeof formSchema>;
