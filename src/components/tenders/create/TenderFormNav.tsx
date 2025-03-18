@@ -14,15 +14,16 @@ const TenderFormNav: React.FC<TenderFormNavProps> = ({
   totalSteps,
   onStepClick
 }) => {
-  // Create an array of step labels
+  // Create an array of step labels with updated names
   const steps = [
     { id: 1, label: "Type d'AO" },
     { id: 2, label: "Confidentialité" },
     { id: 3, label: "Informations" },
     { id: 4, label: "Détails" },
-    { id: 5, label: "Documents" },
-    { id: 6, label: "Invitations" },
-    { id: 7, label: "Publication" },
+    { id: 5, label: "DCE" },           // Changed from "Documents"
+    { id: 6, label: "Documents" },      // New step for administrative documents
+    { id: 7, label: "Invitations" },
+    { id: 8, label: "Publication" },    // Moved to step 8
   ];
   
   return (

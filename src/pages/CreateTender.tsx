@@ -16,6 +16,7 @@ import ConstructionTenderForm from "@/components/tenders/create/ConstructionTend
 import ServiceTenderForm from "@/components/tenders/create/ServiceTenderForm";
 import TenderPublishOptions from "@/components/tenders/create/TenderPublishOptions";
 import TenderCompanyInvitation from "@/components/tenders/create/TenderCompanyInvitation";
+import TenderAdminDocuments from "@/components/tenders/create/TenderAdminDocuments";
 
 export type TenderType = 'design' | 'construction' | 'service';
 export type TenderPrivacy = 'open' | 'restricted' | 'closed';
@@ -42,6 +43,10 @@ const tenderSchema = z.object({
     name: z.string(),
     size: z.number()
   })).optional(),
+  adminDocuments: z.array(z.object({
+    id: z.string(),
+    name: z.string()
+  })).optional(),
   invitedCompanies: z.array(z.object({
     id: z.string(),
     name: z.string(),
@@ -53,7 +58,7 @@ export type TenderFormValues = z.infer<typeof tenderSchema>;
 
 export default function CreateTender() {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 7;
+  const totalSteps = 8; // Updated total steps
   const navigate = useNavigate();
   
   const form = useForm<TenderFormValues>({
@@ -66,6 +71,7 @@ export default function CreateTender() {
       location: "",
       budget: "",
       documents: [],
+      adminDocuments: [],
       invitedCompanies: []
     }
   });
@@ -212,15 +218,15 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 5: Documents upload */}
+              {/* Step 5: DCE (renamed from Documents upload) */}
               {currentStep === 5 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
-                    <h2 className="text-xl font-semibold mb-4">Documents</h2>
+                    <h2 className="text-xl font-semibold mb-4">DCE (Dossier de Consultation des Entreprises)</h2>
                     <p className="text-muted-foreground mb-4">
-                      Ajoutez les documents nécessaires à la compréhension de votre projet
+                      Ajoutez les documents techniques nécessaires à la consultation des entreprises
                       {watchType === 'design' && ' (programme, esquisses, etc.)'}
-                      {watchType === 'construction' && ' (plans, DCE, DPGF, etc.)'}
+                      {watchType === 'construction' && ' (plans, cahier des charges, DPGF, etc.)'}
                       {watchType === 'service' && ' (cahier des charges, plans des locaux, etc.)'}
                     </p>
                     
@@ -244,8 +250,18 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 6: Company invitation */}
+              {/* Step 6: New administrative documents step */}
               {currentStep === 6 && 
+                <Card className="md:col-span-3">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Documents administratifs à fournir</h2>
+                    <TenderAdminDocuments form={form} />
+                  </CardContent>
+                </Card>
+              }
+              
+              {/* Step 7: Company invitation (moved from step 6) */}
+              {currentStep === 7 && 
                 <Card className="md:col-span-3">
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Invitation des entreprises</h2>
@@ -254,8 +270,8 @@ export default function CreateTender() {
                 </Card>
               }
               
-              {/* Step 7: Publication options */}
-              {currentStep === 7 && <>
+              {/* Step 8: Publication options (moved from step 7) */}
+              {currentStep === 8 && <>
                   <Card className="md:col-span-2">
                     <CardContent className="p-6">
                       <h2 className="text-xl font-semibold mb-4">Prévisualisation de l'appel d'offres</h2>
@@ -296,8 +312,23 @@ export default function CreateTender() {
                         </div>
                         
                         <div>
-                          <h4 className="font-medium mb-1">Documents</h4>
+                          <h4 className="font-medium mb-1">DCE</h4>
                           <p className="text-sm text-muted-foreground">Aucun document joint.</p>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium mb-1">Documents administratifs requis</h4>
+                          {form.getValues("adminDocuments")?.length ? (
+                            <ul className="text-sm list-disc pl-5">
+                              {form.getValues("adminDocuments")
+                                ?.filter(doc => doc.name.trim() !== '')
+                                .map(doc => (
+                                  <li key={doc.id}>{doc.name}</li>
+                                ))}
+                            </ul>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">Aucun document administratif requis.</p>
+                          )}
                         </div>
 
                         <div>
