@@ -17,12 +17,8 @@ import { Separator } from '@/components/ui/separator';
 
 // Define the form schema
 const quoteFormSchema = z.object({
-  quoteFile: z.any().refine((file) => file && file.length > 0, {
-    message: "Le devis au format PDF est obligatoire",
-  }),
-  dpgfFile: z.any().refine((file) => file && file.length > 0, {
-    message: "Le DPGF au format XLS est obligatoire",
-  }),
+  quoteFile: z.any().optional(), // Changed from required to optional
+  dpgfFile: z.any().optional(),  // Changed from required to optional
   adminDocs: z.array(
     z.object({
       id: z.string(),
@@ -125,46 +121,7 @@ export default function SubmitQuote() {
   
   const handleNextStep = () => {
     if (currentStep < totalSteps) {
-      // Validate current step before moving to next
-      switch (currentStep) {
-        case 1: // Quote file upload
-          if (!uploadedQuoteFile) {
-            form.setError("quoteFile", { 
-              type: "manual", 
-              message: "Veuillez téléverser votre devis au format PDF." 
-            });
-            return;
-          }
-          break;
-        case 2: // DPGF file upload
-          if (!uploadedDpgfFile) {
-            form.setError("dpgfFile", { 
-              type: "manual", 
-              message: "Veuillez téléverser votre DPGF au format Excel." 
-            });
-            return;
-          }
-          break;
-        case 3: // Admin docs
-          // Check if all required docs are uploaded
-          const adminDocs = form.getValues("adminDocs");
-          const missingRequiredDocs = adminDocs.filter(doc => doc.isRequired && !uploadedAdminDocs[doc.id]);
-          if (missingRequiredDocs.length > 0) {
-            alert("Veuillez téléverser tous les documents administratifs obligatoires.");
-            return;
-          }
-          break;
-        case 4: // Amount
-          if (!form.getValues("amount")) {
-            form.setError("amount", { 
-              type: "manual", 
-              message: "Veuillez indiquer le montant HT de votre devis." 
-            });
-            return;
-          }
-          break;
-      }
-      
+      // Move to next step regardless of validation
       setCurrentStep(currentStep + 1);
     }
   };
@@ -182,12 +139,9 @@ export default function SubmitQuote() {
     navigate(`/tender/${tenderId}`);
   };
   
-  // Check if all documents are uploaded for the final step
-  const areAllDocsUploaded = () => {
-    if (!uploadedQuoteFile || !uploadedDpgfFile) return false;
-    
-    const requiredDocs = form.getValues("adminDocs").filter(doc => doc.isRequired);
-    return requiredDocs.every(doc => uploadedAdminDocs[doc.id]);
+  // Check if all documents are uploaded for the final step - now just checks if amount is entered
+  const canSubmitForm = () => {
+    return form.getValues("amount") && form.getValues("termsAgreed");
   };
   
   return (
@@ -273,12 +227,10 @@ export default function SubmitQuote() {
                       </div>
                     )}
                     
-                    {form.formState.errors.quoteFile && (
-                      <div className="text-destructive text-sm flex items-center gap-2">
-                        <AlertCircle size={14} /> 
-                        {form.formState.errors.quoteFile.message?.toString()}
-                      </div>
-                    )}
+                    <div className="text-amber-700 text-sm flex items-center gap-2">
+                      <Info size={14} /> 
+                      Le dépôt du devis est recommandé mais non obligatoire.
+                    </div>
                   </div>
                 )}
                 
@@ -328,12 +280,10 @@ export default function SubmitQuote() {
                       </div>
                     )}
                     
-                    {form.formState.errors.dpgfFile && (
-                      <div className="text-destructive text-sm flex items-center gap-2">
-                        <AlertCircle size={14} /> 
-                        {form.formState.errors.dpgfFile.message?.toString()}
-                      </div>
-                    )}
+                    <div className="text-amber-700 text-sm flex items-center gap-2">
+                      <Info size={14} /> 
+                      Le dépôt du DPGF est recommandé mais non obligatoire.
+                    </div>
                   </div>
                 )}
                 
@@ -352,7 +302,7 @@ export default function SubmitQuote() {
                           <div className="flex-1">
                             <p className="font-medium">{doc.name}</p>
                             {doc.isRequired && (
-                              <Badge variant="outline" className="text-xs mt-1">Obligatoire</Badge>
+                              <Badge variant="outline" className="text-xs mt-1">Recommandé</Badge>
                             )}
                           </div>
                           <div>
@@ -378,9 +328,9 @@ export default function SubmitQuote() {
                       ))}
                     </div>
                     
-                    <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 mt-2 text-sm text-amber-700">
                       <Info size={14} />
-                      <p>Tous les documents obligatoires doivent être fournis avant de pouvoir procéder.</p>
+                      <p>Le dépôt des documents administratifs est recommandé mais non obligatoire.</p>
                     </div>
                   </div>
                 )}
@@ -462,8 +412,8 @@ export default function SubmitQuote() {
                         <div className="grid grid-cols-2 gap-2">
                           {form.getValues("adminDocs").map((doc) => (
                             <div key={doc.id} className="flex items-center gap-2">
-                              <div className={`h-2 w-2 rounded-full ${uploadedAdminDocs[doc.id] ? 'bg-green-500' : 'bg-red-500'}`} />
-                              <span className="text-sm">{doc.name}</span>
+                              <div className={`h-2 w-2 rounded-full ${uploadedAdminDocs[doc.id] ? 'bg-green-500' : 'bg-amber-500'}`} />
+                              <span className="text-sm">{doc.name}: {uploadedAdminDocs[doc.id] ? "Fourni" : "Non fourni"}</span>
                             </div>
                           ))}
                         </div>
@@ -515,7 +465,7 @@ export default function SubmitQuote() {
                   ) : (
                     <Button 
                       type="submit" 
-                      disabled={!form.getValues("termsAgreed") || !areAllDocsUploaded()}
+                      disabled={!canSubmitForm()}
                     >
                       Soumettre l'offre
                     </Button>
