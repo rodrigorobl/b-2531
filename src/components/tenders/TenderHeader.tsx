@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Calendar, Building } from 'lucide-react';
+import { ChevronLeft, Calendar, Building, Pen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface TenderHeaderProps {
   tender: {
@@ -10,6 +10,7 @@ interface TenderHeaderProps {
     status: string;
     deadline: string;
     projectType: string;
+    id: number;
   };
 }
 
@@ -47,7 +48,12 @@ export function TenderHeader({ tender }: TenderHeaderProps) {
           </div>
         </div>
         <div className="flex gap-2">
-          {/* Any action buttons can go here */}
+          <Button variant="outline" asChild>
+            <Link to={`/edit-tender/${tender.id}`} className="gap-2">
+              <Pen className="h-4 w-4" />
+              Modifier l'Appel d'Offres
+            </Link>
+          </Button>
         </div>
       </div>
     </>

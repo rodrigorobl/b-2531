@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -69,11 +68,7 @@ const App = () => (
             <Route path="/directory" element={<CompanyDirectory />} />
             <Route path="/quoted-directory" element={<QuotedDirectory />} />
             <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
-            {/* Quote related routes */}
-            <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
-            <Route path="/quote/:quoteId" element={<QuoteDetail />} />
-            <Route path="/submit-quote/:tenderId/:lotId?" element={<SubmitQuote />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
