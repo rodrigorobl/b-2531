@@ -18,8 +18,8 @@ const DesignTenderForm: React.FC<DesignTenderFormProps> = ({ form }) => {
         <div className="space-y-2">
           <Label htmlFor="projectNature">Nature du projet</Label>
           <Select
-            onValueChange={(value) => form.setValue("projectNature", value)}
-            defaultValue={form.getValues("projectNature")}
+            onValueChange={(value) => form.setValue("design.projectNature", value as any)}
+            defaultValue={form.getValues("design.projectNature")}
           >
             <SelectTrigger id="projectNature">
               <SelectValue placeholder="Sélectionnez la nature du projet" />
@@ -42,7 +42,7 @@ const DesignTenderForm: React.FC<DesignTenderFormProps> = ({ form }) => {
             id="area"
             type="text"
             placeholder="Ex: 2500"
-            {...form.register("area")}
+            {...form.register("design.area")}
           />
         </div>
       </div>

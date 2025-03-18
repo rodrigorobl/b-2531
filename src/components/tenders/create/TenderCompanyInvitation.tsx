@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Search, UserPlus, Check, X } from 'lucide-react';
+
 interface TenderCompanyInvitationProps {
   form: UseFormReturn<TenderFormValues>;
 }
@@ -42,6 +43,7 @@ const dummyCompanies = [{
   id: "comp-10",
   name: "Isolation Performante"
 }];
+
 const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
   form
 }) => {
@@ -50,13 +52,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
     id: string;
     name: string;
     selected?: boolean;
-  }[]>(
-  // Ensure that we only use valid companies with id and name defined
-  (form.getValues("invitedCompanies") || []).filter((company): company is {
-    id: string;
-    name: string;
-    selected?: boolean;
-  } => typeof company.id === 'string' && typeof company.name === 'string'));
+  }[]>(form.getValues("invitedCompanies") || []);
 
   // Filtrer les entreprises en fonction du terme de recherche
   const filteredCompanies = dummyCompanies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -67,28 +63,20 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
   };
 
   // Gérer la sélection d'une entreprise
-  const handleCompanySelection = (company: {
-    id: string;
-    name: string;
-  }) => {
+  const handleCompanySelection = (company: { id: string; name: string; }) => {
     const companyExists = selectedCompanies.find(c => c.id === company.id);
     let updatedCompanies;
     if (companyExists) {
-      // Si l'entreprise existe déjà, inverser son état de sélection
-      updatedCompanies = selectedCompanies.map(c => c.id === company.id ? {
-        ...c,
-        selected: !c.selected
-      } : c);
+      updatedCompanies = selectedCompanies.map(c => 
+        c.id === company.id ? { ...c, selected: !c.selected } : c
+      );
     } else {
-      // Sinon, ajouter l'entreprise avec selected à true
-      updatedCompanies = [...selectedCompanies, {
-        ...company,
-        selected: true
-      }];
+      updatedCompanies = [...selectedCompanies, { ...company, selected: true }];
     }
     setSelectedCompanies(updatedCompanies);
     form.setValue("invitedCompanies", updatedCompanies);
   };
+
   return <div className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="company-search">Rechercher des entreprises</Label>
@@ -142,4 +130,5 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
       </div>
     </div>;
 };
+
 export default TenderCompanyInvitation;

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Calendar, Building, Pen } from 'lucide-react';
@@ -10,7 +11,7 @@ interface TenderHeaderProps {
     status: string;
     deadline: string;
     projectType: string;
-    id: number;
+    id: string;  // Changed from number to string
   };
 }
 

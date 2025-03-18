@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -11,6 +12,22 @@ import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 
+// Define specific schemas for each tender type
+const designTenderSchema = z.object({
+  projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
+  area: z.string(),
+});
+
+const constructionTenderSchema = z.object({
+  constructionType: z.enum(['neuf', 'réhabilitation', 'extension', 'renovation', 'demolition', 'amenagement']),
+  area: z.string(),
+});
+
+const serviceTenderSchema = z.object({
+  serviceScope: z.enum(['local', 'départemental', 'régional', 'national', 'international']),
+  serviceDuration: z.enum(['ponctuel', '3mois', '6mois', '1an', '2ans', '3ans']),
+});
+
 const formSchema = z.object({
   type: z.enum(['design', 'construction', 'service']).default('design'),
   privacy: z.enum(['open', 'restricted', 'closed']).default('open'),
@@ -20,6 +37,15 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
+  // Add specific fields based on tender type
+  design: designTenderSchema.optional(),
+  construction: constructionTenderSchema.optional(),
+  service: serviceTenderSchema.optional(),
+  invitedCompanies: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    selected: z.boolean().optional(),
+  })).optional(),
 });
 
 export type TenderFormValues = z.infer<typeof formSchema>;
@@ -39,6 +65,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
       privacy: "open",
       projectName: "",
       description: "",
+      invitedCompanies: [],
     },
   });
 
