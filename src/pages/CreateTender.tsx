@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -10,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
+import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
 
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
@@ -42,6 +44,7 @@ const formSchema = z.object({
     z.object({
       id: z.string(),
       name: z.string(),
+      lotId: z.string().optional(),
       selected: z.boolean()
     })
   ),
@@ -159,6 +162,10 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                   </FormItem>
                 </div>
               </div>
+            )}
+
+            {currentStep === 8 && (
+              <TenderCompanyInvitation form={form} />
             )}
 
             <div className="flex justify-end">
