@@ -14,6 +14,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Textarea } from '@/components/ui/textarea';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info, ExternalLink, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface SurveyProvider {
   id: string;
@@ -23,6 +27,10 @@ interface SurveyProvider {
   rating: number;
   isAvailable: boolean;
   hasBeenUsedByCompetitor?: string; 
+  reviewCount: number;
+  description?: string;
+  website?: string;
+  address?: string;
 }
 
 const messageSchema = z.object({
@@ -41,6 +49,7 @@ export default function QuantitySurveyRequest() {
   const [selectedProvider, setSelectedProvider] = useState<SurveyProvider | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const navigate = useNavigate();
   
   const messageForm = useForm<MessageFormValues>({
     resolver: zodResolver(messageSchema),
@@ -69,7 +78,11 @@ export default function QuantitySurveyRequest() {
       price: 2500,
       estimatedDelivery: '5 jours',
       rating: 4.8,
+      reviewCount: 124,
       isAvailable: true,
+      description: "Expert en métrés et études de prix depuis 2010",
+      website: "https://metroexpert.fr",
+      address: "15 rue des Entrepreneurs, 75015 Paris",
     },
     {
       id: 'provider-2',
@@ -77,8 +90,12 @@ export default function QuantitySurveyRequest() {
       price: 2100,
       estimatedDelivery: '7 jours',
       rating: 4.5,
+      reviewCount: 89,
       isAvailable: true,
       hasBeenUsedByCompetitor: 'Entreprise Durand',
+      description: "Solutions de métrés innovantes pour le BTP",
+      website: "https://quantipro.fr",
+      address: "23 avenue du Bâtiment, 69003 Lyon",
     },
     {
       id: 'provider-3',
@@ -86,7 +103,11 @@ export default function QuantitySurveyRequest() {
       price: 3200,
       estimatedDelivery: '3 jours',
       rating: 4.9,
+      reviewCount: 156,
       isAvailable: true,
+      description: "Le métré de précision pour vos projets d'envergure",
+      website: "https://surveymasters.com",
+      address: "8 rue de la Mesure, 13001 Marseille",
     },
     {
       id: 'provider-4',
@@ -94,7 +115,10 @@ export default function QuantitySurveyRequest() {
       price: 1900,
       estimatedDelivery: '10 jours',
       rating: 4.2,
+      reviewCount: 62,
       isAvailable: true,
+      description: "Métrés rapides et économiques pour les petits projets",
+      address: "45 boulevard des Géomètres, 31000 Toulouse",
     },
     {
       id: 'provider-5',
@@ -102,7 +126,11 @@ export default function QuantitySurveyRequest() {
       price: 2800,
       estimatedDelivery: '4 jours',
       rating: 4.7,
+      reviewCount: 95,
       isAvailable: false,
+      description: "Technologies de pointe pour des métrés toujours plus précis",
+      website: "https://metretech.com",
+      address: "10 impasse de l'Innovation, 44000 Nantes",
     },
   ];
 
@@ -149,20 +177,44 @@ export default function QuantitySurveyRequest() {
     messageForm.reset();
   };
 
-  const renderStarRating = (rating: number) => {
+  const handleViewRatings = (providerId: string) => {
+    navigate(`/provider/${providerId}/ratings`);
+  };
+
+  const renderStarRating = (rating: number, reviewCount: number, providerId: string) => {
     return (
       <div className="flex items-center">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={16}
-            className={cn(
-              "mr-0.5",
-              star <= Math.round(rating) ? "text-amber-500 fill-amber-500" : "text-gray-300"
-            )}
-          />
-        ))}
-        <span className="ml-1 text-sm">{rating.toFixed(1)}</span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleViewRatings(providerId);
+                }}
+                className="flex items-center hover:text-primary transition-colors"
+              >
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={16}
+                    className={cn(
+                      "mr-0.5",
+                      star <= Math.round(rating) ? "text-amber-500 fill-amber-500" : "text-gray-300"
+                    )}
+                  />
+                ))}
+                <span className="ml-1 text-sm">{rating.toFixed(1)}</span>
+                <span className="ml-1 text-sm text-muted-foreground flex items-center">
+                  ({reviewCount} <Plus className="h-3 w-3 ml-0.5" />)
+                </span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Voir les {reviewCount} avis clients
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     );
   };
@@ -266,14 +318,49 @@ export default function QuantitySurveyRequest() {
                           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                             <div>
                               <h3 className="font-medium text-lg flex items-center gap-2">
-                                {provider.name}
+                                <HoverCard>
+                                  <HoverCardTrigger asChild>
+                                    <button className="hover:text-primary transition-colors flex items-center gap-1">
+                                      {provider.name}
+                                      <Info className="h-4 w-4 text-muted-foreground" />
+                                    </button>
+                                  </HoverCardTrigger>
+                                  <HoverCardContent className="w-80">
+                                    <div className="space-y-2">
+                                      <p className="text-sm">{provider.description}</p>
+                                      <div className="text-sm">
+                                        <div className="text-muted-foreground">{provider.address}</div>
+                                        {provider.website && (
+                                          <a 
+                                            href={provider.website} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-1 text-primary hover:underline mt-1"
+                                          >
+                                            Voir le site web
+                                            <ExternalLink className="h-3 w-3" />
+                                          </a>
+                                        )}
+                                      </div>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="w-full mt-2"
+                                        onClick={() => navigate(`/provider/${provider.id}`)}
+                                      >
+                                        Voir la fiche entreprise
+                                        <ExternalLink className="h-4 w-4 ml-1" />
+                                      </Button>
+                                    </div>
+                                  </HoverCardContent>
+                                </HoverCard>
                                 {provider.hasBeenUsedByCompetitor && (
                                   <Badge variant="outline" className="text-amber-500 border-amber-500">
                                     Déjà exploité
                                   </Badge>
                                 )}
                               </h3>
-                              <div className="mt-1">{renderStarRating(provider.rating)}</div>
+                              <div className="mt-1">{renderStarRating(provider.rating, provider.reviewCount, provider.id)}</div>
                               <div className="grid grid-cols-2 gap-4 mt-2">
                                 <div>
                                   <span className="text-sm text-muted-foreground">Prix:</span>
