@@ -37,6 +37,8 @@ import ProductReferenceTracking from "./pages/ProductReferenceTracking";
 import ProjectsSearch from "./pages/ProjectsSearch";
 import ProductReferenceDetail from "./pages/ProductReferenceDetail";
 import QuantitySurveyRequest from "./pages/QuantitySurveyRequest";
+import TenderAlert from "./pages/TenderAlert";
+import AlertManagement from "./pages/AlertManagement";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +80,8 @@ const App = () => (
             <Route path="/product-reference" element={<ProductReferenceTracking />} />
             <Route path="/product-reference/:referenceId" element={<ProductReferenceDetail />} />
             <Route path="/quantity-survey-request" element={<QuantitySurveyRequest />} />
+            <Route path="/tender-alerte" element={<TenderAlert />} />
+            <Route path="/alerte-management" element={<AlertManagement />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

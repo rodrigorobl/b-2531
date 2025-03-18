@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import TenderSearchFilters from '@/components/tenders/TenderSearchFilters';
 import TenderSearchResults from '@/components/tenders/TenderSearchResults';
@@ -7,7 +9,7 @@ import TenderMap from '@/components/tenders/TenderMap';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, BellPlus } from 'lucide-react';
 export type TenderStatus = 'open' | 'closed' | 'assigned';
 export interface TenderSearchResult {
   id: string;
@@ -142,6 +144,12 @@ export default function TenderSearch() {
                 Rechercher
               </Button>
             </div>
+            <Link to="/tender-alerte">
+              <Button variant="outline" className="flex items-center gap-2">
+                <BellPlus size={18} />
+                <span>Créer une alerte</span>
+              </Button>
+            </Link>
           </div>
           
           <Tabs defaultValue="all" className="w-full" onValueChange={setSelectedTab}>
