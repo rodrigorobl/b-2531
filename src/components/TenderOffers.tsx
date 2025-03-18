@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FileDown, CheckCircle, AlertCircle, Clock, Info } from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, Info } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,28 @@ interface TenderOffersProps {
 export default function TenderOffers({
   offers
 }: TenderOffersProps) {
+  // Two example offers: one for Gros Œuvre with pending status
+  // and one for Peinture with status "conforme"
+  const exampleOffers: Offer[] = [
+    {
+      id: "offer-001",
+      lot: "03",
+      description: "Gros Œuvre",
+      status: "pending",
+      deadline: "15/05/2024",
+    },
+    {
+      id: "offer-002",
+      lot: "07",
+      description: "Peinture",
+      status: "submitted",
+      deadline: "20/05/2024",
+      isCompliant: true,
+      submissionDate: "10/05/2024",
+      quoteIndex: "QT-002"
+    }
+  ];
+
   // Préparer les données pour l'affichage
   const prepareOfferData = (offer: Offer) => {
     return {
@@ -36,8 +58,8 @@ export default function TenderOffers({
     };
   };
 
-  // Enrichir les données avec des informations supplémentaires
-  const enrichedOffers = offers.map(prepareOfferData);
+  // Utiliser les exemples au lieu des offres passées en props
+  const enrichedOffers = exampleOffers.map(prepareOfferData);
 
   return (
     <div className="h-full animate-fade-in" style={{
@@ -125,13 +147,6 @@ function OffersTable({
             
             <TableCell>
               <div className="flex items-center gap-2">
-                {offer.status !== 'pending' && (
-                  <Button size="sm" className="h-8" variant="outline">
-                    <FileDown size={14} className="mr-1" />
-                    Voir devis
-                  </Button>
-                )}
-                
                 <Button 
                   size="sm" 
                   variant="outline" 
