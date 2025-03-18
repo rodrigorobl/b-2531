@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink } from 'lucide-react';
+import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Activity {
@@ -17,7 +17,17 @@ interface ActivityFeedProps {
 }
 
 export default function ActivityFeed({ activities }: ActivityFeedProps) {
-  const getActivityIcon = (type: string) => {
+  const getActivityIcon = (type: string, title: string) => {
+    // Special case for "Offre acceptée"
+    if (title === "Offre acceptée") {
+      return (
+        <div className="w-8 h-8 rounded-full bg-status-completed/10 flex items-center justify-center text-status-completed">
+          <CheckCircle size={16} />
+        </div>
+      );
+    }
+    
+    // Regular icon logic
     switch (type) {
       case 'tender':
         return (
@@ -77,7 +87,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
       {activities.map((activity) => (
         <div key={activity.id} className="flex items-start">
           <div className="mr-3">
-            {getActivityIcon(activity.type)}
+            {getActivityIcon(activity.type, activity.title)}
           </div>
           <div className="flex-1 min-w-0">
             {activity.link ? (
