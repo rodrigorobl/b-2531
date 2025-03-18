@@ -8,13 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Calendar, FileText, Users, Building, MapPin, Clock, Download, Briefcase, Plus, MessageSquare, Ruler } from 'lucide-react';
+import { Calendar, FileText, Users, Building, MapPin, Clock, Download, Briefcase, Plus, MessageSquare, Ruler, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export default function ProjectSpecifications() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project');
   const [activeTab, setActiveTab] = useState('overview');
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // This would typically come from API based on the ID
   const projectData = {
@@ -29,6 +33,13 @@ export default function ProjectSpecifications() {
     projectType: 'Commercial',
     surface: '15,000 m²',
     description: 'Construction d\'un nouveau centre commercial sur 3 niveaux avec parking souterrain et espaces verts en toiture terrasse.',
+    perspectiveImages: [
+      '/photo-1461749280684-dccba630e2f6',
+      '/photo-1486312338219-ce68d2c6f44d',
+      '/photo-1498050108023-c5249f4df085',
+      '/photo-1483058712412-4245e9b90334',
+      '/photo-1449157291145-7efd050a4d0e'
+    ],
     lots: [
       { id: 'lot-1', name: 'Gros œuvre', budget: '850,000 €', deadline: '30/08/2023', minSurveyPrice: 1900, minSurveyDelivery: '5 jours' },
       { id: 'lot-2', name: 'Menuiseries', budget: '450,000 €', deadline: '15/09/2023', minSurveyPrice: 1500, minSurveyDelivery: '3 jours' },
@@ -37,68 +48,97 @@ export default function ProjectSpecifications() {
     ]
   };
 
+  const openGallery = (index: number) => {
+    setActiveImageIndex(index);
+    setIsGalleryOpen(true);
+  };
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <div className="container py-6 space-y-6 max-w-7xl">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl font-bold">{projectData.name}</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <StatusBadge status={projectData.status === 'open' ? 'in-progress' : projectData.status === 'closed' ? 'closed' : 'draft'} />
-                <span className="text-sm text-muted-foreground">•</span>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <MapPin size={14} />
-                  <span>{projectData.location}</span>
-                </div>
-                <span className="text-sm text-muted-foreground">•</span>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Calendar size={14} />
-                  <span>Publié le {projectData.createdDate}</span>
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Project Perspective Image */}
+            <div className="md:w-1/3">
+              <div 
+                className="rounded-lg overflow-hidden cursor-pointer hover-scale"
+                onClick={() => openGallery(0)}
+              >
+                <AspectRatio ratio={16 / 9}>
+                  <img 
+                    src={projectData.perspectiveImages[0]} 
+                    alt="Perspective du projet" 
+                    className="w-full h-full object-cover"
+                  />
+                </AspectRatio>
+                <div className="bg-black/50 text-white text-xs py-1 px-2 absolute bottom-0 right-0 rounded-tl-md">
+                  {projectData.perspectiveImages.length} photos
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Link to={`/submit-quote/${projectData.id}`}>
-                <Button>Déposer une offre</Button>
-              </Link>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline">
-                    <Download size={16} className="mr-2" />
-                    Télécharger
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Télécharger les documents</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="flex items-center justify-between hover:bg-accent p-2 rounded-md cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <FileText size={16} />
-                        <span>DCE_Complet.zip</span>
-                      </div>
-                      <Download size={16} />
+            
+            {/* Project Title & Info */}
+            <div className="md:w-2/3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-bold">{projectData.name}</h1>
+                  <div className="flex items-center gap-2 mt-1">
+                    <StatusBadge status={projectData.status === 'open' ? 'in-progress' : projectData.status === 'closed' ? 'closed' : 'draft'} />
+                    <span className="text-sm text-muted-foreground">•</span>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin size={14} />
+                      <span>{projectData.location}</span>
                     </div>
-                    <div className="flex items-center justify-between hover:bg-accent p-2 rounded-md cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <FileText size={16} />
-                        <span>Plans_Architecte.pdf</span>
-                      </div>
-                      <Download size={16} />
-                    </div>
-                    <div className="flex items-center justify-between hover:bg-accent p-2 rounded-md cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <FileText size={16} />
-                        <span>DPGF.xlsx</span>
-                      </div>
-                      <Download size={16} />
+                    <span className="text-sm text-muted-foreground">•</span>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Calendar size={14} />
+                      <span>Publié le {projectData.createdDate}</span>
                     </div>
                   </div>
-                </DialogContent>
-              </Dialog>
+                </div>
+                <div className="flex gap-2">
+                  <Link to={`/submit-quote/${projectData.id}`}>
+                    <Button>Déposer une offre</Button>
+                  </Link>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">
+                        <Download size={16} className="mr-2" />
+                        Télécharger
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Télécharger les documents</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="flex items-center justify-between hover:bg-accent p-2 rounded-md cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <FileText size={16} />
+                            <span>DCE_Complet.zip</span>
+                          </div>
+                          <Download size={16} />
+                        </div>
+                        <div className="flex items-center justify-between hover:bg-accent p-2 rounded-md cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <FileText size={16} />
+                            <span>Plans_Architecte.pdf</span>
+                          </div>
+                          <Download size={16} />
+                        </div>
+                        <div className="flex items-center justify-between hover:bg-accent p-2 rounded-md cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <FileText size={16} />
+                            <span>DPGF.xlsx</span>
+                          </div>
+                          <Download size={16} />
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -391,6 +431,58 @@ export default function ProjectSpecifications() {
           </Tabs>
         </div>
       </div>
+
+      {/* Image Gallery Dialog */}
+      <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
+        <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black/95">
+          <div className="relative h-[80vh] flex flex-col">
+            <div className="absolute top-2 right-2 z-10">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsGalleryOpen(false)}
+                className="text-white hover:bg-white/20"
+              >
+                <X size={24} />
+              </Button>
+            </div>
+            
+            <div className="flex-1 flex items-center justify-center p-4">
+              <img 
+                src={projectData.perspectiveImages[activeImageIndex]} 
+                alt={`Perspective du projet ${activeImageIndex + 1}`}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            
+            <div className="p-4 bg-black/80">
+              <Carousel>
+                <CarouselContent>
+                  {projectData.perspectiveImages.map((image, index) => (
+                    <CarouselItem key={index} className="basis-1/5 md:basis-1/6">
+                      <div 
+                        className={`
+                          h-16 md:h-20 cursor-pointer p-1 rounded-md overflow-hidden
+                          ${activeImageIndex === index ? 'ring-2 ring-primary' : ''}
+                        `}
+                        onClick={() => setActiveImageIndex(index)}
+                      >
+                        <img 
+                          src={image} 
+                          alt={`Miniature ${index + 1}`} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
