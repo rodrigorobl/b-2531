@@ -56,6 +56,11 @@ interface Quote {
   currentVersion: number;
   versions: QuoteVersion[];
   lineItems: QuoteLineItem[];
+  budgetImpact?: {
+    lotBudget: number;
+    deviation: number;
+    deviationPercentage: number;
+  };
 }
 
 // Données de test pour le devis (même structure que dans QuoteAnalysis)

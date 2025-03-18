@@ -20,7 +20,7 @@ interface Quote {
   statusReason?: string;
   currentVersion: number;
   versions: any[];
-  budgetImpact: {
+  budgetImpact?: {
     lotBudget: number;
     deviation: number;
     deviationPercentage: number;
@@ -136,24 +136,26 @@ export default function QuoteGeneralInfo({ quote }: QuoteGeneralInfoProps) {
             )}
           </div>
 
-          <div className="flex flex-col items-center justify-center">
-            <div className="mb-2">
-              <CircleProgress 
-                percentage={Math.abs(quote.budgetImpact.deviationPercentage)}
-                isPositive={quote.budgetImpact.deviation <= 0}
-              />
+          {quote.budgetImpact && (
+            <div className="flex flex-col items-center justify-center">
+              <div className="mb-2">
+                <CircleProgress 
+                  percentage={Math.abs(quote.budgetImpact.deviationPercentage)}
+                  isPositive={quote.budgetImpact.deviation <= 0}
+                />
+              </div>
+              <h3 className="font-medium text-center">Impact budgétaire</h3>
+              <p className={`text-center ${
+                quote.budgetImpact.deviation <= 0 ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {quote.budgetImpact.deviation <= 0 ? 'Économie de ' : 'Dépassement de '}
+                {formatCurrency(Math.abs(quote.budgetImpact.deviation))}
+              </p>
+              <p className="text-sm text-muted-foreground text-center">
+                Budget du lot: {formatCurrency(quote.budgetImpact.lotBudget)}
+              </p>
             </div>
-            <h3 className="font-medium text-center">Impact budgétaire</h3>
-            <p className={`text-center ${
-              quote.budgetImpact.deviation <= 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {quote.budgetImpact.deviation <= 0 ? 'Économie de ' : 'Dépassement de '}
-              {formatCurrency(Math.abs(quote.budgetImpact.deviation))}
-            </p>
-            <p className="text-sm text-muted-foreground text-center">
-              Budget du lot: {formatCurrency(quote.budgetImpact.lotBudget)}
-            </p>
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>
