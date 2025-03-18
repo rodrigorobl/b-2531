@@ -35,6 +35,7 @@ import SubmitQuote from "./pages/SubmitQuote";
 import ProjectSpecifications from "./pages/ProjectSpecifications";
 import ProductReferenceTracking from "./pages/ProductReferenceTracking";
 import ProjectsSearch from "./pages/ProjectsSearch";
+import ProductReferenceDetail from "./pages/ProductReferenceDetail";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
             <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing />} />
             <Route path="/product-reference" element={<ProductReferenceTracking />} />
+            <Route path="/product-reference/:referenceId" element={<ProductReferenceDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
