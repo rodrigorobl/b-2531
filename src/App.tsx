@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -33,6 +34,7 @@ import QuoteDetail from "./pages/QuoteDetail";
 import SubmitQuote from "./pages/SubmitQuote";
 import ProjectSpecifications from "./pages/ProjectSpecifications";
 import ProductReferenceTracking from "./pages/ProductReferenceTracking";
+import ProjectsSearch from "./pages/ProjectsSearch";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +64,7 @@ const App = () => (
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/create-tender" element={<CreateTender />} />
             <Route path="/projects" element={<ProjectsList />} />
+            <Route path="/projects-search" element={<ProjectsSearch />} />
             <Route path="/company" element={<Company />} />
             <Route path="/company/edit" element={<EditCompany />} />
             <Route path="/profile" element={<UserProfileSettings />} />

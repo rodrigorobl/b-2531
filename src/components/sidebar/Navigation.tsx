@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck } from 'lucide-react';
@@ -96,12 +97,20 @@ export const Navigation: React.FC<NavigationProps> = ({
           </li>
         )}
         {activeProfile === 'industriel' && (
-          <li>
-            <Link to="/product-reference" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/product-reference' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-              <Package size={18} />
-              <span>Suivi des références</span>
-            </Link>
-          </li>
+          <>
+            <li>
+              <Link to="/product-reference" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/product-reference' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <Package size={18} />
+                <span>Suivi des références</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/projects-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <Search size={18} />
+                <span>Recherche de projets</span>
+              </Link>
+            </li>
+          </>
         )}
         <li>
           <Link 
