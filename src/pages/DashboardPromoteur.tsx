@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,10 +8,9 @@ import ProjectsList from '@/components/ProjectsList';
 import ActivityFeed from '@/components/ActivityFeed';
 import PriorityActions from '@/components/PriorityActions';
 import Sidebar from '@/components/Sidebar';
-
 export default function DashboardPromoteur() {
   const navigate = useNavigate();
-  
+
   // Sample data for KPI cards specific to Promoteur
   const kpiData = {
     projectsInProgress: 15,
@@ -22,88 +20,74 @@ export default function DashboardPromoteur() {
   };
 
   // Sample projects data for Promoteur
-  const projects = [
-    {
-      id: 'project-001',
-      name: 'Résidence Les Cerisiers',
-      client: 'SCI Immobilier',
-      type: 'Résidentiel',
-      status: 'in-progress' as const,
-      progress: 45,
-      deadline: '15/10/2024'
-    },
-    {
-      id: 'project-002',
-      name: 'Centre commercial Beau Rivage',
-      client: 'Promoteur Commercial SA',
-      type: 'Commercial',
-      status: 'assigned' as const,
-      progress: 20,
-      deadline: '22/12/2024'
-    },
-    {
-      id: 'project-003',
-      name: 'Éco-quartier Les Saules',
-      client: 'Mairie de Nantes',
-      type: 'Résidentiel',
-      status: 'in-progress' as const,
-      progress: 70,
-      deadline: '05/08/2024'
-    }
-  ];
+  const projects = [{
+    id: 'project-001',
+    name: 'Résidence Les Cerisiers',
+    client: 'SCI Immobilier',
+    type: 'Résidentiel',
+    status: 'in-progress' as const,
+    progress: 45,
+    deadline: '15/10/2024'
+  }, {
+    id: 'project-002',
+    name: 'Centre commercial Beau Rivage',
+    client: 'Promoteur Commercial SA',
+    type: 'Commercial',
+    status: 'assigned' as const,
+    progress: 20,
+    deadline: '22/12/2024'
+  }, {
+    id: 'project-003',
+    name: 'Éco-quartier Les Saules',
+    client: 'Mairie de Nantes',
+    type: 'Résidentiel',
+    status: 'in-progress' as const,
+    progress: 70,
+    deadline: '05/08/2024'
+  }];
 
   // Sample priority actions for Promoteur
-  const priorityActions = [
-    {
-      id: 'action-001',
-      title: 'Approuver devis Gros Œuvre',
-      project: 'Résidence Les Cerisiers',
-      deadline: '18/05/2024',
-      type: 'quote' as const
-    },
-    {
-      id: 'action-002',
-      title: 'Sélectionner entreprises Lot Plomberie',
-      project: 'Centre commercial Beau Rivage',
-      deadline: '20/05/2024',
-      type: 'tender' as const
-    },
-    {
-      id: 'action-003',
-      title: 'Réunion maîtrise d\'œuvre',
-      project: 'Éco-quartier Les Saules',
-      deadline: '25/05/2024',
-      type: 'meeting' as const
-    }
-  ];
+  const priorityActions = [{
+    id: 'action-001',
+    title: 'Approuver devis Gros Œuvre',
+    project: 'Résidence Les Cerisiers',
+    deadline: '18/05/2024',
+    type: 'quote' as const
+  }, {
+    id: 'action-002',
+    title: 'Sélectionner entreprises Lot Plomberie',
+    project: 'Centre commercial Beau Rivage',
+    deadline: '20/05/2024',
+    type: 'tender' as const
+  }, {
+    id: 'action-003',
+    title: 'Réunion maîtrise d\'œuvre',
+    project: 'Éco-quartier Les Saules',
+    deadline: '25/05/2024',
+    type: 'meeting' as const
+  }];
 
   // Sample activity feed for Promoteur
-  const activities = [
-    {
-      id: 'activity-001',
-      title: 'Nouveau devis reçu',
-      description: 'BTP Construction a soumis une offre pour Lot Gros Œuvre',
-      timestamp: 'Il y a 2 heures',
-      type: 'quote' as const
-    },
-    {
-      id: 'activity-002',
-      title: 'Mise à jour planning',
-      description: 'Maître d\'œuvre a actualisé le planning de Résidence Les Cerisiers',
-      timestamp: 'Hier, 15:30',
-      type: 'update' as const
-    },
-    {
-      id: 'activity-003',
-      title: 'Permis de construire',
-      description: 'Permis de construire accepté pour Éco-quartier Les Saules',
-      timestamp: 'Hier, 09:45',
-      type: 'document' as const
-    }
-  ];
-
-  return (
-    <div className="flex min-h-screen bg-background">
+  const activities = [{
+    id: 'activity-001',
+    title: 'Nouveau devis reçu',
+    description: 'BTP Construction a soumis une offre pour Lot Gros Œuvre',
+    timestamp: 'Il y a 2 heures',
+    type: 'quote' as const
+  }, {
+    id: 'activity-002',
+    title: 'Mise à jour planning',
+    description: 'Maître d\'œuvre a actualisé le planning de Résidence Les Cerisiers',
+    timestamp: 'Hier, 15:30',
+    type: 'update' as const
+  }, {
+    id: 'activity-003',
+    title: 'Permis de construire',
+    description: 'Permis de construire accepté pour Éco-quartier Les Saules',
+    timestamp: 'Hier, 09:45',
+    type: 'document' as const
+  }];
+  return <div className="flex min-h-screen bg-background">
       <Sidebar />
       
       <main className="flex-1 px-6 py-8">
@@ -111,12 +95,7 @@ export default function DashboardPromoteur() {
         <header className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-3xl font-bold">Bonjour, Antoine</h1>
-            <Button 
-              variant="default" 
-              size="sm" 
-              onClick={() => navigate('/create-tender')}
-              className="whitespace-nowrap"
-            >
+            <Button variant="default" size="sm" onClick={() => navigate('/create-tender')} className="whitespace-nowrap">
               <Plus size={16} className="mr-1" />
               Lancer un Appel d'Offres
             </Button>
@@ -140,7 +119,7 @@ export default function DashboardPromoteur() {
           <div className="lg:col-span-6 space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
               <div className="p-4 border-b flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Mes projets immobiliers</h2>
+                <h2 className="text-lg font-semibold">Mes projets</h2>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/projects">Voir tous</Link>
                 </Button>
@@ -173,6 +152,5 @@ export default function DashboardPromoteur() {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 }
