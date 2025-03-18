@@ -73,7 +73,7 @@ export default function QuoteAnnotations({ quoteId, lineItems }: QuoteAnnotation
     
     allAnnotations.push({
       id: 'gen-002',
-      text: 'Nous devons demander une réduction de 5% sur l'ensemble avant de valider.',
+      text: 'Nous devons demander une réduction de 5% sur l\'ensemble avant de valider.',
       author: 'Thomas Bernard',
       timestamp: '2024-05-03 11:30',
       isInternal: true
