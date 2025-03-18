@@ -2,9 +2,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
+type QuoteFilterType = 'all' | 'to-analyze' | 'in-progress' | 'compliant' | 'non-compliant';
+
 interface QuoteFilterButtonsProps {
-  filter: 'all' | 'to-analyze' | 'in-progress' | 'compliant' | 'non-compliant';
-  setFilter: (filter: 'all' | 'to-analyze' | 'in-progress' | 'compliant' | 'non-compliant') => void;
+  filter: QuoteFilterType;
+  setFilter: (filter: QuoteFilterType) => void;
 }
 
 export const QuoteFilterButtons = ({ filter, setFilter }: QuoteFilterButtonsProps) => {

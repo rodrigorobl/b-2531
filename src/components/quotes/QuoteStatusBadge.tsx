@@ -3,8 +3,8 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Clock, User, Check, X } from 'lucide-react';
 
-type QuoteStatus = 'to-analyze' | 'in-progress' | 'compliant' | 'non-compliant';
-type UrgencyLevel = 'low' | 'medium' | 'high';
+export type QuoteStatus = 'to-analyze' | 'in-progress' | 'compliant' | 'non-compliant';
+export type UrgencyLevel = 'low' | 'medium' | 'high';
 
 interface QuoteStatusBadgeProps {
   status: QuoteStatus;

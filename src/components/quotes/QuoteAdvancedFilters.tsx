@@ -21,11 +21,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
 
-interface UrgencyLevel {
-  high: string;
-  medium: string;
-  low: string;
-}
+type UrgencyLevel = 'high' | 'medium' | 'low';
 
 interface QuoteAdvancedFiltersProps {
   projectOptions: string[];
@@ -34,8 +30,8 @@ interface QuoteAdvancedFiltersProps {
   setFilterProject: (value: string) => void;
   filterLot: string;
   setFilterLot: (value: string) => void;
-  filterUrgency: string;
-  setFilterUrgency: (value: string) => void;
+  filterUrgency: UrgencyLevel | 'all';
+  setFilterUrgency: (value: UrgencyLevel | 'all') => void;
   resetFilters: () => void;
 }
 
@@ -112,7 +108,7 @@ export const QuoteAdvancedFilters = ({
             </label>
             <Select 
               value={filterUrgency} 
-              onValueChange={setFilterUrgency}
+              onValueChange={(value) => setFilterUrgency(value as UrgencyLevel | 'all')}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Toutes les urgences" />
