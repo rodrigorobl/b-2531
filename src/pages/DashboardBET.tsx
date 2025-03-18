@@ -123,7 +123,7 @@ export default function DashboardBET() {
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             <DashboardKPI title="Projets supervisés" value={kpiData.projectsManaged} icon={<DraftingCompass />} color="bg-primary/10 text-primary" linkTo="/projects" />
-            <DashboardKPI title="AO en cours" value={kpiData.activeTenders} icon={<FileText />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-management" />
+            <DashboardKPI title="AO en cours" value={kpiData.activeTenders} icon={<FileText />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-list" />
             <DashboardKPI title="Validations en attente" value={kpiData.pendingValidations} icon={<CheckCircle2 />} color="bg-status-assigned/10 text-status-assigned" linkTo="/documents?filter=pending" />
             <DashboardKPI title="Devis à analyser" value={kpiData.quotesToAnalyze} icon={<ClipboardCheck />} color="bg-status-in-progress/10 text-status-in-progress" linkTo="/quotes-to-analyze" />
           </div>
