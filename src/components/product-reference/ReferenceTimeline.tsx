@@ -8,7 +8,7 @@ interface TimelineEvent {
   date: string;
   title: string;
   description: string;
-  status: 'completed' | 'pending' | 'cancelled';
+  status: 'completed' | 'pending' | 'cancelled' | string;
 }
 
 interface ReferenceTimelineProps {

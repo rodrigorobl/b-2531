@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useParams } from 'react-router-dom';
@@ -111,7 +110,6 @@ export default function ProductReferenceDetail() {
   const { referenceId } = useParams<{ referenceId: string }>();
   const [activeTab, setActiveTab] = useState("information");
   
-  // Mock data for demonstration
   const projectData = {
     id: referenceId,
     name: "Résidence Les Cerisiers",
@@ -155,12 +153,12 @@ export default function ProductReferenceDetail() {
       ]
     },
     timeline: [
-      { date: "2024-01-10", title: "Première présentation du produit", description: "Présentation des panneaux isolants A+ au cabinet d'architecture", status: "completed" as const },
-      { date: "2024-02-15", title: "Validation technique par le BET", description: "Le bureau d'études thermiques a validé la conformité du produit", status: "completed" as const },
-      { date: "2024-03-05", title: "Demande de devis", description: "L'entreprise Construction ABC a demandé un devis pour les panneaux", status: "completed" as const },
-      { date: "2024-03-15", title: "Envoi du devis", description: "Devis envoyé à l'entreprise Construction ABC", status: "completed" as const },
-      { date: "2024-04-01", title: "Signature du devis prévue", description: "Date prévisionnelle pour la signature du devis", status: "pending" as const },
-      { date: "2024-05-15", title: "Début des travaux", description: "Date prévisionnelle pour le début de l'installation", status: "pending" as const }
+      { date: "2024-01-10", title: "Première présentation du produit", description: "Présentation des panneaux isolants A+ au cabinet d'architecture", status: "completed" },
+      { date: "2024-02-15", title: "Validation technique par le BET", description: "Le bureau d'études thermiques a validé la conformité du produit", status: "completed" },
+      { date: "2024-03-05", title: "Demande de devis", description: "L'entreprise Construction ABC a demandé un devis pour les panneaux", status: "completed" },
+      { date: "2024-03-15", title: "Envoi du devis", description: "Devis envoyé à l'entreprise Construction ABC", status: "completed" },
+      { date: "2024-04-01", title: "Signature du devis prévue", description: "Date prévisionnelle pour la signature du devis", status: "pending" },
+      { date: "2024-05-15", title: "Début des travaux", description: "Date prévisionnelle pour le début de l'installation", status: "pending" }
     ],
     messages: [
       { 
@@ -235,7 +233,6 @@ export default function ProductReferenceDetail() {
     ]
   };
 
-  // Extract all contacts from the project data
   const promoterContacts = projectData.promoter.contacts;
   
   const betContacts = projectData.technicalOffices.flatMap(office => 
@@ -497,3 +494,4 @@ export default function ProductReferenceDetail() {
     </Layout>
   );
 }
+
