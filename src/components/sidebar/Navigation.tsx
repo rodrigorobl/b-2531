@@ -86,8 +86,18 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <span>Carte des chantiers</span>
               </Link>
             </li>
-            
-            
+            <li>
+              <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <HardHat size={18} />
+                <span>Devis en attente</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/company-services/service-company-1" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <Wrench size={18} />
+                <span>Mes services</span>
+              </Link>
+            </li>
             <li>
               <Link to="/services-quote-management" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/services-quote') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <FileSpreadsheet size={18} />
