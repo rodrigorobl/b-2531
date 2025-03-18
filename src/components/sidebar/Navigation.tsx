@@ -76,10 +76,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               
             </li>
             <li>
-              <Link to="/tender-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tender-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <Search size={18} />
-                <span>Recherche AO</span>
-              </Link>
+              
             </li>
           </>}
         {activeProfile === 'entreprise-services' && <>
