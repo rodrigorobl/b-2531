@@ -56,11 +56,6 @@ interface Quote {
   currentVersion: number;
   versions: QuoteVersion[];
   lineItems: QuoteLineItem[];
-  budgetImpact: {
-    lotBudget: number;
-    deviation: number;
-    deviationPercentage: number;
-  };
 }
 
 // Données de test pour le devis (même structure que dans QuoteAnalysis)
@@ -149,11 +144,6 @@ const MOCK_QUOTE: Quote = {
       ],
     },
   ],
-  budgetImpact: {
-    lotBudget: 900000,
-    deviation: -50000,
-    deviationPercentage: -5.56,
-  },
 };
 
 export default function CompanyDetailsTender() {
