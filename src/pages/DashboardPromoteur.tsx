@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,9 +16,9 @@ export default function DashboardPromoteur() {
   // Sample data for KPI cards specific to Promoteur
   const kpiData = {
     projectsInProgress: 15,
-    tenderDrafts: 4,
-    activeTenders: 8,
-    pendingProposals: 12
+    designTenders: 4,
+    constructionTenders: 8,
+    newOffers: 12
   };
 
   // Sample projects data for Promoteur
@@ -127,9 +128,9 @@ export default function DashboardPromoteur() {
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             <DashboardKPI title="Projets en cours" value={kpiData.projectsInProgress} icon={<Briefcase />} color="bg-primary/10 text-primary" linkTo="/projects" />
-            <DashboardKPI title="Brouillons d'AO" value={kpiData.tenderDrafts} icon={<FileText />} color="bg-slate-500/10 text-slate-500" linkTo="/tender-management?filter=draft" />
-            <DashboardKPI title="Appels d'Offres en cours" value={kpiData.activeTenders} icon={<Bell />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-list" />
-            <DashboardKPI title="Propositions reçues" value={kpiData.pendingProposals} icon={<CheckCircle2 />} color="bg-status-assigned/10 text-status-assigned" linkTo="/tender-management?filter=proposals" />
+            <DashboardKPI title="AO Conception en cours" value={kpiData.designTenders} icon={<FileText />} color="bg-slate-500/10 text-slate-500" linkTo="/projects?type=conception" />
+            <DashboardKPI title="AO Réalisation en cours" value={kpiData.constructionTenders} icon={<Bell />} color="bg-status-pending/10 text-status-pending" linkTo="/projects?type=realisation" />
+            <DashboardKPI title="Nouvelles offres reçues" value={kpiData.newOffers} icon={<CheckCircle2 />} color="bg-status-assigned/10 text-status-assigned" linkTo="/quotes-to-analyze" />
           </div>
         </header>
         

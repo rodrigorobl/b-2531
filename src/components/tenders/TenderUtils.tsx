@@ -9,9 +9,9 @@ export const getStatusBadge = (status: TenderStatus) => {
     case 'open':
       return <StatusBadge status="in-progress" />;
     case 'closed':
-      return <StatusBadge status="closed" />;
+      return <Badge className="bg-orange-500 text-white">Clôturé</Badge>;
     case 'assigned':
-      return <StatusBadge status="assigned" />;
+      return <Badge className="bg-green-600 text-white">Attribué</Badge>;
     default:
       return <Badge>Inconnu</Badge>;
   }
