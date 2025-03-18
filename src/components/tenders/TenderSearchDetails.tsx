@@ -11,10 +11,14 @@ import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clo
 
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
+  projectButtonText?: string;
+  projectUrlPath?: string;
 }
 
 export default function TenderSearchDetails({
-  tender
+  tender,
+  projectButtonText = "Accéder à l'Appel d'offres",
+  projectUrlPath = "/tender-specifications"
 }: TenderSearchDetailsProps) {
   if (!tender) {
     return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
@@ -141,10 +145,10 @@ export default function TenderSearchDetails({
                 </Card>
               </div>
               
-              <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
+              <Link to={`${projectUrlPath}?project=${tender.id}`} className="w-full">
                 <Button className="w-full gap-2">
                   <ExternalLink size={14} />
-                  <span>Accéder à l'Appel d'offres</span>
+                  <span>{projectButtonText}</span>
                 </Button>
               </Link>
               

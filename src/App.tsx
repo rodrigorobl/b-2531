@@ -30,6 +30,7 @@ import TenderList from "./pages/TenderList";
 import QuotesToAnalyze from "./pages/QuotesToAnalyze";
 import QuoteDetail from "./pages/QuoteDetail";
 import SubmitQuote from "./pages/SubmitQuote";
+import ProjectSpecifications from "./pages/ProjectSpecifications";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
             <Route path="/tender/:projectId/lot/:lotId" element={<LotAnalysis />} />
             <Route path="/tender-specifications" element={<Index />} />
+            <Route path="/project-specifications" element={<ProjectSpecifications />} />
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/create-tender" element={<CreateTender />} />
             <Route path="/projects" element={<ProjectsList />} />

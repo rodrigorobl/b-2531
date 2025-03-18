@@ -185,6 +185,8 @@ export default function OpportunitiesSearch() {
               
               <TenderSearchDetails 
                 tender={opportunities.find(t => t.id === selectedTender)} 
+                projectButtonText="Accéder au projet"
+                projectUrlPath="/project-specifications"
               />
             </div>
           </Tabs>
