@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet } from 'lucide-react';
@@ -34,7 +33,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
   };
-
+  
   const getCompanyRoute = () => {
     if (activeProfile === 'entreprise-services') {
       return '/company-services';
@@ -74,7 +73,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             <li>
               <Link to="/moe-list" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/moe-list' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <List size={18} />
-                <span>Liste AO Réalisation & Services</span>
+                <span>Mes Appels d'Offres</span>
               </Link>
             </li>
             <li>
