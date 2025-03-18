@@ -1,14 +1,11 @@
 
 import React, { useState } from 'react';
-import { ExternalLink, SendIcon } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Layout } from '@/components/Layout';
 import { Quote, QuoteRequest } from '@/types/services-quotes';
 import { QuoteManagementHeader } from '@/components/services-quotes/QuoteManagementHeader';
 import { QuoteSearchBar } from '@/components/services-quotes/QuoteSearchBar';
-import { QuoteRequestsTabContent } from '@/components/services-quotes/QuoteRequestsTabContent';
-import { QuotesTabContent } from '@/components/services-quotes/QuotesTabContent';
 import { mockQuoteRequests, mockQuotes } from '@/components/services-quotes/mock-data';
+import { QuotesTabContent } from '@/components/services-quotes/QuotesTabContent';
 
 export default function ServicesQuoteManagement() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,26 +59,7 @@ export default function ServicesQuoteManagement() {
           onSearchChange={handleSearch}
         />
 
-        <Tabs defaultValue="requests" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="requests">
-              <ExternalLink size={16} className="mr-2" />
-              Demandes de devis reçues
-            </TabsTrigger>
-            <TabsTrigger value="quotes">
-              <SendIcon size={16} className="mr-2" />
-              Devis envoyés
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="requests">
-            <QuoteRequestsTabContent requests={filteredRequests} />
-          </TabsContent>
-
-          <TabsContent value="quotes">
-            <QuotesTabContent filteredQuotes={filteredQuotes} />
-          </TabsContent>
-        </Tabs>
+        <QuotesTabContent filteredQuotes={filteredQuotes} />
       </div>
     </Layout>
   );

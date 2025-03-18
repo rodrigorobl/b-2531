@@ -137,5 +137,112 @@ export const mockQuotes: Quote[] = [
       }
     ],
     isVoluntary: false
+  },
+  // New quotes examples
+  {
+    id: 'quote4',
+    projectId: 'proj5',
+    projectName: 'Hôtel de Ville',
+    recipientType: 'service-company',
+    recipientName: 'Mairie de Lyon',
+    recipientId: 'comp5',
+    serviceId: 'serv5',
+    serviceName: 'Rénovation façade',
+    createdAt: '2023-06-10',
+    updatedAt: '2023-06-12',
+    status: 'accepted',
+    currentAmount: 18500,
+    versions: [
+      {
+        id: 'v6',
+        quoteId: 'quote4',
+        version: 1,
+        amount: 18500,
+        createdAt: '2023-06-10'
+      }
+    ],
+    isVoluntary: true
+  },
+  {
+    id: 'quote5',
+    requestId: 'req5',
+    projectId: 'proj6',
+    projectName: 'Campus Universitaire',
+    recipientType: 'service-company',
+    recipientName: 'Université Paul Valéry',
+    recipientId: 'comp6',
+    serviceId: 'serv6',
+    serviceName: 'Installation système sécurité',
+    createdAt: '2023-06-15',
+    updatedAt: '2023-06-15',
+    status: 'rejected',
+    currentAmount: 12700,
+    versions: [
+      {
+        id: 'v7',
+        quoteId: 'quote5',
+        version: 1,
+        amount: 12700,
+        createdAt: '2023-06-15'
+      }
+    ],
+    isVoluntary: false
+  },
+  {
+    id: 'quote6',
+    projectId: 'proj7',
+    projectName: 'Centre Sportif Municipal',
+    recipientType: 'project-manager',
+    recipientName: 'Cabinet MTO Architectes',
+    recipientId: 'comp7',
+    serviceId: 'serv7',
+    serviceName: 'Étude acoustique',
+    createdAt: '2023-07-01',
+    updatedAt: '2023-07-05',
+    status: 'pending',
+    currentAmount: 4800,
+    versions: [
+      {
+        id: 'v8',
+        quoteId: 'quote6',
+        version: 1,
+        amount: 5200,
+        createdAt: '2023-07-01'
+      },
+      {
+        id: 'v9',
+        quoteId: 'quote6',
+        version: 2,
+        amount: 4800,
+        createdAt: '2023-07-05',
+        notes: 'Ajustement suite à précision du périmètre'
+      }
+    ],
+    isVoluntary: true
+  },
+  {
+    id: 'quote7',
+    requestId: 'req7',
+    projectId: 'proj8',
+    projectName: 'Résidence Les Oliviers',
+    recipientType: 'developer',
+    recipientName: 'Groupe Immobilier Méditerranée',
+    recipientId: 'comp8',
+    serviceId: 'serv8',
+    serviceName: 'Diagnostic plomberie',
+    createdAt: '2023-07-20',
+    updatedAt: '2023-07-20',
+    status: 'sent',
+    currentAmount: 2300,
+    versions: [
+      {
+        id: 'v10',
+        quoteId: 'quote7',
+        version: 1,
+        amount: 2300,
+        createdAt: '2023-07-20'
+      }
+    ],
+    isVoluntary: false
   }
 ];

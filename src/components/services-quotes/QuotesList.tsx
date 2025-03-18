@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Building, Calendar, Check, X, Clock, ArrowRight, PenLine, ExternalLink, Send } from 'lucide-react';
+import { Building, Calendar, Check, X, Clock, ArrowRight, ExternalLink, Send } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -131,20 +131,12 @@ export function QuotesList({ quotes }: QuotesListProps) {
               <TableCell>{getSourceBadge(quote.isVoluntary)}</TableCell>
               <TableCell>{getStatusBadge(quote.status)}</TableCell>
               <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Link to={`/services-quote-tracking/${quote.id}`}>
-                    <Button variant="outline" size="sm">
-                      <ArrowRight size={14} className="mr-1" />
-                      Suivi
-                    </Button>
-                  </Link>
-                  {quote.status === 'sent' && (
-                    <Button variant="outline" size="sm">
-                      <PenLine size={14} className="mr-1" />
-                      Modifier
-                    </Button>
-                  )}
-                </div>
+                <Link to={`/services-quote-tracking/${quote.id}`}>
+                  <Button variant="outline" size="sm">
+                    <ArrowRight size={14} className="mr-1" />
+                    Suivi
+                  </Button>
+                </Link>
               </TableCell>
             </TableRow>
           ))

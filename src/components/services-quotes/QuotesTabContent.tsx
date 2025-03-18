@@ -13,9 +13,9 @@ export function QuotesTabContent({ filteredQuotes }: QuotesTabContentProps) {
     <Card>
       <CardHeader>
         <div>
-          <CardTitle>Devis envoyés</CardTitle>
+          <CardTitle>Gestion des devis</CardTitle>
           <CardDescription>
-            Suivez l'état de vos devis envoyés, qu'ils soient en réponse à une demande ou envoyés spontanément
+            Suivez l'état de vos devis, qu'ils soient en réponse à une demande ou envoyés spontanément
           </CardDescription>
         </div>
       </CardHeader>
