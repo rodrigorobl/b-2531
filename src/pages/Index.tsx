@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -183,13 +184,15 @@ export default function Index() {
   const minSurveyPrice = 1500;
   const minSurveyDelivery = "4 jours";
 
-  // Project perspective images for the gallery
+  // Project perspective images for the gallery - updated to building images
   const perspectiveImages = [
-    'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
-    'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
-    'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
-    'https://images.unsplash.com/photo-1483058712412-4245e9b90334',
-    'https://images.unsplash.com/photo-1449157291145-7efd050a4d0e'
+    'https://images.unsplash.com/photo-1449157291145-7efd050a4d0e', // Low angle photography of building
+    'https://images.unsplash.com/photo-1460574283810-2aab119d8511', // Low angle photography of building
+    'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a', // Low angle photography of gray building
+    'https://images.unsplash.com/photo-1518005020951-eccb494ad742', // White concrete building during daytime
+    'https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace', // White concrete building
+    'https://images.unsplash.com/photo-1524230572899-a752b3835840', // White concrete building
+    'https://images.unsplash.com/photo-1487958449943-2429e8be8625'  // White concrete building
   ];
 
   return (
