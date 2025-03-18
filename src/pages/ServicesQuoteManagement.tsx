@@ -1,171 +1,20 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FileSpreadsheet, FileText, Filter, FilePlus2, Search, ExternalLink, SendIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { ExternalLink, SendIcon } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Layout } from '@/components/Layout';
-import { Badge } from '@/components/ui/badge';
 import { Quote, QuoteRequest } from '@/types/services-quotes';
-import { QuoteRequestsList } from '@/components/services-quotes/QuoteRequestsList';
-import { QuotesList } from '@/components/services-quotes/QuotesList';
-
-// Mock data for demonstration
-const mockQuoteRequests: QuoteRequest[] = [
-  {
-    id: 'req1',
-    projectId: 'proj1',
-    projectName: 'Résidence Les Cèdres',
-    requesterType: 'developer',
-    requesterName: 'Promoteur ABC',
-    requesterId: 'comp1',
-    serviceId: 'serv1',
-    serviceName: 'Nettoyage de fin de chantier',
-    requestDate: '2023-05-15',
-    desiredCompletionDate: '2023-06-30',
-    description: 'Nettoyage complet de 15 appartements avant livraison',
-    status: 'pending'
-  },
-  {
-    id: 'req2',
-    projectId: 'proj2',
-    projectName: 'Tour Horizon',
-    requesterType: 'constructor',
-    requesterName: 'Construction XYZ',
-    requesterId: 'comp2',
-    serviceId: 'serv2',
-    serviceName: 'Location nacelle élévatrice',
-    requestDate: '2023-05-10',
-    desiredCompletionDate: '2023-05-25',
-    description: 'Location nacelle 15m pour 5 jours',
-    status: 'sent'
-  },
-  {
-    id: 'req3',
-    projectId: 'proj3',
-    projectName: 'Centre Commercial Est',
-    requesterType: 'project-manager',
-    requesterName: 'Bureau Études Tech',
-    requesterId: 'comp3',
-    serviceId: 'serv3',
-    serviceName: 'Contrôle technique installations',
-    requestDate: '2023-05-05',
-    desiredCompletionDate: '2023-05-20',
-    description: 'Vérification conformité électrique',
-    status: 'accepted'
-  }
-];
-
-const mockQuotes: Quote[] = [
-  {
-    id: 'quote1',
-    requestId: 'req1',
-    projectId: 'proj1',
-    projectName: 'Résidence Les Cèdres',
-    recipientType: 'developer',
-    recipientName: 'Promoteur ABC',
-    recipientId: 'comp1',
-    serviceId: 'serv1',
-    serviceName: 'Nettoyage de fin de chantier',
-    createdAt: '2023-05-16',
-    updatedAt: '2023-05-16',
-    status: 'sent',
-    currentAmount: 3500,
-    versions: [
-      {
-        id: 'v1',
-        quoteId: 'quote1',
-        version: 1,
-        amount: 3500,
-        createdAt: '2023-05-16'
-      }
-    ],
-    isVoluntary: false
-  },
-  {
-    id: 'quote2',
-    projectId: 'proj4',
-    projectName: 'Immeuble Le Parc',
-    recipientType: 'constructor',
-    recipientName: 'Bâtiment Pro',
-    recipientId: 'comp4',
-    serviceId: 'serv4',
-    serviceName: 'Entretien espaces verts',
-    createdAt: '2023-05-05',
-    updatedAt: '2023-05-07',
-    status: 'pending',
-    currentAmount: 1200,
-    versions: [
-      {
-        id: 'v2',
-        quoteId: 'quote2',
-        version: 1,
-        amount: 1500,
-        createdAt: '2023-05-05'
-      },
-      {
-        id: 'v3',
-        quoteId: 'quote2',
-        version: 2,
-        amount: 1200,
-        createdAt: '2023-05-07',
-        notes: 'Révision suite à discussion client'
-      }
-    ],
-    isVoluntary: true
-  },
-  {
-    id: 'quote3',
-    requestId: 'req3',
-    projectId: 'proj3',
-    projectName: 'Centre Commercial Est',
-    recipientType: 'project-manager',
-    recipientName: 'Bureau Études Tech',
-    recipientId: 'comp3',
-    serviceId: 'serv3',
-    serviceName: 'Contrôle technique installations',
-    createdAt: '2023-05-06',
-    updatedAt: '2023-05-10',
-    status: 'accepted',
-    currentAmount: 2800,
-    versions: [
-      {
-        id: 'v4',
-        quoteId: 'quote3',
-        version: 1,
-        amount: 3200,
-        createdAt: '2023-05-06'
-      },
-      {
-        id: 'v5',
-        quoteId: 'quote3',
-        version: 2,
-        amount: 2800,
-        createdAt: '2023-05-10',
-        notes: 'Réduction suite à négociation'
-      }
-    ],
-    isVoluntary: false
-  }
-];
+import { QuoteManagementHeader } from '@/components/services-quotes/QuoteManagementHeader';
+import { QuoteSearchBar } from '@/components/services-quotes/QuoteSearchBar';
+import { QuoteRequestsTabContent } from '@/components/services-quotes/QuoteRequestsTabContent';
+import { QuotesTabContent } from '@/components/services-quotes/QuotesTabContent';
+import { mockQuoteRequests, mockQuotes } from '@/components/services-quotes/mock-data';
 
 export default function ServicesQuoteManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRequests, setFilteredRequests] = useState<QuoteRequest[]>(mockQuoteRequests);
   const [filteredQuotes, setFilteredQuotes] = useState<Quote[]>(mockQuotes);
   const [quoteTypeFilter, setQuoteTypeFilter] = useState<'all' | 'requested' | 'voluntary'>('all');
-
-  // Filter quotes by type (requested or voluntary)
-  const getFilteredQuotesByType = () => {
-    if (quoteTypeFilter === 'all') return filteredQuotes;
-    return filteredQuotes.filter(quote => 
-      quoteTypeFilter === 'requested' 
-        ? !quote.isVoluntary 
-        : quote.isVoluntary
-    );
-  };
 
   // Handle search and filtering
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,42 +53,15 @@ export default function ServicesQuoteManagement() {
   return (
     <Layout>
       <div className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Gestion des devis</h1>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleExportPDF}>
-              <FileText size={16} className="mr-2" />
-              Export PDF
-            </Button>
-            <Button variant="outline" onClick={handleExportXLS}>
-              <FileSpreadsheet size={16} className="mr-2" />
-              Export XLS
-            </Button>
-          </div>
-        </div>
+        <QuoteManagementHeader 
+          onExportPDF={handleExportPDF} 
+          onExportXLS={handleExportXLS} 
+        />
 
-        <div className="mb-6 flex items-center gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Rechercher par projet, service ou entreprise..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-          </div>
-          <Button variant="outline">
-            <Filter size={16} className="mr-2" />
-            Filtres
-          </Button>
-          <Link to="/create-quote">
-            <Button>
-              <FilePlus2 size={16} className="mr-2" />
-              Nouveau devis
-            </Button>
-          </Link>
-        </div>
+        <QuoteSearchBar
+          searchTerm={searchTerm}
+          onSearchChange={handleSearch}
+        />
 
         <Tabs defaultValue="requests" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -254,70 +76,16 @@ export default function ServicesQuoteManagement() {
           </TabsList>
 
           <TabsContent value="requests">
-            <Card>
-              <CardHeader>
-                <CardTitle>Demandes de devis</CardTitle>
-                <CardDescription>
-                  Consultez et répondez aux demandes de devis pour vos services
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <QuoteRequestsList requests={filteredRequests} />
-              </CardContent>
-            </Card>
+            <QuoteRequestsTabContent requests={filteredRequests} />
           </TabsContent>
 
           <TabsContent value="quotes">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <CardTitle>Devis envoyés</CardTitle>
-                    <CardDescription>
-                      Suivez l'état de vos devis envoyés, qu'ils soient en réponse à une demande ou envoyés spontanément
-                    </CardDescription>
-                  </div>
-                  
-                  <div className="inline-flex p-1 rounded-md bg-muted">
-                    <Button 
-                      variant={quoteTypeFilter === 'all' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      onClick={() => setQuoteTypeFilter('all')}
-                      className="relative flex-1"
-                    >
-                      Tous les devis
-                    </Button>
-                    <Button 
-                      variant={quoteTypeFilter === 'requested' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      onClick={() => setQuoteTypeFilter('requested')}
-                      className="relative flex-1"
-                    >
-                      <ExternalLink size={14} className="mr-1" />
-                      Sur demande
-                      <Badge variant="outline" className="ml-2 bg-blue-50 hover:bg-blue-50">
-                        {mockQuotes.filter(q => !q.isVoluntary).length}
-                      </Badge>
-                    </Button>
-                    <Button 
-                      variant={quoteTypeFilter === 'voluntary' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      onClick={() => setQuoteTypeFilter('voluntary')}
-                      className="relative flex-1"
-                    >
-                      <SendIcon size={14} className="mr-1" />
-                      Démarchage actif
-                      <Badge variant="outline" className="ml-2 bg-emerald-50 hover:bg-emerald-50">
-                        {mockQuotes.filter(q => q.isVoluntary).length}
-                      </Badge>
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <QuotesList quotes={getFilteredQuotesByType()} />
-              </CardContent>
-            </Card>
+            <QuotesTabContent
+              quotes={mockQuotes}
+              quoteTypeFilter={quoteTypeFilter}
+              setQuoteTypeFilter={setQuoteTypeFilter}
+              filteredQuotes={filteredQuotes}
+            />
           </TabsContent>
         </Tabs>
       </div>
