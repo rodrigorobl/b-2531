@@ -22,9 +22,9 @@ const TenderFormNav: React.FC<TenderFormNavProps> = ({
     { id: 4, label: "Détails" },
     { id: 5, label: "DCE" },
     { id: 6, label: "Documents" },
-    { id: 7, label: "Contacts" },     // Added new step
-    { id: 8, label: "Invitations" },  // Moved to step 8
-    { id: 9, label: "Publication" },  // Moved to step 9
+    { id: 7, label: "Invitations" },
+    { id: 8, label: "Planification" },
+    { id: 9, label: "Publication" },
   ];
   
   return (

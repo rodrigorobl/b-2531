@@ -13,6 +13,7 @@ import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
@@ -139,35 +140,369 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
               {currentStep === 3 && (
                 <div className="space-y-3">
                   <div>
-                    <FormItem>
-                      <FormLabel>Nom du projet</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Résidence Les Cerisiers" {...form.register("projectName")} />
-                      </FormControl>
-                      <FormDescription>
-                        Quel est le nom de votre projet ?
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                    <FormField
+                      control={form.control}
+                      name="projectName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom du projet</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Résidence Les Cerisiers" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Quel est le nom de votre projet ?
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   <div>
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Décrivez votre projet en détail" {...form.register("description")} />
-                      </FormControl>
-                      <FormDescription>
-                        Donnez le plus de détails possible.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Décrivez votre projet en détail" 
+                              className="min-h-[120px]"
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Donnez le plus de détails possible.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 4 && (
+                <div className="space-y-4">
+                  {form.getValues("type") === "design" && (
+                    <>
+                      <h2 className="text-xl font-semibold">Détails du projet de conception</h2>
+                      
+                      <FormField
+                        control={form.control}
+                        name="design.projectNature"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nature du projet</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Sélectionnez la nature du projet" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="logement">Logement</SelectItem>
+                                <SelectItem value="tertiaire">Tertiaire</SelectItem>
+                                <SelectItem value="industriel">Industriel</SelectItem>
+                                <SelectItem value="commercial">Commercial</SelectItem>
+                                <SelectItem value="hospitalier">Hospitalier</SelectItem>
+                                <SelectItem value="scolaire">Scolaire</SelectItem>
+                                <SelectItem value="autres">Autres</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              Choisissez la nature de votre projet de conception
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="design.area"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Surface (m²)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="1000" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Indiquez la surface approximative du projet
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                  
+                  {form.getValues("type") === "construction" && (
+                    <>
+                      <h2 className="text-xl font-semibold">Détails du projet de construction</h2>
+                      
+                      <FormField
+                        control={form.control}
+                        name="construction.constructionType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Type de construction</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Sélectionnez le type de construction" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="neuf">Neuf</SelectItem>
+                                <SelectItem value="réhabilitation">Réhabilitation</SelectItem>
+                                <SelectItem value="extension">Extension</SelectItem>
+                                <SelectItem value="renovation">Rénovation</SelectItem>
+                                <SelectItem value="demolition">Démolition</SelectItem>
+                                <SelectItem value="amenagement">Aménagement</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              Choisissez le type de construction
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="construction.area"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Surface (m²)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="1000" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Indiquez la surface approximative du projet
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                  
+                  {form.getValues("type") === "service" && (
+                    <>
+                      <h2 className="text-xl font-semibold">Détails de la prestation de service</h2>
+                      
+                      <FormField
+                        control={form.control}
+                        name="service.serviceScope"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Étendue géographique</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Sélectionnez l'étendue géographique" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="local">Local</SelectItem>
+                                <SelectItem value="départemental">Départemental</SelectItem>
+                                <SelectItem value="régional">Régional</SelectItem>
+                                <SelectItem value="national">National</SelectItem>
+                                <SelectItem value="international">International</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              Choisissez l'étendue géographique de la prestation
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="service.serviceDuration"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Durée de la prestation</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Sélectionnez la durée" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="ponctuel">Ponctuel</SelectItem>
+                                <SelectItem value="3mois">3 mois</SelectItem>
+                                <SelectItem value="6mois">6 mois</SelectItem>
+                                <SelectItem value="1an">1 an</SelectItem>
+                                <SelectItem value="2ans">2 ans</SelectItem>
+                                <SelectItem value="3ans">3 ans</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              Indiquez la durée prévue de la prestation
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                </div>
+              )}
+
+              {currentStep === 5 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold">Dossier de Consultation des Entreprises (DCE)</h2>
+                  <p className="text-muted-foreground">
+                    Cette section vous permet de gérer les documents techniques de votre appel d'offres.
+                  </p>
+                  
+                  <div className="bg-secondary/50 p-6 rounded-lg border border-border flex items-center justify-center flex-col h-[300px]">
+                    <p className="text-muted-foreground text-center mb-4">
+                      Déposez vos fichiers ici ou parcourez vos dossiers
+                    </p>
+                    <Button variant="outline">Parcourir</Button>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 6 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold">Documents administratifs</h2>
+                  <p className="text-muted-foreground">
+                    Ajoutez les documents administratifs nécessaires pour votre appel d'offres.
+                  </p>
+                  
+                  <div className="bg-secondary/50 p-6 rounded-lg border border-border flex items-center justify-center flex-col h-[300px]">
+                    <p className="text-muted-foreground text-center mb-4">
+                      Déposez vos fichiers ici ou parcourez vos dossiers
+                    </p>
+                    <Button variant="outline">Parcourir</Button>
                   </div>
                 </div>
               )}
 
               {currentStep === 7 && (
                 <TenderCompanyInvitation form={form} />
+              )}
+
+              {currentStep === 8 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold">Planification</h2>
+                  <p className="text-muted-foreground">
+                    Définissez le calendrier de votre appel d'offres
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormItem>
+                      <FormLabel>Date de publication</FormLabel>
+                      <FormControl>
+                        <Input type="date" />
+                      </FormControl>
+                      <FormDescription>
+                        Date à laquelle l'appel d'offres sera visible
+                      </FormDescription>
+                    </FormItem>
+                    
+                    <FormItem>
+                      <FormLabel>Date limite de réponse</FormLabel>
+                      <FormControl>
+                        <Input type="date" />
+                      </FormControl>
+                      <FormDescription>
+                        Date limite pour recevoir les propositions
+                      </FormDescription>
+                    </FormItem>
+                    
+                    <FormItem>
+                      <FormLabel>Date de début du projet</FormLabel>
+                      <FormControl>
+                        <Input type="date" />
+                      </FormControl>
+                      <FormDescription>
+                        Date prévue pour le démarrage du projet
+                      </FormDescription>
+                    </FormItem>
+                    
+                    <FormItem>
+                      <FormLabel>Durée estimée (en mois)</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="1" placeholder="12" />
+                      </FormControl>
+                      <FormDescription>
+                        Durée estimée du projet en mois
+                      </FormDescription>
+                    </FormItem>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 9 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold">Publication</h2>
+                  <p className="text-muted-foreground">
+                    Vérifiez les informations avant de publier votre appel d'offres
+                  </p>
+                  
+                  <div className="bg-secondary/30 p-6 rounded-lg border border-border">
+                    <h3 className="font-medium mb-4">Récapitulatif</h3>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between pb-2 border-b">
+                        <span className="text-muted-foreground">Type</span>
+                        <span className="font-medium">
+                          {form.getValues("type") === "design" ? "Conception" : 
+                           form.getValues("type") === "construction" ? "Réalisation" : 
+                           "Services"}
+                        </span>
+                      </div>
+                      
+                      <div className="flex justify-between pb-2 border-b">
+                        <span className="text-muted-foreground">Confidentialité</span>
+                        <span className="font-medium">
+                          {form.getValues("privacy") === "open" ? "Ouvert" : 
+                           form.getValues("privacy") === "restricted" ? "Restreint" : 
+                           "Privé"}
+                        </span>
+                      </div>
+                      
+                      <div className="flex justify-between pb-2 border-b">
+                        <span className="text-muted-foreground">Nom du projet</span>
+                        <span className="font-medium">{form.getValues("projectName") || "Non défini"}</span>
+                      </div>
+                      
+                      <div className="flex justify-between pb-2 border-b">
+                        <span className="text-muted-foreground">Entreprises invitées</span>
+                        <span className="font-medium">{form.getValues("invitedCompanies").length}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
 
               <div className="flex justify-end">
