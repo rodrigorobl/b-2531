@@ -32,36 +32,16 @@ export function RangeSliderFilter({
         <Label>{label}</Label>
       </div>
       <div className="pt-5 px-2">
-        <div className="relative">
-          <Slider 
-            value={value} 
-            min={min} 
-            max={max} 
-            step={step}
-            onValueChange={onChange}
-          />
-          <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-            <span>{formatValue(value[0])}</span>
-            <span>{formatValue(value[1])}</span>
-          </div>
-          
-          {/* The circles at min and max values */}
-          <div 
-            className="absolute w-3 h-3 rounded-full bg-primary border-2 border-white shadow-sm" 
-            style={{ 
-              left: `${((value[0] - min) / (max - min)) * 100}%`, 
-              top: '0%',
-              transform: 'translate(-50%, 0)'
-            }}
-          />
-          <div 
-            className="absolute w-3 h-3 rounded-full bg-primary border-2 border-white shadow-sm" 
-            style={{ 
-              left: `${((value[1] - min) / (max - min)) * 100}%`, 
-              top: '0%',
-              transform: 'translate(-50%, 0)'
-            }}
-          />
+        <Slider 
+          value={value} 
+          min={min} 
+          max={max} 
+          step={step}
+          onValueChange={onChange}
+        />
+        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+          <span>{formatValue(value[0])}</span>
+          <span>{formatValue(value[1])}</span>
         </div>
       </div>
     </div>
