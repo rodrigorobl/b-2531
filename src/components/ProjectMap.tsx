@@ -3,7 +3,8 @@ import React from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 
 interface ProjectMapProps {
-  sites: {
+  // For multiple sites (new interface)
+  sites?: {
     id: string;
     name: string;
     location: {
@@ -14,6 +15,13 @@ interface ProjectMapProps {
   }[];
   onSiteClick?: (siteId: string) => void;
   selectedSiteId?: string;
+  
+  // For single location (old interface)
+  location?: {
+    address: string;
+    lat: number;
+    lng: number;
+  };
 }
 
 const containerStyle = {
@@ -21,18 +29,32 @@ const containerStyle = {
   height: '100%'
 };
 
-export default function ProjectMap({ sites, onSiteClick, selectedSiteId }: ProjectMapProps) {
+export default function ProjectMap({ sites, onSiteClick, selectedSiteId, location }: ProjectMapProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyBb7ikdBNJYSpoXkzOFBQlThyfMt9mJa68'
   });
 
+  // Convert single location to sites array format if needed
+  const markersData = React.useMemo(() => {
+    if (sites && sites.length > 0) {
+      return sites;
+    } else if (location) {
+      return [{
+        id: 'single-location',
+        name: location.address,
+        location: location
+      }];
+    }
+    return [];
+  }, [sites, location]);
+
   // Calculate map bounds to fit all markers
   const getBoundsFromSites = () => {
-    if (sites.length === 0) return null;
+    if (markersData.length === 0) return null;
     
     const bounds = new google.maps.LatLngBounds();
-    sites.forEach(site => {
+    markersData.forEach(site => {
       bounds.extend({ lat: site.location.lat, lng: site.location.lng });
     });
     return bounds;
@@ -52,12 +74,20 @@ export default function ProjectMap({ sites, onSiteClick, selectedSiteId }: Proje
     }
   };
 
+  // Get center location
+  const getMapCenter = () => {
+    if (markersData.length > 0) {
+      return { lat: markersData[0].location.lat, lng: markersData[0].location.lng };
+    }
+    return { lat: 45.7578, lng: 4.8320 }; // Default to Lyon, France
+  };
+
   return (
     <div className="rounded-lg overflow-hidden border border-border h-full relative">
       {isLoaded ? (
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={sites.length > 0 ? { lat: sites[0].location.lat, lng: sites[0].location.lng } : { lat: 45.7578, lng: 4.8320 }}
+          center={getMapCenter()}
           zoom={14}
           onLoad={handleLoad}
           options={{
@@ -68,7 +98,7 @@ export default function ProjectMap({ sites, onSiteClick, selectedSiteId }: Proje
             fullscreenControl: true,
           }}
         >
-          {sites.map(site => (
+          {markersData.map(site => (
             <Marker 
               key={site.id}
               position={{ lat: site.location.lat, lng: site.location.lng }}
