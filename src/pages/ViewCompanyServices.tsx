@@ -1,20 +1,17 @@
 
 import React, { useState } from "react";
-import { Layout } from "@/components/Layout";
 import { useNavigate } from "react-router-dom";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ExternalLink, Eye, Edit, Wrench, FileSpreadsheet, MapPin, Star } from 'lucide-react';
-import { toast } from "@/components/ui/use-toast";
-import { ServiceCompany } from '@/types/company-services';
-import { CompanyInfo } from '@/components/company-services/CompanyInfo';
-import { ServicesList } from '@/components/company-services/ServicesList';
-import { CoverageMap } from '@/components/company-services/CoverageMap';
-import { ReviewsList } from '@/components/company-services/ReviewsList';
-import { ProjectPortfolio } from '@/components/company-services/ProjectPortfolio';
-import { FinancialsCard } from '@/components/company-services/FinancialsCard';
-import { QuoteFormDialog } from '@/components/company-services/QuoteFormDialog';
+import { ArrowLeft } from "lucide-react";
+import { ServiceCompany } from "@/types/company-services";
+import { CompanyInfo } from "@/components/company-services/CompanyInfo";
+import { ServicesList } from "@/components/company-services/ServicesList";
+import { CoverageMap } from "@/components/company-services/CoverageMap";
+import { ReviewsList } from "@/components/company-services/ReviewsList";
+import { ProjectPortfolio } from "@/components/company-services/ProjectPortfolio";
+import { FinancialsCard } from "@/components/company-services/FinancialsCard";
+import { QuoteFormDialog } from "@/components/company-services/QuoteFormDialog";
 
 // Mock data - in a real application, this would come from an API
 const MOCK_COMPANY: ServiceCompany = {
@@ -175,63 +172,41 @@ const MOCK_COMPANY: ServiceCompany = {
   }
 };
 
-export default function CompanyServices() {
+export default function ViewCompanyServices() {
+  const navigate = useNavigate();
   const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<string | undefined>(undefined);
-  const navigate = useNavigate();
   
-  // In a real app, you would fetch the company data based on companyId
+  // In a real app, you would fetch the company data
   const company = MOCK_COMPANY;
+  
+  const handleBackClick = () => {
+    navigate("/company-services");
+  };
   
   const handleRequestQuote = (serviceId: string) => {
     setSelectedServiceId(serviceId);
     setQuoteDialogOpen(true);
   };
 
-  const handleEditServices = () => {
-    navigate("/company-services/edit");
-  };
-  
-  const handleViewAsVisitor = () => {
-    navigate("/view-company-services");
-  };
-
-  const handleViewQuotes = () => {
-    navigate("/services-quote-management");
-  };
-  
   return (
-    <Layout>
-      <div className="container mx-auto py-6 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Mes Services</h1>
-          <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={handleViewAsVisitor}
-              className="flex items-center gap-2"
-            >
-              <Eye size={16} />
-              Voir en tant que visiteur
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b py-4">
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={handleBackClick} className="flex items-center gap-2">
+              <ArrowLeft size={16} />
+              Retour
             </Button>
-            <Button
-              variant="outline"
-              onClick={handleViewQuotes}
-              className="flex items-center gap-2"
-            >
-              <FileSpreadsheet size={16} />
-              Gérer mes devis
-            </Button>
-            <Button 
-              onClick={handleEditServices}
-              className="flex items-center gap-2"
-            >
-              <Edit size={16} />
-              Modifier mes services
-            </Button>
+            <h1 className="text-lg font-semibold">Aperçu des services de votre entreprise</h1>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Vue visiteur
           </div>
         </div>
-        
+      </header>
+      
+      <main className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main content - 2 columns wide */}
           <div className="lg:col-span-2 space-y-6">
@@ -273,16 +248,14 @@ export default function CompanyServices() {
                   <p className="font-medium">{company.services.length} services</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Devis en cours</p>
-                  <p className="font-medium">5 devis</p>
+                  <p className="text-sm text-gray-500">Projets réalisés</p>
+                  <p className="font-medium">{company.projects.length} projets</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Taux d'acceptation</p>
-                  <p className="font-medium">78%</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Revenu moyen par service</p>
-                  <p className="font-medium">2 500 €</p>
+                  <p className="text-sm text-gray-500">Note moyenne</p>
+                  <p className="font-medium">
+                    {company.reviews.reduce((acc, review) => acc + review.rating, 0) / company.reviews.length} / 5
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -314,7 +287,8 @@ export default function CompanyServices() {
           initialServiceId={selectedServiceId}
           companyName={company.name}
         />
-      </div>
-    </Layout>
+      </main>
+    </div>
   );
 }
+
