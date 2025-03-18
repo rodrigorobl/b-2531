@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, MailOpen, BookOpen, List, ClipboardCheck } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 
 interface NavigationProps {
@@ -13,7 +12,6 @@ export const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const location = useLocation();
   
-  // Get the dashboard route based on the active profile
   const getDashboardRoute = () => {
     switch (activeProfile) {
       case 'promoteur':
@@ -31,7 +29,6 @@ export const Navigation: React.FC<NavigationProps> = ({
     }
   };
 
-  // Check if the current location is one of the dashboard routes
   const isActiveDashboard = () => {
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
@@ -68,7 +65,6 @@ export const Navigation: React.FC<NavigationProps> = ({
               <span>Projets</span>
             </Link>
           </li>}
-        {/* Add opportunities search link for Maître d'Œuvre/BET profile */}
         {activeProfile === 'maitre-oeuvre' && (
           <li>
             <Link to="/opportunities-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/opportunities-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -91,12 +87,19 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
           </>}
-        {/* Add new menu item for "Devis à analyser" for MOE and BET profiles */}
-        {(activeProfile === 'maitre-oeuvre') && (
+        {activeProfile === 'maitre-oeuvre' && (
           <li>
             <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
               <ClipboardCheck size={18} />
               <span>Devis à analyser</span>
+            </Link>
+          </li>
+        )}
+        {activeProfile === 'industriel' && (
+          <li>
+            <Link to="/product-reference" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/product-reference' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+              <Package size={18} />
+              <span>Suivi des références</span>
             </Link>
           </li>
         )}
