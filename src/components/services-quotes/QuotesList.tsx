@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Building, Calendar, Check, X, Clock, ArrowRight, PenLine } from 'lucide-react';
+import { Building, Calendar, Check, X, Clock, ArrowRight, PenLine, ExternalLink, Send } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,6 +64,20 @@ export function QuotesList({ quotes }: QuotesListProps) {
     }
   };
 
+  const getSourceBadge = (isVoluntary: boolean) => {
+    return isVoluntary ? (
+      <Badge variant="outline" className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-50">
+        <Send size={12} />
+        Démarchage actif
+      </Badge>
+    ) : (
+      <Badge variant="outline" className="flex items-center gap-1 bg-blue-50 hover:bg-blue-50">
+        <ExternalLink size={12} />
+        Sur demande
+      </Badge>
+    );
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -83,7 +97,7 @@ export function QuotesList({ quotes }: QuotesListProps) {
             </div>
           </TableHead>
           <TableHead>Montant</TableHead>
-          <TableHead>Type</TableHead>
+          <TableHead>Source</TableHead>
           <TableHead>Statut</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -114,11 +128,7 @@ export function QuotesList({ quotes }: QuotesListProps) {
               <TableCell>{quote.serviceName}</TableCell>
               <TableCell>{formatDate(quote.createdAt)}</TableCell>
               <TableCell className="font-medium">{formatAmount(quote.currentAmount)}</TableCell>
-              <TableCell>
-                <Badge variant="outline">
-                  {quote.isVoluntary ? 'Spontané' : 'Sur demande'}
-                </Badge>
-              </TableCell>
+              <TableCell>{getSourceBadge(quote.isVoluntary)}</TableCell>
               <TableCell>{getStatusBadge(quote.status)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">

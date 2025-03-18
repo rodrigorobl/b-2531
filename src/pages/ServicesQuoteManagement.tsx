@@ -14,7 +14,6 @@ export default function ServicesQuoteManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRequests, setFilteredRequests] = useState<QuoteRequest[]>(mockQuoteRequests);
   const [filteredQuotes, setFilteredQuotes] = useState<Quote[]>(mockQuotes);
-  const [quoteTypeFilter, setQuoteTypeFilter] = useState<'all' | 'requested' | 'voluntary'>('all');
 
   // Handle search and filtering
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,12 +79,7 @@ export default function ServicesQuoteManagement() {
           </TabsContent>
 
           <TabsContent value="quotes">
-            <QuotesTabContent
-              quotes={mockQuotes}
-              quoteTypeFilter={quoteTypeFilter}
-              setQuoteTypeFilter={setQuoteTypeFilter}
-              filteredQuotes={filteredQuotes}
-            />
+            <QuotesTabContent filteredQuotes={filteredQuotes} />
           </TabsContent>
         </Tabs>
       </div>
