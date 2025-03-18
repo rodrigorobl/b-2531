@@ -32,7 +32,7 @@ export default function TenderSearchDetails({
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'open':
-        return 'En cours';
+        return 'Ouvert';
       case 'closed':
         return 'Clôturé';
       case 'assigned':
@@ -153,10 +153,12 @@ export default function TenderSearchDetails({
               </Link>
               
               <div className="grid grid-cols-2 gap-2">
-                
-                <Button variant="outline" size="sm" className="w-full gap-1" asChild>
-                  
-                </Button>
+                <Link to={`/submit-quote/${tender.id}/lot-1`} className="w-full">
+                  <Button variant="outline" size="sm" className="w-full gap-1">
+                    <Upload size={14} />
+                    <span>Soumettre une offre</span>
+                  </Button>
+                </Link>
               </div>
             </div>
           </TabsContent>

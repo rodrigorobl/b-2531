@@ -88,6 +88,10 @@ const App = () => (
             <Route path="/alerte-management" element={<AlertManagement />} />
             <Route path="/construction-sites-map" element={<ConstructionSitesMap />} />
             <Route path="/construction-site/:siteId" element={<ConstructionSiteDetail />} />
+            <Route path="/company-services/:companyId" element={<CompanyServices />} />
+            <Route path="/submit-quote" element={<SubmitQuote />} />
+            <Route path="/submit-quote/:tenderId" element={<SubmitQuote />} />
+            <Route path="/submit-quote/:tenderId/:lotId" element={<SubmitQuote />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
