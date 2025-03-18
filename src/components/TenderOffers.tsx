@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileDown, CheckCircle, Download, AlertCircle, Upload, DollarSign, Calendar, Hash, Info } from 'lucide-react';
+import { FileDown, CheckCircle, AlertCircle, Clock, Info } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+
 interface Offer {
   id: string;
   lot: string;
@@ -17,16 +17,14 @@ interface Offer {
   submissionDate?: string;
   quoteIndex?: string;
 }
+
 interface TenderOffersProps {
   offers: Offer[];
 }
+
 export default function TenderOffers({
   offers
 }: TenderOffersProps) {
-  const pendingOffers = offers.filter(offer => offer.status === 'pending');
-  const submittedOffers = offers.filter(offer => offer.status === 'submitted');
-  const completedOffers = offers.filter(offer => ['approved', 'rejected'].includes(offer.status));
-
   // Préparer les données pour l'affichage
   const prepareOfferData = (offer: Offer) => {
     return {
@@ -39,68 +37,53 @@ export default function TenderOffers({
   };
 
   // Enrichir les données avec des informations supplémentaires
-  const enrichedPendingOffers = pendingOffers.map(prepareOfferData);
-  const enrichedSubmittedOffers = submittedOffers.map(prepareOfferData);
-  const enrichedCompletedOffers = completedOffers.map(prepareOfferData);
-  return <div className="h-full animate-fade-in" style={{
-    animationDelay: '0.1s'
-  }}>
+  const enrichedOffers = offers.map(prepareOfferData);
+
+  return (
+    <div className="h-full animate-fade-in" style={{
+      animationDelay: '0.1s'
+    }}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Mes offres</h2>
       </div>
       
-      <Tabs defaultValue="pending" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="pending">En attente</TabsTrigger>
-          <TabsTrigger value="submitted">Soumis</TabsTrigger>
-          <TabsTrigger value="completed">Terminés</TabsTrigger>
-        </TabsList>
-        
-        <div className="column-content">
-          <TabsContent value="pending" className="m-0 h-full">
-            <OffersTable offers={enrichedPendingOffers} type="pending" />
-          </TabsContent>
-          
-          <TabsContent value="submitted" className="m-0 h-full">
-            <OffersTable offers={enrichedSubmittedOffers} type="submitted" />
-          </TabsContent>
-          
-          <TabsContent value="completed" className="m-0 h-full">
-            <OffersTable offers={enrichedCompletedOffers} type="completed" />
-          </TabsContent>
-        </div>
-      </Tabs>
-    </div>;
+      <div className="column-content">
+        {enrichedOffers.length === 0 ? (
+          <EmptyState message="Aucune offre disponible" />
+        ) : (
+          <OffersTable offers={enrichedOffers} />
+        )}
+      </div>
+    </div>
+  );
 }
+
 interface OffersTableProps {
   offers: (Offer & {
     amount?: number;
     submissionDate?: string;
     quoteIndex?: string;
   })[];
-  type: 'pending' | 'submitted' | 'completed';
 }
+
 function OffersTable({
-  offers,
-  type
+  offers
 }: OffersTableProps) {
-  if (offers.length === 0) {
-    return <EmptyState message={`Aucun ${type === 'pending' ? 'appel d\'offres en attente' : type === 'submitted' ? 'devis soumis' : 'appel d\'offres terminé'}`} />;
-  }
-  return <Table>
+  return (
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Lot</TableHead>
           <TableHead>Montant du devis</TableHead>
-          {type === 'pending' ? <TableHead>Date du devis</TableHead> : <TableHead>Date du devis</TableHead>}
-          {type !== 'pending' && <TableHead>Indice du devis</TableHead>}
-          {type === 'submitted' && <TableHead>Conformité</TableHead>}
-          {type === 'completed' && <TableHead>Statut</TableHead>}
+          <TableHead>Date du devis</TableHead>
+          <TableHead>Indice du devis</TableHead>
+          <TableHead>Statut</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {offers.map(offer => <TableRow key={offer.id}>
+        {offers.map(offer => (
+          <TableRow key={offer.id}>
             <TableCell>
               <div>
                 <div className="font-medium">Lot {offer.lot}</div>
@@ -113,33 +96,36 @@ function OffersTable({
             </TableCell>
             
             <TableCell>
-              {type === 'pending' ? offer.deadline : offer.submissionDate || '-'}
+              {offer.status === 'pending' ? offer.deadline : offer.submissionDate || '-'}
             </TableCell>
             
-            {type !== 'pending' && <TableCell>{offer.quoteIndex || '-'}</TableCell>}
+            <TableCell>{offer.quoteIndex || '-'}</TableCell>
             
-            {type === 'submitted' && offer.isCompliant !== undefined && <TableCell>
-                <Badge className={`${offer.isCompliant ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-500 hover:bg-red-200'} border-0`}>
-                  {offer.isCompliant ? <><CheckCircle size={12} className="mr-1" /> Conforme</> : <><AlertCircle size={12} className="mr-1" /> Non conforme</>}
+            <TableCell>
+              {offer.status === 'pending' ? (
+                <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 border-0">
+                  <Clock size={12} className="mr-1" /> En attente
                 </Badge>
-              </TableCell>}
-            
-            {type === 'completed' && <TableCell>
-                <Badge className={`${offer.status === 'approved' ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-500 hover:bg-red-200'} border-0`}>
-                  {offer.status === 'approved' ? 'Accepté' : 'Refusé'}
+              ) : offer.isCompliant !== undefined ? (
+                offer.isCompliant ? (
+                  <Badge className="bg-blue-100 text-blue-600 hover:bg-blue-200 border-0">
+                    <CheckCircle size={12} className="mr-1" /> Conforme
+                  </Badge>
+                ) : (
+                  <Badge className="bg-red-100 text-red-500 hover:bg-red-200 border-0">
+                    <AlertCircle size={12} className="mr-1" /> Non conforme
+                  </Badge>
+                )
+              ) : (
+                <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 border-0">
+                  <Info size={12} className="mr-1" /> Inconnu
                 </Badge>
-              </TableCell>}
+              )}
+            </TableCell>
             
             <TableCell>
               <div className="flex items-center gap-2">
-                {type === 'pending' && (
-                  <Button size="sm" className="h-8" variant="outline">
-                    <Upload size={14} className="mr-1" />
-                    Soumettre
-                  </Button>
-                )}
-                
-                {type !== 'pending' && (
+                {offer.status !== 'pending' && (
                   <Button size="sm" className="h-8" variant="outline">
                     <FileDown size={14} className="mr-1" />
                     Voir devis
@@ -148,8 +134,8 @@ function OffersTable({
                 
                 <Button 
                   size="sm" 
-                  variant="ghost" 
-                  className="h-8"
+                  variant="outline" 
+                  className="h-8 border-primary text-primary hover:bg-primary/10"
                   asChild
                 >
                   <Link to={`/company-details-tender/quote-${offer.id}`}>
@@ -158,18 +144,23 @@ function OffersTable({
                 </Button>
               </div>
             </TableCell>
-          </TableRow>)}
+          </TableRow>
+        ))}
       </TableBody>
-    </Table>;
+    </Table>
+  );
 }
+
 function EmptyState({
   message
 }: {
   message: string;
 }) {
-  return <div className="h-40 flex items-center justify-center">
+  return (
+    <div className="h-40 flex items-center justify-center">
       <div className="text-center text-muted-foreground">
         <p>{message}</p>
       </div>
-    </div>;
+    </div>
+  );
 }
