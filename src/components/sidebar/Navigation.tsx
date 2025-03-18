@@ -1,18 +1,14 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
-
 interface NavigationProps {
   activeProfile: ProfileType;
 }
-
 export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
   const location = useLocation();
-  
   const getDashboardRoute = () => {
     switch (activeProfile) {
       case 'promoteur':
@@ -29,12 +25,10 @@ export const Navigation: React.FC<NavigationProps> = ({
         return '/dashboard';
     }
   };
-
   const isActiveDashboard = () => {
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
   };
-  
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
         {getProfileName(activeProfile)}
@@ -66,14 +60,12 @@ export const Navigation: React.FC<NavigationProps> = ({
               <span>Projets</span>
             </Link>
           </li>}
-        {activeProfile === 'maitre-oeuvre' && (
-          <li>
+        {activeProfile === 'maitre-oeuvre' && <li>
             <Link to="/opportunities-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/opportunities-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
               <Search size={18} />
               <span>Recherche d'opportunités</span>
             </Link>
-          </li>
-        )}
+          </li>}
         {(activeProfile === 'entreprise-construction' || activeProfile === 'entreprise-services' || activeProfile === 'industriel') && <>
             <li>
               <Link to="/tenders" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/tenders' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -88,16 +80,13 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
           </>}
-        {activeProfile === 'maitre-oeuvre' && (
-          <li>
+        {activeProfile === 'maitre-oeuvre' && <li>
             <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
               <ClipboardCheck size={18} />
-              <span>Devis à analyser</span>
+              <span>Offres à analyser</span>
             </Link>
-          </li>
-        )}
-        {activeProfile === 'industriel' && (
-          <>
+          </li>}
+        {activeProfile === 'industriel' && <>
             <li>
               <Link to="/product-reference" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/product-reference' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <Package size={18} />
@@ -110,13 +99,9 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <span>Recherche de projets</span>
               </Link>
             </li>
-          </>
-        )}
+          </>}
         <li>
-          <Link 
-            to={activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre' ? '/quoted-directory' : '/directory'} 
-            className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quoted-directory' || location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}
-          >
+          <Link to={activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre' ? '/quoted-directory' : '/directory'} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quoted-directory' || location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <BookOpen size={18} />
             <span>Annuaire</span>
           </Link>
