@@ -2,12 +2,11 @@
 import React from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, Bookmark, Star, ExternalLink } from 'lucide-react';
+import { FileText, Calendar, Map, Building, Clock, Users, Star, ExternalLink } from 'lucide-react';
 
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
@@ -62,163 +61,82 @@ export default function TenderSearchDetails({
         </div>
       </div>
       
-      <Tabs defaultValue="details" className="flex-1 flex flex-col">
-        <TabsList className="w-full justify-start px-4 pt-2 bg-transparent">
-          <TabsTrigger value="details" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">
-            Détails
-          </TabsTrigger>
-          <TabsTrigger value="messages" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">
-            Messages
-          </TabsTrigger>
-          <TabsTrigger value="documents" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">
-            Documents
-          </TabsTrigger>
-        </TabsList>
-        
-        <div className="flex-1 overflow-auto">
-          <TabsContent value="details" className="h-full m-0 p-4">
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium mb-2">Description</h4>
-                <p className="text-sm text-muted-foreground">{tender.description}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Calendar size={14} className="text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Échéance: {tender.deadline}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Users size={14} className="text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">MOA: {tender.client.name}</span>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <Map size={14} className="text-muted-foreground" />
-                    <h4 className="text-xs font-medium">Localisation</h4>
-                  </div>
-                  <p className="text-sm">{tender.location}</p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <Building size={14} className="text-muted-foreground" />
-                    <h4 className="text-xs font-medium">Type de projet</h4>
-                  </div>
-                  <p className="text-sm">{tender.projectType}</p>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <Users size={14} className="text-muted-foreground" />
-                  <h4 className="text-xs font-medium">Lots concernés</h4>
-                </div>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {tender.lots.map((lot, index) => <Badge key={index} variant="outline" className="font-normal">
-                      {lot}
-                    </Badge>)}
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader className="p-3">
-                    <CardTitle className="text-sm">Budget estimé</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-3 pt-0 font-medium">
-                    {tender.budget}
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="p-3">
-                    <CardTitle className="text-sm">Surface</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-3 pt-0 font-medium">
-                    {tender.surface}
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <Link to={`${projectUrlPath}?project=${tender.id}`} className="w-full">
-                <Button className="w-full gap-2">
-                  <ExternalLink size={14} />
-                  <span>{projectButtonText}</span>
-                </Button>
-              </Link>
-              
-              <div className="grid grid-cols-2 gap-2">
-                <Link to={`/submit-quote/${tender.id}/lot-1`} className="w-full">
-                  <Button variant="outline" size="sm" className="w-full gap-1">
-                    <Upload size={14} />
-                    <span>Soumettre une offre</span>
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </TabsContent>
+      <div className="flex-1 overflow-auto p-4">
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-sm font-medium mb-2">Description</h4>
+            <p className="text-sm text-muted-foreground">{tender.description}</p>
+          </div>
           
-          <TabsContent value="messages" className="h-full m-0 flex flex-col">
-            <div className="flex-1 overflow-auto p-4 space-y-4">
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="text-sm font-medium">Jean Dupont (MOA)</p>
-                <p className="text-xs text-muted-foreground">12/05/2023 - 10:45</p>
-                <p className="text-sm mt-2">Bonjour, pouvez-vous préciser vos délais d'intervention pour ce projet ?</p>
-              </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center gap-1.5">
+              <Calendar size={14} className="text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Échéance: {tender.deadline}</span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <Users size={14} className="text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">MOA: {tender.client.name}</span>
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="flex items-center gap-1.5">
+                <Map size={14} className="text-muted-foreground" />
+                <h4 className="text-xs font-medium">Localisation</h4>
+              </div>
+              <p className="text-sm">{tender.location}</p>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <Building size={14} className="text-muted-foreground" />
+                <h4 className="text-xs font-medium">Type de projet</h4>
+              </div>
+              <p className="text-sm">{tender.projectType}</p>
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex items-center gap-1.5">
+              <Users size={14} className="text-muted-foreground" />
+              <h4 className="text-xs font-medium">Lots concernés</h4>
+            </div>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {tender.lots.map((lot, index) => <Badge key={index} variant="outline" className="font-normal">
+                  {lot}
+                </Badge>)}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="p-3">
+                <CardTitle className="text-sm">Budget estimé</CardTitle>
+              </CardHeader>
+              <CardContent className="p-3 pt-0 font-medium">
+                {tender.budget}
+              </CardContent>
+            </Card>
             
-            <div className="p-4 pt-2 border-t mt-auto">
-              <div className="flex gap-2">
-                <Button className="w-full" variant="outline" size="sm">
-                  <MessageSquare size={14} className="mr-1" />
-                  <span>Envoyer un message</span>
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
+            <Card>
+              <CardHeader className="p-3">
+                <CardTitle className="text-sm">Surface</CardTitle>
+              </CardHeader>
+              <CardContent className="p-3 pt-0 font-medium">
+                {tender.surface}
+              </CardContent>
+            </Card>
+          </div>
           
-          <TabsContent value="documents" className="h-full m-0 p-4">
-            <div className="space-y-2">
-              <div className="bg-muted/50 p-3 rounded-lg flex items-center gap-3">
-                <FileText size={20} className="text-muted-foreground" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">Dossier de Consultation des Entreprises.pdf</p>
-                  <p className="text-xs text-muted-foreground">3.2 MB</p>
-                </div>
-                <Button variant="ghost" size="sm">
-                  <FileDown size={14} />
-                </Button>
-              </div>
-              
-              <div className="bg-muted/50 p-3 rounded-lg flex items-center gap-3">
-                <FileText size={20} className="text-muted-foreground" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">DPGF.xlsx</p>
-                  <p className="text-xs text-muted-foreground">1.5 MB</p>
-                </div>
-                <Button variant="ghost" size="sm">
-                  <FileDown size={14} />
-                </Button>
-              </div>
-              
-              <div className="bg-muted/50 p-3 rounded-lg flex items-center gap-3">
-                <FileText size={20} className="text-muted-foreground" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">Plans_Architecte.pdf</p>
-                  <p className="text-xs text-muted-foreground">8.7 MB</p>
-                </div>
-                <Button variant="ghost" size="sm">
-                  <FileDown size={14} />
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
+          <Link to={`${projectUrlPath}?project=${tender.id}`} className="w-full">
+            <Button className="w-full gap-2">
+              <ExternalLink size={14} />
+              <span>{projectButtonText}</span>
+            </Button>
+          </Link>
         </div>
-      </Tabs>
+      </div>
     </div>;
 }
