@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Layout } from "@/components/Layout";
 import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
@@ -105,90 +106,92 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
   }, [isEditing, tenderId, form]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">
-            {isEditing ? "Modifier l'Appel d'Offres" : "Créer un Appel d'Offres"}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {isEditing 
-              ? "Modifiez les paramètres de votre appel d'offres" 
-              : "Publiez un nouvel appel d'offres"}
-          </p>
-        </div>
+    <Layout>
+      <div className="min-h-screen bg-background">
+        <div className="container py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold">
+              {isEditing ? "Modifier l'Appel d'Offres" : "Créer un Appel d'Offres"}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              {isEditing 
+                ? "Modifiez les paramètres de votre appel d'offres" 
+                : "Publiez un nouvel appel d'offres"}
+            </p>
+          </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <TenderFormNav 
-              currentStep={currentStep}
-              totalSteps={9}
-              onStepClick={(step) => setCurrentStep(step)}
-            />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <TenderFormNav 
+                currentStep={currentStep}
+                totalSteps={9}
+                onStepClick={(step) => setCurrentStep(step)}
+              />
 
-            {currentStep === 1 && (
-              <TenderTypeSelector form={form} />
-            )}
+              {currentStep === 1 && (
+                <TenderTypeSelector form={form} />
+              )}
 
-            {currentStep === 2 && (
-              <TenderPrivacySelector form={form} />
-            )}
+              {currentStep === 2 && (
+                <TenderPrivacySelector form={form} />
+              )}
 
-            {currentStep === 3 && (
-              <div className="space-y-3">
-                <div>
-                  <FormItem>
-                    <FormLabel>Nom du projet</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Résidence Les Cerisiers" {...form.register("projectName")} />
-                    </FormControl>
-                    <FormDescription>
-                      Quel est le nom de votre projet ?
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
+              {currentStep === 3 && (
+                <div className="space-y-3">
+                  <div>
+                    <FormItem>
+                      <FormLabel>Nom du projet</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Résidence Les Cerisiers" {...form.register("projectName")} />
+                      </FormControl>
+                      <FormDescription>
+                        Quel est le nom de votre projet ?
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  </div>
+
+                  <div>
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Décrivez votre projet en détail" {...form.register("description")} />
+                      </FormControl>
+                      <FormDescription>
+                        Donnez le plus de détails possible.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  </div>
                 </div>
+              )}
 
-                <div>
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Décrivez votre projet en détail" {...form.register("description")} />
-                    </FormControl>
-                    <FormDescription>
-                      Donnez le plus de détails possible.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                </div>
+              {currentStep === 7 && (
+                <TenderCompanyInvitation form={form} />
+              )}
+
+              <div className="flex justify-end">
+                {currentStep > 1 && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setCurrentStep(currentStep - 1)}
+                    className="mr-2"
+                  >
+                    Précédent
+                  </Button>
+                )}
+                {currentStep < 9 ? (
+                  <Button onClick={() => setCurrentStep(currentStep + 1)}>Suivant</Button>
+                ) : (
+                  <Button type="submit">
+                    {isEditing ? "Mettre à jour" : "Publier"}
+                  </Button>
+                )}
               </div>
-            )}
-
-            {currentStep === 8 && (
-              <TenderCompanyInvitation form={form} />
-            )}
-
-            <div className="flex justify-end">
-              {currentStep > 1 && (
-                <Button
-                  variant="secondary"
-                  onClick={() => setCurrentStep(currentStep - 1)}
-                  className="mr-2"
-                >
-                  Précédent
-                </Button>
-              )}
-              {currentStep < 9 ? (
-                <Button onClick={() => setCurrentStep(currentStep + 1)}>Suivant</Button>
-              ) : (
-                <Button type="submit">
-                  {isEditing ? "Mettre à jour" : "Publier"}
-                </Button>
-              )}
-            </div>
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }
