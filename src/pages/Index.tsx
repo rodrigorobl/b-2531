@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -7,6 +6,7 @@ import ProjectInfo from '@/components/ProjectInfo';
 import TenderOffers from '@/components/TenderOffers';
 import Communication from '@/components/Communication';
 import ProjectMap from '@/components/ProjectMap';
+import ProjectGallery from '@/components/project-specifications/ProjectGallery';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Download, Upload, Clock, MapPin, FileText, Building, Calendar, DollarSign, Ruler } from 'lucide-react';
 
@@ -183,6 +183,15 @@ export default function Index() {
   const minSurveyPrice = 1500;
   const minSurveyDelivery = "4 jours";
 
+  // Project perspective images for the gallery
+  const perspectiveImages = [
+    'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
+    'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+    'https://images.unsplash.com/photo-1483058712412-4245e9b90334',
+    'https://images.unsplash.com/photo-1449157291145-7efd050a4d0e'
+  ];
+
   return (
     <div className="flex w-full min-h-screen bg-background">
       <Sidebar />
@@ -200,7 +209,15 @@ export default function Index() {
           </Button>
         </div>
         
-        <ProjectHeader project={projectData} />
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Project Perspective Image */}
+          <div className="md:w-1/3">
+            <ProjectGallery images={perspectiveImages} />
+          </div>
+          
+          {/* Project Title & Info */}
+          <ProjectHeader project={projectData} />
+        </div>
         
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="space-y-4">
