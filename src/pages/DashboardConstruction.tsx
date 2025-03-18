@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Hammer } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Hammer, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -104,6 +103,34 @@ export default function DashboardConstruction() {
     }
   ];
 
+  // Sample activity feed data with updated item and links
+  const activities = [
+    {
+      id: 'activity-001',
+      title: 'Nouvel appel d\'offres',
+      description: 'Lot Charpente sur Résidence Les Cerisiers',
+      timestamp: 'Il y a 1 heure',
+      type: 'tender' as const,
+      link: '/tender-search?project=Résidence+Les+Cerisiers'
+    },
+    {
+      id: 'activity-002',
+      title: 'Offre acceptée',
+      description: 'Votre devis pour École Saint-Pierre a été retenu',
+      timestamp: 'Hier, 14:30',
+      type: 'quote' as const,
+      link: '/company-details-tender/quote-002'
+    },
+    {
+      id: 'activity-003',
+      title: 'Offre classé non conforme',
+      description: 'Devis rejeté pour Entrepôt Logistique',
+      timestamp: 'Hier, 10:15',
+      type: 'document' as const,
+      link: '/company-details-tender/quote-003'
+    }
+  ];
+
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
@@ -139,7 +166,7 @@ export default function DashboardConstruction() {
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
               <div className="p-4 border-b flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Mes chantiers</h2>
+                <h2 className="text-lg font-semibold">Mes Appels d'Offres</h2>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/projects">Voir tous</Link>
                 </Button>
@@ -181,29 +208,7 @@ export default function DashboardConstruction() {
                 <h2 className="text-lg font-semibold">Activité récente</h2>
               </div>
               <div className="p-4">
-                <ActivityFeed activities={[
-                  {
-                    id: 'activity-001',
-                    title: 'Nouvel appel d\'offres',
-                    description: 'Lot Charpente sur Résidence Les Cerisiers',
-                    timestamp: 'Il y a 1 heure',
-                    type: 'tender' as const
-                  },
-                  {
-                    id: 'activity-002',
-                    title: 'Offre acceptée',
-                    description: 'Votre devis pour École Saint-Pierre a été retenu',
-                    timestamp: 'Hier, 14:30',
-                    type: 'quote' as const
-                  },
-                  {
-                    id: 'activity-003',
-                    title: 'Validation plans',
-                    description: 'Plans d\'exécution validés pour Entrepôt Logistique',
-                    timestamp: 'Hier, 10:15',
-                    type: 'document' as const
-                  }
-                ]} />
+                <ActivityFeed activities={activities} />
               </div>
             </div>
           </div>

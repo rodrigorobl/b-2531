@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, ArrowRight, FileText, ExternalLink, Upload } from 'lucide-react';
+import { Calendar, ArrowRight, FileText, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -55,21 +55,11 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
           </div>
           
           {offer.status === 'open' && (
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex justify-center">
               <Link to={`/tender-specifications?project=${offer.id}`} className="flex-1">
                 <Button variant="default" size="sm" className="w-full">
                   <ExternalLink size={14} className="mr-1.5" />
                   Accéder à l'Appel d'offres
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm">
-                <FileText size={14} className="mr-1.5" />
-                DCE
-              </Button>
-              <Link to={`/submit-quote/${offer.id}`}>
-                <Button variant="outline" size="sm">
-                  <Upload size={14} className="mr-1.5" />
-                  Offre
                 </Button>
               </Link>
             </div>

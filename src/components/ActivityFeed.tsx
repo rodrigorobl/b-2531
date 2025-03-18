@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar } from 'lucide-react';
+import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface Activity {
   id: string;
@@ -8,6 +9,7 @@ interface Activity {
   description: string;
   timestamp: string;
   type: 'tender' | 'message' | 'status' | 'document' | 'quote' | 'update' | 'order' | 'delivery';
+  link?: string;
 }
 
 interface ActivityFeedProps {
@@ -38,7 +40,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
       case 'document':
         return (
           <div className="w-8 h-8 rounded-full bg-status-in-progress/10 flex items-center justify-center text-status-in-progress">
-            <FileText size={16} />
+            <AlertTriangle size={16} />
           </div>
         );
       case 'quote':
@@ -78,8 +80,20 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
             {getActivityIcon(activity.type)}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-sm">{activity.title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
+            {activity.link ? (
+              <Link to={activity.link} className="group">
+                <h3 className="font-medium text-sm group-hover:text-primary flex items-center">
+                  {activity.title}
+                  <ExternalLink size={12} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
+              </Link>
+            ) : (
+              <>
+                <h3 className="font-medium text-sm">{activity.title}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
+              </>
+            )}
             <div className="flex items-center mt-1 text-xs text-muted-foreground">
               <Clock size={12} className="mr-1" />
               <span>{activity.timestamp}</span>
