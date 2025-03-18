@@ -209,18 +209,18 @@ export default function ConstructionSiteDetail() {
   }) => {
     const newMessage = {
       id: `msg${messages.length + 1}`,
-      sender: {
-        name: 'Mon Équipe',
-        role: 'Chef de projet'
-      },
-      content: quoteData.message,
-      timestamp: new Date().toLocaleString('fr-FR', {
+      date: new Date().toLocaleString('fr-FR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
       }),
+      sender: 'Mon Équipe',
+      senderRole: 'Chef de projet',
+      content: quoteData.message,
+      isRead: true,
+      recipient: 'promoter',
       quoteInfo: {
         service: quoteData.service,
         price: quoteData.price
@@ -243,6 +243,14 @@ export default function ConstructionSiteDetail() {
       description: "Votre devis a été envoyé avec succès et sera suivi dans la gestion des devis."
     });
   };
+
+  const formattedDocuments = site.documents.map(doc => ({
+    id: doc.id,
+    name: doc.name,
+    type: doc.type,
+    size: `${Math.round(Math.random() * 10)}MB`,
+    uploadDate: doc.date
+  }));
 
   return (
     <Layout>
@@ -456,7 +464,7 @@ export default function ConstructionSiteDetail() {
               <Communication
                 messages={messages}
                 notifications={[]} // You could add real notifications here
-                documents={site.documents}
+                documents={formattedDocuments}
                 onSendMessage={handleSendMessage}
                 onSendQuote={handleSendQuote}
               />

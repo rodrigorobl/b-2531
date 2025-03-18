@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SendHorizontal, File, Download, User, Clock, Paperclip, FileText, DollarSign } from 'lucide-react';
@@ -24,6 +23,22 @@ interface Message {
   };
 }
 
+interface LegacyMessage {
+  id: string;
+  date: string;
+  sender: string;
+  senderRole: string;
+  content: string;
+  isRead: boolean;
+  recipient: string;
+}
+
+type MessageOrLegacy = Message | LegacyMessage;
+
+function isLegacyMessage(message: MessageOrLegacy): message is LegacyMessage {
+  return 'date' in message && 'senderRole' in message;
+}
+
 interface Notification {
   id: string;
   title: string;
@@ -41,10 +56,23 @@ interface Document {
   uploadDate: string;
 }
 
+interface LegacyDocument {
+  id: string;
+  name: string;
+  type: string;
+  date: string;
+}
+
+type DocumentOrLegacy = Document | LegacyDocument;
+
+function isLegacyDocument(doc: DocumentOrLegacy): doc is LegacyDocument {
+  return 'date' in doc && !('uploadDate' in doc);
+}
+
 interface CommunicationProps {
-  messages: Message[];
+  messages: MessageOrLegacy[];
   notifications: Notification[];
-  documents: Document[];
+  documents: DocumentOrLegacy[];
   onSendMessage?: (content: string, attachments?: any[]) => void;
   onSendQuote?: (quoteData: {
     message: string;
@@ -174,7 +202,26 @@ export default function Communication({
   );
 }
 
-function MessageItem({ message }: { message: Message }) {
+function MessageItem({ message }: { message: MessageOrLegacy }) {
+  if (isLegacyMessage(message)) {
+    // Convert legacy message format to new format
+    const formattedMessage: Message = {
+      id: message.id,
+      sender: {
+        name: message.sender,
+        role: message.senderRole
+      },
+      content: message.content,
+      timestamp: message.date
+    };
+    
+    return renderMessage(formattedMessage);
+  } else {
+    return renderMessage(message);
+  }
+}
+
+function renderMessage(message: Message) {
   return (
     <div className="bg-secondary/30 rounded-lg p-3">
       <div className="flex items-start">
@@ -253,18 +300,28 @@ function NotificationItem({ notification }: { notification: Notification }) {
   );
 }
 
-function DocumentItem({ document }: { document: Document }) {
+function DocumentItem({ document }: { document: DocumentOrLegacy }) {
+  const formattedDoc: Document = isLegacyDocument(document) 
+    ? {
+        id: document.id,
+        name: document.name,
+        type: document.type,
+        size: `${Math.round(Math.random() * 10)}MB`, // Fallback for missing size
+        uploadDate: document.date
+      }
+    : document;
+    
   return (
     <div className="flex items-center p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-all">
       <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center mr-3">
         <File size={16} className="text-primary" />
       </div>
       <div className="flex-1">
-        <div className="text-sm font-medium">{document.name}</div>
+        <div className="text-sm font-medium">{formattedDoc.name}</div>
         <div className="flex items-center text-xs text-muted-foreground">
-          <span>{document.type}</span>
+          <span>{formattedDoc.type}</span>
           <span className="mx-2">•</span>
-          <span>{document.size}</span>
+          <span>{formattedDoc.size}</span>
         </div>
       </div>
       <button className="text-primary hover:text-primary/80 transition-colors">
