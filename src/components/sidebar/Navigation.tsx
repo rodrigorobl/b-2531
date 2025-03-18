@@ -72,6 +72,12 @@ export const Navigation: React.FC<NavigationProps> = ({
           </li>}
         {activeProfile === 'maitre-oeuvre' && <>
             <li>
+              <Link to="/moe-list" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/moe-list' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <List size={18} />
+                <span>Liste AO Réalisation & Services</span>
+              </Link>
+            </li>
+            <li>
               <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <ClipboardCheck size={18} />
                 <span>Offres à analyser</span>

@@ -31,6 +31,7 @@ import CompanyDetail from "./pages/CompanyDetail";
 import ProjectsList from "./pages/ProjectsList";
 import LotAnalysis from "./pages/LotAnalysis";
 import TenderList from "./pages/TenderList";
+import MoeList from "./pages/MoeList";
 import QuotesToAnalyze from "./pages/QuotesToAnalyze";
 import QuoteDetail from "./pages/QuoteDetail";
 import SubmitQuote from "./pages/SubmitQuote";
@@ -75,6 +76,7 @@ const App = () => (
             <Route path="/tender-specifications" element={<Index />} />
             <Route path="/project-specifications" element={<ProjectSpecifications />} />
             <Route path="/tender-list" element={<TenderList />} />
+            <Route path="/moe-list" element={<MoeList />} />
             <Route path="/create-tender" element={<CreateTender />} />
             <Route path="/projects" element={<ProjectsList />} />
             <Route path="/projects-search" element={<ProjectsSearch />} />
