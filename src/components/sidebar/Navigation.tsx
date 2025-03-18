@@ -2,16 +2,13 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
-
 interface NavigationProps {
   activeProfile: ProfileType;
 }
-
 export const Navigation: React.FC<NavigationProps> = ({
   activeProfile
 }) => {
   const location = useLocation();
-  
   const getDashboardRoute = () => {
     switch (activeProfile) {
       case 'promoteur':
@@ -28,22 +25,10 @@ export const Navigation: React.FC<NavigationProps> = ({
         return '/dashboard';
     }
   };
-  
   const isActiveDashboard = () => {
     const dashboardRoutes = ['/dashboard', '/dashboard-promoteur', '/dashboard-bet', '/dashboard-construction', '/dashboard-services', '/dashboard-industry'];
     return dashboardRoutes.includes(location.pathname);
   };
-
-  const getCompanyLink = () => {
-    return activeProfile === 'entreprise-services' ? '/company-services' : '/company';
-  };
-  
-  const isCompanyLinkActive = () => {
-    const link = getCompanyLink();
-    return location.pathname === link || 
-           (activeProfile === 'entreprise-services' && location.pathname === '/company-services');
-  };
-  
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
         {getProfileName(activeProfile)}
@@ -55,7 +40,6 @@ export const Navigation: React.FC<NavigationProps> = ({
             <span>Tableau de bord</span>
           </Link>
         </li>
-
         {activeProfile === 'promoteur' && <>
             <li>
               <Link to="/projects" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -70,14 +54,10 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
           </>}
-
+        {activeProfile !== 'promoteur' && <li>
+            
+          </li>}
         {activeProfile === 'maitre-oeuvre' && <>
-            <li>
-              <Link to="/projects" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <Briefcase size={18} />
-                <span>Mes Projets</span>
-              </Link>
-            </li>
             <li>
               <Link to="/quotes-to-analyze" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quotes-to-analyze' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <ClipboardCheck size={18} />
@@ -91,7 +71,6 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
           </>}
-
         {(activeProfile === 'entreprise-construction' || activeProfile === 'entreprise-services' || activeProfile === 'industriel') && <>
             <li>
               
@@ -100,7 +79,6 @@ export const Navigation: React.FC<NavigationProps> = ({
               
             </li>
           </>}
-
         {activeProfile === 'entreprise-services' && <>
             <li>
               <Link to="/construction-sites-map" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/construction-sites-map' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -115,15 +93,9 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
             <li>
-              <Link to="/company-services" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services') && !location.pathname.includes('/company-services/edit') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+              <Link to="/company-services/service-company-1" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
                 <Wrench size={18} />
                 <span>Mes services</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/company-services/edit" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname.includes('/company-services/edit') ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <FileText size={18} />
-                <span>Éditer mes services</span>
               </Link>
             </li>
             <li>
@@ -133,27 +105,22 @@ export const Navigation: React.FC<NavigationProps> = ({
               </Link>
             </li>
           </>}
-
         {activeProfile === 'industriel' && <>
             <li>
               <Link to="/product-reference" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/product-reference' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <Package size={18} />
+                
                 <span>Suivi des références</span>
               </Link>
             </li>
             <li>
               <Link to="/projects-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/projects-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-                <Search size={18} />
+                
                 <span>Recherche de projets</span>
               </Link>
             </li>
           </>}
-          
         <li>
-          <Link to={activeProfile === 'promoteur' || activeProfile === 'maitre-oeuvre' ? '/quoted-directory' : '/directory'} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/quoted-directory' || location.pathname === '/directory' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
-            <BookOpen size={18} />
-            <span>Annuaire</span>
-          </Link>
+          
         </li>
         <li>
           <Link to="/messaging" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/messaging' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
@@ -168,7 +135,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           </Link>
         </li>
         <li>
-          <Link to={getCompanyLink()} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${isCompanyLinkActive() ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+          <Link to="/company" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/company' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <Building size={18} />
             <span>Mon entreprise</span>
           </Link>
