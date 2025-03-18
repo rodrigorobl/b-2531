@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Filter, MapPin, Building } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { QuoteStatusBadge } from '@/components/quotes/QuoteStatusBadge';
