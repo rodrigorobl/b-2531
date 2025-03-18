@@ -1,22 +1,25 @@
-
 import React, { useState } from "react";
-import { Layout } from "@/components/Layout";
-import { useNavigate } from "react-router-dom";
+import Sidebar from "@/components/Sidebar";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Eye, Save, RotateCcw, Lightbulb, Upload, PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
+import EditSidebar from "@/components/edit-company/EditSidebar";
+import CompanyPresentation from "@/components/edit-company/CompanyPresentation";
+import CompanyParticulars from "@/components/edit-company/CompanyParticulars";
+import CompanyContacts from "@/components/edit-company/CompanyContacts";
+import CompanyPreview from "@/components/edit-company/CompanyPreview";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, ArrowLeft, Save, Trash2, MapPin, Euro, Clock, CheckCircle, X } from 'lucide-react';
-import { toast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { ServiceCompany, Service } from "@/types/company-services";
 
 // Mock data - same as in CompanyServices.tsx
@@ -126,10 +129,11 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 export default function CompanyServicesEdit() {
   const navigate = useNavigate();
+  const [completionPercentage, setCompletionPercentage] = useState(75);
+  const [activeSection, setActiveSection] = useState("presentation");
   const [company, setCompany] = useState<ServiceCompany>(MOCK_COMPANY);
   const [services, setServices] = useState<Service[]>(MOCK_COMPANY.services);
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [activeTab, setActiveTab] = useState("services");
   
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
@@ -144,7 +148,26 @@ export default function CompanyServicesEdit() {
       status: true
     }
   });
+  
+  const handlePreview = () => {
+    toast({
+      title: "Prévisualisation",
+      description: "Ouverture du mode prévisualisation de votre page entreprise."
+    });
+  };
 
+  const handleSave = () => {
+    toast({
+      title: "Modifications enregistrées",
+      description: "Vos modifications ont été enregistrées avec succès."
+    });
+    navigate("/company-services");
+  };
+
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+  };
+  
   const handleEditService = (service: Service) => {
     setEditingService(service);
     
@@ -230,168 +253,67 @@ export default function CompanyServicesEdit() {
     setEditingService(null);
     form.reset();
   };
-  
-  const handleSaveAllChanges = () => {
-    // In a real app, this would send the data to the backend
-    toast({
-      title: "Modifications enregistrées",
-      description: "Toutes les modifications ont été enregistrées avec succès."
-    });
-    navigate("/company-services");
-  };
-  
-  const handleCancel = () => {
-    navigate("/company-services");
-  };
-  
-  const updateCompanyInfo = (field: string, value: string) => {
-    setCompany(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-  
-  const updateContactInfo = (field: string, value: string) => {
-    setCompany(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        [field]: value
-      }
-    }));
-  };
-  
-  const updateCoverageArea = (field: string, value: string | string[]) => {
-    setCompany(prev => ({
-      ...prev,
-      coverageAreas: {
-        ...prev.coverageAreas,
-        [field]: value
-      }
-    }));
-  };
-  
+
   return (
-    <Layout>
-      <div className="container mx-auto py-6 px-4">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" onClick={handleCancel}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold">Modifier mes services</h1>
-          <div className="flex-1"></div>
-          <Button 
-            variant="default" 
-            onClick={handleSaveAllChanges}
-            className="flex items-center gap-2"
-          >
-            <Save size={16} />
-            Enregistrer les modifications
-          </Button>
-        </div>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="company">Informations générales</TabsTrigger>
-            <TabsTrigger value="services">Services</TabsTrigger>
-            <TabsTrigger value="coverage">Zone de couverture</TabsTrigger>
-          </TabsList>
-          
-          {/* Company Information Tab */}
-          <TabsContent value="company" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Informations de l'entreprise</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <FormLabel>Nom de l'entreprise</FormLabel>
-                    <Input 
-                      value={company.name}
-                      onChange={e => updateCompanyInfo('name', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormLabel>Logo</FormLabel>
-                    <div className="flex items-center gap-4">
-                      <img 
-                        src={company.logo} 
-                        alt={company.name} 
-                        className="h-16 w-16 object-contain border rounded"
-                      />
-                      <Button variant="outline">Modifier le logo</Button>
-                    </div>
-                  </div>
+    <div className="flex h-screen">
+      <Sidebar />
+      <main className="flex-1 overflow-auto bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-10 bg-background border-b p-4">
+          <div className="container mx-auto">
+            <div className="flex flex-wrap justify-between items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-bold">Édition de mes services</h1>
+                <div className="flex items-center mt-2">
+                  <Progress value={completionPercentage} className="w-48 h-2" />
+                  <span className="ml-2 text-sm text-muted-foreground">{completionPercentage}% complété</span>
                 </div>
-                
-                <div className="space-y-2">
-                  <FormLabel>Description</FormLabel>
-                  <Textarea 
-                    value={company.description}
-                    onChange={e => updateCompanyInfo('description', e.target.value)}
-                    rows={4}
-                  />
-                </div>
-                
-                <h3 className="text-lg font-medium mt-6">Coordonnées de contact</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <FormLabel>Téléphone</FormLabel>
-                    <Input 
-                      value={company.contact.phone}
-                      onChange={e => updateContactInfo('phone', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormLabel>Email</FormLabel>
-                    <Input 
-                      value={company.contact.email}
-                      onChange={e => updateContactInfo('email', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormLabel>Site web</FormLabel>
-                    <Input 
-                      value={company.contact.website}
-                      onChange={e => updateContactInfo('website', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormLabel>LinkedIn</FormLabel>
-                    <Input 
-                      value={company.contact.linkedin}
-                      onChange={e => updateContactInfo('linkedin', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Services Tab */}
-          <TabsContent value="services" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Liste des services</CardTitle>
-                    <Button 
-                      onClick={handleAddNewService}
-                      className="flex items-center gap-2"
-                    >
-                      <PlusCircle size={16} />
-                      Ajouter un service
-                    </Button>
-                  </CardHeader>
-                  <CardContent>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2"
+                  onClick={handlePreview}
+                >
+                  <Eye size={16} />
+                  Prévisualiser
+                </Button>
+                <Button 
+                  className="flex items-center gap-2"
+                  onClick={handleSave}
+                >
+                  <Save size={16} />
+                  Enregistrer
+                </Button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main content */}
+        <div className="container mx-auto py-6 px-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* Left column - Navigation and editing tools */}
+            <div className="md:col-span-3">
+              <EditSidebar activeSection={activeSection} onSectionChange={handleSectionChange} />
+            </div>
+
+            {/* Middle column - Editable content */}
+            <div className="md:col-span-6 space-y-6">
+              {activeSection === "presentation" && <CompanyPresentation />}
+              {activeSection === "particulars" && <CompanyParticulars />}
+              {activeSection === "contacts" && <CompanyContacts />}
+              {activeSection === "services" && (
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-xl font-semibold mb-4">Liste des services</h2>
+                  <p className="text-muted-foreground mb-4">Gérez les services que vous proposez à vos clients.</p>
+                  
+                  <div className="mb-6">
                     <Table>
                       <TableHeader>
                         <TableRow>
                           <TableHead>Nom du service</TableHead>
-                          <TableHead>Tarification</TableHead>
-                          <TableHead>Durée</TableHead>
+                          <TableHead>Tarif</TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -406,23 +328,25 @@ export default function CompanyServicesEdit() {
                               {service.price.type === 'range' && service.price.value && `${service.price.value} ${service.price.unit || ''}`}
                               {service.price.type === 'quote' && 'Sur devis'}
                             </TableCell>
-                            <TableCell>{service.duration.value}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <Button 
                                   variant="ghost" 
-                                  size="icon"
+                                  size="sm"
                                   onClick={() => handleEditService(service)}
+                                  className="h-8 px-2"
                                 >
-                                  <PlusCircle size={16} />
+                                  <PlusCircle size={16} className="mr-1" />
+                                  Modifier
                                 </Button>
                                 <Button
                                   variant="ghost"
-                                  size="icon"
+                                  size="sm"
                                   onClick={() => handleDeleteService(service.id)}
-                                  className="text-destructive"
+                                  className="h-8 px-2 text-destructive"
                                 >
-                                  <Trash2 size={16} />
+                                  <Trash2 size={16} className="mr-1" />
+                                  Supprimer
                                 </Button>
                               </div>
                             </TableCell>
@@ -430,231 +354,256 @@ export default function CompanyServicesEdit() {
                         ))}
                       </TableBody>
                     </Table>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      {editingService ? 'Modifier le service' : 'Ajouter un service'}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Nom du service</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="ex: Nettoyage fin de chantier" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="description"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Description</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} placeholder="Description détaillée du service" rows={4} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <div className="grid grid-cols-2 gap-4">
+                  </div>
+                  
+                  <Button 
+                    onClick={handleAddNewService}
+                    className="flex items-center gap-2"
+                  >
+                    <PlusCircle size={16} />
+                    Ajouter un service
+                  </Button>
+
+                  {/* Service Form */}
+                  {(editingService || form.formState.isDirty) && (
+                    <div className="mt-8 border p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-4">
+                        {editingService ? 'Modifier le service' : 'Nouveau service'}
+                      </h3>
+                      
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                           <FormField
                             control={form.control}
-                            name="priceType"
+                            name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Type de tarification</FormLabel>
-                                <Select 
-                                  onValueChange={field.onChange} 
-                                  defaultValue={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Sélectionner" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="fixed">Prix fixe</SelectItem>
-                                    <SelectItem value="range">Fourchette de prix</SelectItem>
-                                    <SelectItem value="quote">Sur devis</SelectItem>
-                                  </SelectContent>
-                                </Select>
+                                <FormLabel>Nom du service</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="ex: Nettoyage fin de chantier" />
+                                </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                           
+                          <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} placeholder="Description détaillée du service" rows={4} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="priceType"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Type de tarification</FormLabel>
+                                  <Select 
+                                    onValueChange={field.onChange} 
+                                    defaultValue={field.value}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Sélectionner" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="fixed">Prix fixe</SelectItem>
+                                      <SelectItem value="range">Fourchette de prix</SelectItem>
+                                      <SelectItem value="quote">Sur devis</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            {form.watch("priceType") !== "quote" && (
+                              <FormField
+                                control={form.control}
+                                name="priceValue"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Prix</FormLabel>
+                                    <FormControl>
+                                      <Input {...field} placeholder={form.watch("priceType") === "range" ? "ex: 500€ - 1000€" : "ex: 150€"} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                          </div>
+                          
                           {form.watch("priceType") !== "quote" && (
                             <FormField
                               control={form.control}
-                              name="priceValue"
+                              name="priceUnit"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Prix</FormLabel>
+                                  <FormLabel>Unité de prix</FormLabel>
                                   <FormControl>
-                                    <Input {...field} placeholder={form.watch("priceType") === "range" ? "ex: 500€ - 1000€" : "ex: 150€"} />
+                                    <Input {...field} placeholder="ex: par jour, par m², par heure" />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
                           )}
-                        </div>
-                        
-                        {form.watch("priceType") !== "quote" && (
+                          
                           <FormField
                             control={form.control}
-                            name="priceUnit"
+                            name="duration"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Unité de prix</FormLabel>
+                                <FormLabel>Durée d'exécution</FormLabel>
                                 <FormControl>
-                                  <Input {...field} placeholder="ex: par jour, par m², par heure" />
+                                  <Input {...field} placeholder="ex: 2-3 jours, à la demande" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                        )}
-                        
-                        <FormField
-                          control={form.control}
-                          name="duration"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Durée d'exécution</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="ex: 2-3 jours, à la demande" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="requirements"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Certifications et exigences (séparées par des virgules)</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} placeholder="ex: CACES à jour, Certification INRS" rows={2} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="status"
-                          render={({ field }) => (
-                            <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
-                              <div className="space-y-0.5">
-                                <FormLabel>Statut du service</FormLabel>
-                                <div className="text-sm text-muted-foreground">
-                                  Activer ou désactiver ce service
+                          
+                          <FormField
+                            control={form.control}
+                            name="requirements"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Certifications et exigences (séparées par des virgules)</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} placeholder="ex: CACES à jour, Certification INRS" rows={2} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                                <div className="space-y-0.5">
+                                  <FormLabel>Statut du service</FormLabel>
+                                  <div className="text-sm text-muted-foreground">
+                                    Activer ou désactiver ce service
+                                  </div>
                                 </div>
-                              </div>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <div className="flex justify-end space-x-2 pt-4">
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => {
-                              setEditingService(null);
-                              form.reset();
-                            }}
-                          >
-                            Annuler
-                          </Button>
-                          <Button type="submit">
-                            {editingService ? 'Mettre à jour' : 'Ajouter'}
-                          </Button>
-                        </div>
-                      </form>
-                    </Form>
-                  </CardContent>
-                </Card>
-              </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <div className="flex justify-end space-x-2 pt-4">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => {
+                                setEditingService(null);
+                                form.reset();
+                              }}
+                            >
+                              Annuler
+                            </Button>
+                            <Button type="submit">
+                              {editingService ? 'Mettre à jour' : 'Ajouter'}
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    </div>
+                  )}
+                </div>
+              )}
+              {activeSection === "projects" && (
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-xl font-semibold mb-4">Projets réalisés</h2>
+                  <p className="text-muted-foreground mb-4">Ajoutez vos projets réalisés pour mettre en valeur votre expertise.</p>
+                  <Button className="flex items-center gap-2">
+                    <PlusCircle size={16} />
+                    Ajouter un projet
+                  </Button>
+                </div>
+              )}
+              {activeSection === "coverage" && (
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-xl font-semibold mb-4">Zone de couverture</h2>
+                  <p className="text-muted-foreground mb-4">Définissez votre zone d'intervention géographique.</p>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <FormLabel>Régions couvertes (séparées par des virgules)</FormLabel>
+                      <Input 
+                        value={company.coverageAreas.regions.join(", ")}
+                        onChange={e => setCompany({
+                          ...company,
+                          coverageAreas: {
+                            ...company.coverageAreas,
+                            regions: e.target.value.split(",").map(r => r.trim())
+                          }
+                        })}
+                        placeholder="ex: Île-de-France, Normandie"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <FormLabel>Villes principales (séparées par des virgules)</FormLabel>
+                      <Input 
+                        value={company.coverageAreas.cities.join(", ")}
+                        onChange={e => setCompany({
+                          ...company,
+                          coverageAreas: {
+                            ...company.coverageAreas,
+                            cities: e.target.value.split(",").map(c => c.trim())
+                          }
+                        })}
+                        placeholder="ex: Paris, Rouen, Lille"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <FormLabel>Description de la zone d'intervention</FormLabel>
+                      <Textarea 
+                        value={company.coverageAreas.description}
+                        onChange={e => setCompany({
+                          ...company,
+                          coverageAreas: {
+                            ...company.coverageAreas,
+                            description: e.target.value
+                          }
+                        })}
+                        rows={4}
+                        placeholder="Précisez votre zone d'intervention, les conditions de déplacement, etc."
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </TabsContent>
-          
-          {/* Coverage Tab */}
-          <TabsContent value="coverage" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Zone de couverture</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <FormLabel>Régions couvertes (séparées par des virgules)</FormLabel>
-                  <Input 
-                    value={company.coverageAreas.regions.join(", ")}
-                    onChange={e => updateCoverageArea('regions', e.target.value.split(",").map(r => r.trim()))}
-                    placeholder="ex: Île-de-France, Normandie"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <FormLabel>Villes principales (séparées par des virgules)</FormLabel>
-                  <Input 
-                    value={company.coverageAreas.cities.join(", ")}
-                    onChange={e => updateCoverageArea('cities', e.target.value.split(",").map(c => c.trim()))}
-                    placeholder="ex: Paris, Rouen, Lille"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <FormLabel>Description de la zone d'intervention</FormLabel>
-                  <Textarea 
-                    value={company.coverageAreas.description}
-                    onChange={e => updateCoverageArea('description', e.target.value)}
-                    rows={4}
-                    placeholder="Précisez votre zone d'intervention, les conditions de déplacement, etc."
-                  />
-                </div>
-                
-                <div className="mt-4 p-4 border rounded-lg bg-muted">
-                  <div className="flex items-center gap-2 mb-3">
-                    <MapPin size={18} className="text-muted-foreground" />
-                    <h3 className="font-medium">Aperçu de la carte</h3>
-                  </div>
-                  <div className="h-64 bg-gray-200 rounded-md flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                      Aperçu de la carte non disponible en mode édition
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </Layout>
+
+            {/* Right column - Preview and validation */}
+            <div className="md:col-span-3">
+              <CompanyPreview />
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

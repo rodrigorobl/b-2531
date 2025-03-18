@@ -11,7 +11,8 @@ import {
   Star, 
   FileIcon, 
   RotateCcw, 
-  Lightbulb 
+  Lightbulb,
+  Wrench
 } from "lucide-react";
 
 interface EditSidebarProps {
@@ -24,7 +25,9 @@ export default function EditSidebar({ activeSection, onSectionChange }: EditSide
     { id: "presentation", label: "Présentation", icon: FileText },
     { id: "particulars", label: "Informations particulières", icon: Info },
     { id: "contacts", label: "Liens et contacts", icon: Phone },
+    { id: "services", label: "Liste des services", icon: Wrench },
     { id: "projects", label: "Projets réalisés", icon: Building },
+    { id: "coverage", label: "Zone de couverture", icon: Building },
     { id: "certifications", label: "Certifications", icon: Award },
     { id: "testimonials", label: "Avis clients", icon: Star },
     { id: "documents", label: "Documents", icon: FileIcon },
