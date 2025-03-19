@@ -11,6 +11,15 @@ import QuoteComparisonView from '@/components/quotes/QuoteComparisonView';
 import QuoteAnnotations from '@/components/quotes/QuoteAnnotations';
 import { Badge } from '@/components/ui/badge';
 
+// Types pour les annotations des postes du devis
+interface QuoteLineItemAnnotation {
+  id: string;
+  text: string;
+  author: string;
+  timestamp: string;
+  isInternal: boolean;
+}
+
 // Types pour les postes du devis
 interface QuoteLineItem {
   id: string;
@@ -21,13 +30,10 @@ interface QuoteLineItem {
   totalPrice: number;
   discount?: number;
   observations?: string;
-  annotations?: {
-    id: string;
-    text: string;
-    author: string;
-    timestamp: string;
-    isInternal: boolean;
-  }[];
+  annotations?: QuoteLineItemAnnotation[];
+  level?: number;
+  parentId?: string;
+  children?: QuoteLineItem[];
 }
 
 // Type pour les versions de devis
@@ -64,7 +70,7 @@ interface Quote {
   };
 }
 
-// Données de test pour le devis
+// Données de test pour le devis avec structure hiérarchique
 const MOCK_QUOTE: Quote = {
   id: 'quote-001',
   projectId: 'project-001',
@@ -96,9 +102,30 @@ const MOCK_QUOTE: Quote = {
     },
   ],
   lineItems: [
+    // Niveau 1: Chapitre principal
+    {
+      id: 'chapter-1',
+      designation: 'FONDATIONS',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 304000,
+      totalPrice: 304000,
+    },
+    // Niveau 2: Sous-chapitre dans FONDATIONS
+    {
+      id: 'subchapter-1-1',
+      parentId: 'chapter-1',
+      designation: 'Fondations spéciales',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 300000,
+      totalPrice: 300000,
+    },
+    // Niveau 3: Poste détaillé dans Fondations spéciales
     {
       id: 'line-001',
-      designation: 'Fondations spéciales',
+      parentId: 'subchapter-1-1',
+      designation: 'Pieux forés',
       quantity: 1200,
       unit: 'm²',
       unitPrice: 250,
@@ -114,8 +141,50 @@ const MOCK_QUOTE: Quote = {
         },
       ],
     },
+    // Niveau 2: Autre sous-chapitre dans FONDATIONS
+    {
+      id: 'subchapter-1-2',
+      parentId: 'chapter-1',
+      designation: 'Fondations superficielles',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 4000,
+      totalPrice: 4000,
+    },
+    // Niveau 3: Poste détaillé dans Fondations superficielles
     {
       id: 'line-002',
+      parentId: 'subchapter-1-2',
+      designation: 'Semelles isolées',
+      quantity: 20,
+      unit: 'u',
+      unitPrice: 200,
+      totalPrice: 4000,
+    },
+    
+    // Niveau 1: Chapitre principal
+    {
+      id: 'chapter-2',
+      designation: 'STRUCTURE',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 448000,
+      totalPrice: 448000,
+    },
+    // Niveau 2: Sous-chapitre dans STRUCTURE
+    {
+      id: 'subchapter-2-1',
+      parentId: 'chapter-2',
+      designation: 'Dalles et planchers',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 144000,
+      totalPrice: 144000,
+    },
+    // Niveau 3: Poste détaillé dans Dalles et planchers
+    {
+      id: 'line-003',
+      parentId: 'subchapter-2-1',
       designation: 'Dalle béton RDC',
       quantity: 800,
       unit: 'm²',
@@ -123,22 +192,57 @@ const MOCK_QUOTE: Quote = {
       totalPrice: 144000,
       observations: 'Béton haute performance',
     },
+    // Niveau 2: Autre sous-chapitre dans STRUCTURE
     {
-      id: 'line-003',
+      id: 'subchapter-2-2',
+      parentId: 'chapter-2',
+      designation: 'Éléments verticaux',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 304000,
+      totalPrice: 304000,
+    },
+    // Niveau 3: Poste détaillé dans Éléments verticaux
+    {
+      id: 'line-004',
+      parentId: 'subchapter-2-2',
       designation: 'Structure béton armé',
       quantity: 950,
       unit: 'm³',
       unitPrice: 320,
       totalPrice: 304000,
     },
+    
+    // Niveau 1: Chapitre principal
     {
-      id: 'line-004',
+      id: 'chapter-3',
+      designation: 'ÉLÉMENTS SECONDAIRES',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 98000,
+      totalPrice: 98000,
+    },
+    // Niveau 2: Sous-chapitre dans ÉLÉMENTS SECONDAIRES  
+    {
+      id: 'subchapter-3-1',
+      parentId: 'chapter-3',
+      designation: 'Coffrage et étaiement',
+      quantity: 1,
+      unit: 'ens',
+      unitPrice: 98000,
+      totalPrice: 98000,
+    },
+    // Niveau 3: Poste détaillé dans Coffrage et étaiement
+    {
+      id: 'line-005',
+      parentId: 'subchapter-3-1',
       designation: 'Coffrage',
       quantity: 2500,
       unit: 'm²',
       unitPrice: 40,
       totalPrice: 100000,
-      discount: 5,
+      discount: 2,
+      observations: 'Remise commerciale de 2%',
     },
   ],
   budgetImpact: {
