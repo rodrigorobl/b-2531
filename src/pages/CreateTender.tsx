@@ -14,6 +14,9 @@ import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SaveIcon } from 'lucide-react';
+import ProjectMap from '@/components/ProjectMap';
+import ConstructionTenderForm from '@/components/tenders/create/ConstructionTenderForm';
 
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
@@ -23,6 +26,20 @@ const designTenderSchema = z.object({
 const constructionTenderSchema = z.object({
   constructionType: z.enum(['neuf', 'réhabilitation', 'extension', 'renovation', 'demolition', 'amenagement']),
   area: z.string(),
+  location: z.object({
+    address: z.string().optional(),
+    lat: z.number().optional(),
+    lng: z.number().optional(),
+  }).optional(),
+  projectTeam: z.array(z.object({
+    name: z.string(),
+    role: z.string(),
+  })).optional(),
+  lots: z.array(z.object({
+    name: z.string(),
+    description: z.string().optional(),
+    selected: z.boolean(),
+  })).optional(),
 });
 
 const serviceTenderSchema = z.object({
@@ -61,6 +78,7 @@ interface CreateTenderProps {
 export default function CreateTender({ isEditing = false }: CreateTenderProps) {
   const { tenderId } = useParams();
   const [currentStep, setCurrentStep] = useState(1);
+  const [location, setLocation] = useState<{address: string; lat: number; lng: number} | null>(null);
 
   const form = useForm<TenderFormValues>({
     resolver: zodResolver(formSchema),
@@ -75,7 +93,10 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
       },
       construction: {
         constructionType: "neuf",
-        area: ""
+        area: "",
+        location: undefined,
+        projectTeam: [],
+        lots: []
       },
       service: {
         serviceScope: "local",
@@ -88,6 +109,28 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
   function onSubmit(data: TenderFormValues) {
     console.log("Form values:", data);
   }
+  
+  function saveDraft() {
+    const formData = form.getValues();
+    console.log("Saving draft:", formData);
+    // Here you would save the draft to your database/storage
+    // For now we'll just show a mock success in the console
+    console.log("Draft saved successfully!");
+  }
+
+  // Handle address selection on map
+  const handleAddressChange = (address: string) => {
+    // This would normally use a geocoding service
+    // For demo purposes, we'll set a fixed location
+    const mockLocation = {
+      address: address,
+      lat: 48.8566, // Paris coordinates as example
+      lng: 2.3522
+    };
+    
+    setLocation(mockLocation);
+    form.setValue('construction.location', mockLocation);
+  };
 
   useEffect(() => {
     if (isEditing && tenderId) {
@@ -123,11 +166,22 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <TenderFormNav 
-                currentStep={currentStep}
-                totalSteps={9}
-                onStepClick={(step) => setCurrentStep(step)}
-              />
+              <div className="flex justify-between items-center">
+                <TenderFormNav 
+                  currentStep={currentStep}
+                  totalSteps={9}
+                  onStepClick={(step) => setCurrentStep(step)}
+                />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={saveDraft}
+                  className="flex items-center gap-2"
+                >
+                  <SaveIcon size={16} />
+                  Enregistrer brouillon
+                </Button>
+              </div>
 
               {currentStep === 1 && (
                 <TenderTypeSelector form={form} />
@@ -180,6 +234,29 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                       )}
                     />
                   </div>
+                  
+                  {form.getValues("type") === "construction" && (
+                    <div className="space-y-3 mt-6">
+                      <FormItem>
+                        <FormLabel>Adresse du projet</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Entrez l'adresse du projet" 
+                            onChange={(e) => handleAddressChange(e.target.value)}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Localisation précise du projet
+                        </FormDescription>
+                      </FormItem>
+                      
+                      <div className="h-[300px] mt-2">
+                        <ProjectMap 
+                          location={location || undefined}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -246,62 +323,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                   )}
                   
                   {form.getValues("type") === "construction" && (
-                    <>
-                      <h2 className="text-xl font-semibold">Détails du projet de construction</h2>
-                      
-                      <FormField
-                        control={form.control}
-                        name="construction.constructionType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Type de construction</FormLabel>
-                            <Select 
-                              onValueChange={field.onChange} 
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Sélectionnez le type de construction" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="neuf">Neuf</SelectItem>
-                                <SelectItem value="réhabilitation">Réhabilitation</SelectItem>
-                                <SelectItem value="extension">Extension</SelectItem>
-                                <SelectItem value="renovation">Rénovation</SelectItem>
-                                <SelectItem value="demolition">Démolition</SelectItem>
-                                <SelectItem value="amenagement">Aménagement</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              Choisissez le type de construction
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="construction.area"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Surface (m²)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="1000" 
-                                {...field} 
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              Indiquez la surface approximative du projet
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </>
+                    <ConstructionTenderForm form={form} />
                   )}
                   
                   {form.getValues("type") === "service" && (
