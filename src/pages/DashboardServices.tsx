@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Wrench, MapPin, Clock, Building, Crane, Truck, LampFloor, Droplet, Scale, Trash2, Flame, FirstAid, Wind } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Wrench, MapPin, Clock, Building, Truck, LampFloor, Droplet, Scale, Trash2, Flame, Wind } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
