@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -18,7 +17,7 @@ interface KeyDate {
 }
 
 interface TenderKeyDatesProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderKeyDates: React.FC<TenderKeyDatesProps> = ({ form }) => {
@@ -34,8 +33,8 @@ const TenderKeyDates: React.FC<TenderKeyDatesProps> = ({ form }) => {
   ];
 
   // Make sure we handle the form value properly, ensuring it matches KeyDate[]
-  const existingDates = form.getValues('construction.keyDates');
-  const initialKeyDates: KeyDate[] = existingDates ? 
+  const existingDates = form.getValues('construction.keyDates' as any);
+  const initialKeyDates: KeyDate[] = existingDates && Array.isArray(existingDates) ? 
     existingDates.map(date => ({
       id: date.id || '', 
       name: date.name || '', 
@@ -51,7 +50,7 @@ const TenderKeyDates: React.FC<TenderKeyDatesProps> = ({ form }) => {
     );
     
     setKeyDates(updatedDates);
-    form.setValue('construction.keyDates', updatedDates);
+    form.setValue('construction.keyDates' as any, updatedDates);
   };
 
   // Format date for display

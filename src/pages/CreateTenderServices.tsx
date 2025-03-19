@@ -19,6 +19,7 @@ import TenderSummary from '@/components/tenders/create/TenderSummary';
 import { SaveIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { ServiceTenderFormValues } from '@/types/tender-forms';
 
 const serviceTenderSchema = z.object({
   serviceScope: z.enum(['local', 'départemental', 'régional', 'national', 'international']),
@@ -50,8 +51,6 @@ const formSchema = z.object({
     })
   ).optional(),
 });
-
-export type ServiceTenderFormValues = z.infer<typeof formSchema>;
 
 export default function CreateTenderServices() {
   const { toast } = useToast();

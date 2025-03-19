@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
@@ -9,21 +8,25 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Search } from 'lucide-react';
 
 interface TenderLotsProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderLots: React.FC<TenderLotsProps> = ({ form }) => {
   const [lotSearchQuery, setLotSearchQuery] = useState('');
   
   // Initialize selected lots from form or empty object
-  const [selectedLots, setSelectedLots] = useState<{[key: string]: boolean}>(
-    form.getValues('construction.lots')?.reduce((acc, lot) => {
+  const existingLots = form.getValues('construction.lots' as any);
+  const initialSelectedLots: {[key: string]: boolean} = {};
+  
+  if (existingLots && Array.isArray(existingLots)) {
+    existingLots.forEach(lot => {
       // Find the lot ID by matching the name
       const lotId = constructionLots.find(l => l.name === lot.name)?.id;
-      if (lotId) acc[lotId] = true;
-      return acc;
-    }, {} as {[key: string]: boolean}) || {}
-  );
+      if (lotId) initialSelectedLots[lotId] = true;
+    });
+  }
+  
+  const [selectedLots, setSelectedLots] = useState<{[key: string]: boolean}>(initialSelectedLots);
   
   const constructionLots = [
     { id: "lot-1", name: "Gros œuvre", description: "Fondations, structures porteuses, maçonnerie" },
@@ -57,7 +60,7 @@ const TenderLots: React.FC<TenderLotsProps> = ({ form }) => {
         selected: true
       }));
     
-    form.setValue('construction.lots', formattedLots);
+    form.setValue('construction.lots' as any, formattedLots);
   };
 
   // Filter lots based on search query

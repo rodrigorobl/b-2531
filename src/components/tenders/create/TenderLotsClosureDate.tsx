@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -17,23 +16,24 @@ interface LotClosureDate {
 }
 
 interface TenderLotsClosureDateProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) => {
   const [globalClosureDate, setGlobalClosureDate] = useState<Date | undefined>(undefined);
   
-  // Get lots from form
-  const lots = form.getValues('construction.lots') || [];
+  // Get lots from form with safe type checking
+  const lots = form.getValues('construction.lots' as any) || [];
+  const lotsArray = Array.isArray(lots) ? lots : [];
   
   // Initialize closure dates with proper typing
-  const existingClosureDates = form.getValues('construction.lotClosureDates');
-  const initialLotClosureDates: LotClosureDate[] = existingClosureDates ? 
+  const existingClosureDates = form.getValues('construction.lotClosureDates' as any);
+  const initialLotClosureDates: LotClosureDate[] = existingClosureDates && Array.isArray(existingClosureDates) ? 
     existingClosureDates.map(item => ({
       lotName: item.lotName || '',
       closureDate: item.closureDate
     })) : 
-    lots.map(lot => ({ 
+    lotsArray.map(lot => ({ 
       lotName: lot.name, 
       closureDate: undefined 
     }));
@@ -50,7 +50,7 @@ const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) =
     }));
     
     setLotClosureDates(updatedDates);
-    form.setValue('construction.lotClosureDates', updatedDates);
+    form.setValue('construction.lotClosureDates' as any, updatedDates);
   };
   
   // Update a specific lot's date
@@ -60,7 +60,7 @@ const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) =
     );
     
     setLotClosureDates(updatedDates);
-    form.setValue('construction.lotClosureDates', updatedDates);
+    form.setValue('construction.lotClosureDates' as any, updatedDates);
   };
 
   // Format date for display
@@ -110,7 +110,7 @@ const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) =
       </div>
 
       <div className="space-y-4">
-        {lots.map((lot, index) => {
+        {lotsArray.map((lot, index) => {
           const lotClosure = lotClosureDates.find(item => item.lotName === lot.name);
           
           return (

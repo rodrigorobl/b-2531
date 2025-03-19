@@ -19,6 +19,7 @@ import TenderSummary from '@/components/tenders/create/TenderSummary';
 import { SaveIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { DesignTenderFormValues } from '@/types/tender-forms';
 
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
@@ -50,8 +51,6 @@ const formSchema = z.object({
     })
   ).optional(),
 });
-
-export type DesignTenderFormValues = z.infer<typeof formSchema>;
 
 export default function CreateTenderConception() {
   const { toast } = useToast();

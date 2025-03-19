@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,15 +13,15 @@ interface TeamMember {
 }
 
 interface TenderProjectTeamProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderProjectTeam: React.FC<TenderProjectTeamProps> = ({ form }) => {
   const [newTeamMember, setNewTeamMember] = useState<TeamMember>({ name: '', role: 'architecte' });
   
   // Handle existing team members properly, ensuring they match TeamMember type
-  const existingTeam = form.getValues('construction.projectTeam');
-  const initialProjectTeam: TeamMember[] = existingTeam ? 
+  const existingTeam = form.getValues('construction.projectTeam' as any);
+  const initialProjectTeam: TeamMember[] = existingTeam && Array.isArray(existingTeam) ? 
     existingTeam.map(member => ({
       name: member.name || '',
       role: member.role || ''
@@ -54,7 +53,7 @@ const TenderProjectTeam: React.FC<TenderProjectTeamProps> = ({ form }) => {
     }];
     
     setProjectTeam(updatedTeam);
-    form.setValue('construction.projectTeam', updatedTeam);
+    form.setValue('construction.projectTeam' as any, updatedTeam);
     setNewTeamMember({ name: '', role: 'architecte' });
   };
   
@@ -62,7 +61,7 @@ const TenderProjectTeam: React.FC<TenderProjectTeamProps> = ({ form }) => {
     const updatedTeam = [...projectTeam];
     updatedTeam.splice(index, 1);
     setProjectTeam(updatedTeam);
-    form.setValue('construction.projectTeam', updatedTeam);
+    form.setValue('construction.projectTeam' as any, updatedTeam);
   };
   
   return (

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import ConstructionBaseInfo from './construction/ConstructionBaseInfo';
 import ProjectUsageSelector from './construction/ProjectUsageSelector';
 import BuildingManager from './construction/BuildingManager';

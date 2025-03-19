@@ -24,6 +24,7 @@ import { SaveIcon, MapPin, ArrowLeft, ArrowRight } from 'lucide-react';
 import ProjectMap from '@/components/ProjectMap';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { ConstructionTenderFormValues } from '@/types/tender-forms';
 
 const constructionTenderSchema = z.object({
   constructionType: z.enum(['neuf', 'réhabilitation', 'extension', 'renovation', 'demolition', 'amenagement']),
@@ -87,8 +88,6 @@ const formSchema = z.object({
     })
   ).optional(),
 });
-
-export type ConstructionTenderFormValues = z.infer<typeof formSchema>;
 
 export default function CreateTenderRealisation() {
   const { toast } = useToast();

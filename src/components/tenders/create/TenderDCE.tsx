@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -9,7 +8,7 @@ import { Upload } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TenderDCEProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderDCE: React.FC<TenderDCEProps> = ({ form }) => {
@@ -17,7 +16,8 @@ const TenderDCE: React.FC<TenderDCEProps> = ({ form }) => {
   
   const handleDpgfMethodChange = (value: 'ai' | 'upload') => {
     setDpgfMethod(value);
-    form.setValue('construction.dpgfMethod', value);
+    // Using type assertion with form.setValue to fix the TypeScript error
+    form.setValue('construction.dpgfMethod' as any, value);
   };
 
   return (

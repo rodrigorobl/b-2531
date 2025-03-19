@@ -1,20 +1,20 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MapPin, Calendar, Building, Users, Package, FileText, ClipboardList, Layout } from 'lucide-react';
+import { TenderFormValues } from '@/types/tender-forms';
 
 interface TenderSummaryProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderSummary: React.FC<TenderSummaryProps> = ({ form }) => {
-  const formValues = form.getValues();
+  const formValues = form.getValues() as TenderFormValues;
   const { type, privacy, projectName, description } = formValues;
 
   // Format date for display
