@@ -4,7 +4,7 @@ import LotSelector from './construction/LotSelector';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TenderFormProps } from './TenderFormProps';
 
-const TenderLots: React.FC<TenderFormProps> = ({ form }) => {
+const TenderLots: React.FC<TenderFormProps<any>> = ({ form }) => {
   return (
     <div className="space-y-6">
       <div>

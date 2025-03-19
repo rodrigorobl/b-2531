@@ -157,7 +157,7 @@ export default function CreateTenderServices() {
               </div>
 
               {currentStep === 1 && (
-                <TenderPrivacySelector form={form} />
+                <TenderPrivacySelector form={form as any} />
               )}
 
               {currentStep === 2 && (
@@ -211,21 +211,21 @@ export default function CreateTenderServices() {
               )}
 
               {currentStep === 4 && (
-                <TenderDCE form={form} />
+                <TenderDCE form={form as any} />
               )}
 
               {currentStep === 5 && (
-                <TenderAdminDocuments form={form} />
+                <TenderAdminDocuments form={form as any} />
               )}
 
               {currentStep === 6 && (
-                <TenderCompanyInvitation form={form} />
+                <TenderCompanyInvitation form={form as any} />
               )}
 
               {currentStep === 7 && (
                 <div className="space-y-6">
-                  <TenderSummary form={form} />
-                  <TenderPublishOptions form={form} />
+                  <TenderSummary form={form as any} />
+                  <TenderPublishOptions form={form as any} />
                 </div>
               )}
 

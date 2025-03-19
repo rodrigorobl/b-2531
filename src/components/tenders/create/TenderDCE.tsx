@@ -7,7 +7,7 @@ import { Upload } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TenderFormProps } from './TenderFormProps';
 
-const TenderDCE: React.FC<TenderFormProps> = ({ form }) => {
+const TenderDCE: React.FC<TenderFormProps<any>> = ({ form }) => {
   const [dpgfMethod, setDpgfMethod] = useState<'ai' | 'upload'>('ai');
   
   const handleDpgfMethodChange = (value: 'ai' | 'upload') => {

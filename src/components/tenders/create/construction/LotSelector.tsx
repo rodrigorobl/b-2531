@@ -13,10 +13,11 @@ interface Lot {
   selected: boolean;
 }
 
-const LotSelector: React.FC<TenderFormProps> = ({ form }) => {
+const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
   const [newLotName, setNewLotName] = useState('');
   
-  const lots = form.getValues('construction.lots' as any) || [];
+  const lotsValue = form.getValues('construction.lots' as any);
+  const lots = Array.isArray(lotsValue) ? lotsValue : [];
   
   const handleAddLot = () => {
     if (!newLotName.trim()) return;
@@ -26,14 +27,12 @@ const LotSelector: React.FC<TenderFormProps> = ({ form }) => {
       selected: true
     };
     
-    const updatedLots = [...(Array.isArray(lots) ? lots : []), newLot];
+    const updatedLots = [...lots, newLot];
     form.setValue('construction.lots' as any, updatedLots);
     setNewLotName('');
   };
   
   const handleLotSelection = (index: number, selected: boolean) => {
-    if (!Array.isArray(lots)) return;
-    
     const updatedLots = [...lots];
     updatedLots[index] = {
       ...updatedLots[index],
@@ -44,8 +43,6 @@ const LotSelector: React.FC<TenderFormProps> = ({ form }) => {
   };
   
   const handleRemoveLot = (index: number) => {
-    if (!Array.isArray(lots)) return;
-    
     const updatedLots = lots.filter((_, i) => i !== index);
     form.setValue('construction.lots' as any, updatedLots);
   };
@@ -68,7 +65,7 @@ const LotSelector: React.FC<TenderFormProps> = ({ form }) => {
         </Button>
       </div>
       
-      {Array.isArray(lots) && lots.length > 0 ? (
+      {lots.length > 0 ? (
         <div className="space-y-2">
           <Label>Lots disponibles</Label>
           <div className="border rounded-md p-2">

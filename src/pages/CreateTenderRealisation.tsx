@@ -219,7 +219,7 @@ export default function CreateTenderRealisation() {
               </div>
 
               {currentStep === 1 && (
-                <TenderPrivacySelector form={form} />
+                <TenderPrivacySelector form={form as any} />
               )}
 
               {currentStep === 2 && (
@@ -306,33 +306,33 @@ export default function CreateTenderRealisation() {
               )}
 
               {currentStep === 4 && (
-                <TenderProjectTeam form={form} />
+                <TenderProjectTeam form={form as any} />
               )}
               
               {currentStep === 5 && (
-                <TenderLots form={form} />
+                <TenderLots form={form as any} />
               )}
 
               {currentStep === 6 && (
-                <TenderDCE form={form} />
+                <TenderDCE form={form as any} />
               )}
 
               {currentStep === 7 && (
-                <TenderAdminDocuments form={form} />
+                <TenderAdminDocuments form={form as any} />
               )}
 
               {currentStep === 8 && (
-                <TenderCompanyInvitation form={form} />
+                <TenderCompanyInvitation form={form as any} />
               )}
 
               {currentStep === 9 && (
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <TenderKeyDates form={form} />
-                    <TenderLotsClosureDate form={form} />
-                    <TenderSummary form={form} />
+                    <TenderKeyDates form={form as any} />
+                    <TenderLotsClosureDate form={form as any} />
+                    <TenderSummary form={form as any} />
                   </div>
-                  <TenderPublishOptions form={form} />
+                  <TenderPublishOptions form={form as any} />
                 </div>
               )}
 
