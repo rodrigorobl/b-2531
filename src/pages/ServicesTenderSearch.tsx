@@ -10,7 +10,7 @@ import ServicesTenderFilters from '@/components/services-tender/ServicesTenderFi
 import ServicesTenderResults from '@/components/services-tender/ServicesTenderResults';
 import ServicesTenderDetails from '@/components/services-tender/ServicesTenderDetails';
 
-export type ServiceTenderStatus = 'open' | 'closed' | 'upcoming';
+export type ServiceTenderStatus = 'open' | 'closed';
 export type ConsultationMode = 'public' | 'private' | 'invited';
 export type TenderOrigin = 'promoteur' | 'moe' | 'eg';
 
@@ -87,7 +87,7 @@ export default function ServicesTenderSearch() {
       location: "Nantes",
       budget: "12 000 €",
       estimatedAmount: 12000,
-      status: "upcoming",
+      status: "open",
       deadline: "01/07/2024",
       consultationMode: "invited",
       clientName: "Eiffage Construction",
@@ -164,7 +164,7 @@ export default function ServicesTenderSearch() {
       location: "Lille",
       budget: "22 000 €",
       estimatedAmount: 22000,
-      status: "upcoming",
+      status: "open",
       deadline: "10/07/2024",
       consultationMode: "public",
       clientName: "Icade",

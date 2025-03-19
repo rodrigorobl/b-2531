@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, FileText, Download, Send, Reply, MessageSquare } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Send, MapPin, Building } from 'lucide-react';
 import QuoteGeneralInfo from '@/components/quotes/QuoteGeneralInfo';
 import QuoteLineItems from '@/components/quotes/QuoteLineItems';
 import QuoteAnnotations from '@/components/quotes/QuoteAnnotations';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 // Types pour les postes du devis (même structure que dans QuoteAnalysis)
 interface QuoteLineItem {
@@ -48,6 +49,7 @@ interface Quote {
   lotName: string;
   companyId: string;
   companyName: string;
+  location: string;  // Added location field
   submissionDate: string;
   totalAmountHT: number;
   totalAmountTTC: number;
@@ -72,6 +74,7 @@ const MOCK_QUOTE: Quote = {
   lotName: 'Gros œuvre',
   companyId: 'company-001',
   companyName: 'BTP Construction',
+  location: 'Lyon 3ème arrondissement',  // Added location
   submissionDate: '2024-05-01',
   totalAmountHT: 850000,
   totalAmountTTC: 1020000,
@@ -155,25 +158,6 @@ export default function CompanyDetailsTender() {
   const { quoteId } = useParams<{ quoteId: string }>();
   const navigate = useNavigate();
   const [quote, setQuote] = useState<Quote>(MOCK_QUOTE);
-  const [activeTab, setActiveTab] = useState('details');
-
-  // Cette fonction serait utilisée pour récupérer les données du devis
-  // depuis une API dans une application réelle
-  /*
-  useEffect(() => {
-    const fetchQuoteData = async () => {
-      try {
-        const response = await fetch(`/api/quotes/${quoteId}`);
-        const data = await response.json();
-        setQuote(data);
-      } catch (error) {
-        console.error('Erreur lors du chargement du devis', error);
-      }
-    };
-    
-    fetchQuoteData();
-  }, [quoteId]);
-  */
 
   const handleBack = () => {
     navigate(-1);
@@ -189,6 +173,14 @@ export default function CompanyDetailsTender() {
     console.log('Téléchargement Excel');
   };
 
+  const handleSubmitQuote = () => {
+    navigate(`/submit-services-quote/${quoteId}`);
+  };
+
+  const handleViewDetails = (quoteId: string) => {
+    navigate(`/services-quote-tracking/${quoteId}`);
+  };
+
   return (
     <Layout>
       <div className="container mx-auto p-6">
@@ -200,12 +192,17 @@ export default function CompanyDetailsTender() {
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div>
-              <h1 className="text-2xl font-bold">Détail de votre devis</h1>
-              <p className="text-muted-foreground">
-                {quote.projectName} - {quote.lotName}
+              <h1 className="text-2xl font-bold">Détail de l'appel d'offres</h1>
+              <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                <Building size={14} /> 
+                {quote.projectName}
+              </p>
+              <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                <MapPin size={14} /> 
+                {quote.location}
               </p>
             </div>
-            <div className="mt-2 md:mt-0 flex items-center gap-2">
+            <div className="mt-4 md:mt-0 flex items-center gap-2">
               <Badge className={
                 quote.status === 'conforme' ? 'bg-green-500' : 
                 quote.status === 'non-conforme' ? 'bg-red-500' : 
@@ -220,43 +217,128 @@ export default function CompanyDetailsTender() {
           </div>
         </div>
 
-        <QuoteGeneralInfo quote={quote} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Informations sur le projet</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Nom du projet</p>
+                  <p className="font-medium">{quote.projectName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Client</p>
+                  <p className="font-medium">{quote.companyName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Localisation</p>
+                  <p className="font-medium">{quote.location}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Date de publication</p>
+                  <p className="font-medium">{quote.submissionDate}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Budget estimé</p>
+                  <p className="font-medium">{quote.totalAmountHT.toLocaleString()} € HT</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Statut</p>
+                  <Badge className={
+                    quote.status === 'conforme' ? 'bg-green-500' : 
+                    quote.status === 'non-conforme' ? 'bg-red-500' : 
+                    'bg-blue-500'
+                  }>
+                    {quote.status === 'conforme' ? 'Conforme' : 
+                     quote.status === 'non-conforme' ? 'Non conforme' : 
+                     'Présenti'}
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Tabs 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="mt-6"
-        >
-          <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-2">
-            <TabsTrigger value="details">Détail du devis</TabsTrigger>
-            <TabsTrigger value="annotations">Remarques et commentaires</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="details" className="mt-4">
-            <QuoteLineItems lineItems={quote.lineItems} />
-          </TabsContent>
-          
-          <TabsContent value="annotations" className="mt-4">
-            <QuoteAnnotations quoteId={quote.id} lineItems={quote.lineItems} />
-          </TabsContent>
-        </Tabs>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Button variant="outline" onClick={handleDownloadPDF}>
-            <FileText className="mr-2 h-4 w-4" />
-            Télécharger en PDF
-          </Button>
-          
-          <Button variant="outline" onClick={handleDownloadExcel}>
-            <Download className="mr-2 h-4 w-4" />
-            Télécharger en Excel
-          </Button>
-          
-          <Button className="ml-auto">
-            <Send className="mr-2 h-4 w-4" />
-            Soumettre une nouvelle version
-          </Button>
+          <Card>
+            <CardHeader>
+              <CardTitle>Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="w-full" onClick={handleSubmitQuote}>
+                <Send className="mr-2 h-4 w-4" />
+                Déposer une offre
+              </Button>
+              <Button variant="outline" className="w-full" onClick={handleDownloadPDF}>
+                <Download className="mr-2 h-4 w-4" />
+                Télécharger le dossier d'appel d'offres
+              </Button>
+              <Button variant="outline" className="w-full" onClick={handleDownloadExcel}>
+                <FileText className="mr-2 h-4 w-4" />
+                Consulter le cahier des charges
+              </Button>
+            </CardContent>
+          </Card>
         </div>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Description du projet</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{quote.lotName} - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Mes offres</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {quote.versions.length > 0 ? (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Version</th>
+                    <th className="text-left py-2">Date de soumission</th>
+                    <th className="text-left py-2">Montant</th>
+                    <th className="text-left py-2">Statut</th>
+                    <th className="text-left py-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {quote.versions.map((version) => (
+                    <tr key={version.id} className="border-b">
+                      <td className="py-3">Version {version.versionNumber}</td>
+                      <td className="py-3">{version.submissionDate}</td>
+                      <td className="py-3">{version.totalAmount.toLocaleString()} €</td>
+                      <td className="py-3">
+                        <Badge className={
+                          version.status === 'conforme' ? 'bg-green-500' : 
+                          version.status === 'non-conforme' ? 'bg-red-500' : 
+                          'bg-blue-500'
+                        }>
+                          {version.status === 'conforme' ? 'Conforme' : 
+                           version.status === 'non-conforme' ? 'Non conforme' : 
+                           'Présenti'}
+                        </Badge>
+                      </td>
+                      <td className="py-3">
+                        <Button variant="outline" size="sm" onClick={() => handleViewDetails(version.id)}>
+                          Détails
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                Vous n'avez pas encore soumis d'offre pour cet appel d'offres
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );

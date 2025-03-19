@@ -45,6 +45,10 @@ export default function ServicesTenderDetails() {
     navigate(`/submit-services-quote/${tenderId}`);
   };
 
+  const handleViewAppelOffres = () => {
+    navigate(`/company-details-tender/${tenderId}`);
+  };
+
   return (
     <Layout>
       <div className="container mx-auto p-6">
@@ -66,17 +70,15 @@ export default function ServicesTenderDetails() {
                 <span>{mockTender.location}</span>
               </div>
               <Badge variant={
-                mockTender.status === 'open' ? 'default' : 
-                mockTender.status === 'upcoming' ? 'secondary' : 'outline'
+                mockTender.status === 'open' ? 'default' : 'outline'
               }>
-                {mockTender.status === 'open' ? 'En cours' : 
-                 mockTender.status === 'upcoming' ? 'À venir' : 'Clôturé'}
+                {mockTender.status === 'open' ? 'En cours' : 'Clôturé'}
               </Badge>
             </div>
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => {}} className="whitespace-nowrap">
+            <Button variant="outline" onClick={handleViewAppelOffres} className="whitespace-nowrap">
               <FileText className="mr-2 h-4 w-4" />
               Consulter l'Appel d'Offres
             </Button>
@@ -142,17 +144,11 @@ export default function ServicesTenderDetails() {
                     <p className="text-muted-foreground">{mockTender.createdAt}</p>
                   </div>
                   <div>
-                    <h3 className="font-medium mb-1">Concurrents</h3>
-                    <p className="text-muted-foreground">{mockTender.competitors} entreprise(s) ont consulté cet appel d'offres</p>
-                  </div>
-                  <div>
                     <h3 className="font-medium mb-1">Statut</h3>
                     <Badge variant={
-                      mockTender.status === 'open' ? 'default' : 
-                      mockTender.status === 'upcoming' ? 'secondary' : 'outline'
+                      mockTender.status === 'open' ? 'default' : 'outline'
                     }>
-                      {mockTender.status === 'open' ? 'En cours' : 
-                       mockTender.status === 'upcoming' ? 'À venir' : 'Clôturé'}
+                      {mockTender.status === 'open' ? 'En cours' : 'Clôturé'}
                     </Badge>
                   </div>
                 </CardContent>

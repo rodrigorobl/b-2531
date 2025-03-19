@@ -4,19 +4,21 @@ import { cn } from '@/lib/utils';
 import { ServiceTenderSearchResult } from '@/pages/ServicesTenderSearch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Building, MapPin, Calendar, Star, Eye, Users } from 'lucide-react';
+import { Building, MapPin, Calendar, Star, Eye, FileText } from 'lucide-react';
 import { getServicesTenderStatusBadge } from './ServicesTenderUtils';
 
 interface ServicesTenderListViewProps {
   tenders: ServiceTenderSearchResult[];
   selectedTenderId: string | null;
   onSelectTender: (tenderId: string) => void;
+  onConsultAO: (tenderId: string) => void;
 }
 
 export default function ServicesTenderListView({
   tenders,
   selectedTenderId,
-  onSelectTender
+  onSelectTender,
+  onConsultAO
 }: ServicesTenderListViewProps) {
   if (tenders.length === 0) {
     return (
@@ -69,12 +71,6 @@ export default function ServicesTenderListView({
                 <Calendar size={14} />
                 <span>{tender.deadline}</span>
               </div>
-              {tender.competitors > 0 && (
-                <div className="flex items-center gap-1">
-                  <Users size={14} />
-                  <span>{tender.competitors} concurrent{tender.competitors > 1 ? 's' : ''}</span>
-                </div>
-              )}
               {tender.viewed && (
                 <Badge variant="outline" className="font-normal bg-gray-100">
                   Consulté
@@ -92,9 +88,13 @@ export default function ServicesTenderListView({
             <div className="text-sm font-medium">
               {tender.budget}
             </div>
-            <Button variant="ghost" size="sm" className="text-primary">
-              <Eye size={14} className="mr-1" />
-              <span>Détails</span>
+            <Button variant="outline" size="sm" className="text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onConsultAO(tender.id);
+                    }}>
+              <FileText size={14} className="mr-1" />
+              <span>Consulter l'Appel d'Offres</span>
             </Button>
           </div>
         </div>

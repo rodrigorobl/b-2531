@@ -1,18 +1,20 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ServiceTenderSearchResult } from '@/pages/ServicesTenderSearch';
+import { ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import ServicesTenderListView from './ServicesTenderListView';
+import ServicesTenderGridView from './ServicesTenderGridView';
 import ServicesTenderViewModeSelector from './ServicesTenderViewModeSelector';
 import ServicesTenderFilterSortMenu from './ServicesTenderFilterSortMenu';
-import ServicesTenderGridView from './ServicesTenderGridView';
-import ServicesTenderListView from './ServicesTenderListView';
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from '@/components/ui/pagination';
 
 interface ServicesTenderResultsProps {
   tenders: ServiceTenderSearchResult[];
@@ -29,99 +31,72 @@ export default function ServicesTenderResults({
   viewMode,
   onViewModeChange
 }: ServicesTenderResultsProps) {
-  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'location' | 'relevance'>('date');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-  
-  // Calculate total pages
-  const totalPages = Math.ceil(tenders.length / itemsPerPage);
-  
-  // Get current tenders
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentTenders = tenders.slice(indexOfFirstItem, indexOfLastItem);
+  const navigate = useNavigate();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'alphabetical'>('date');
+
+  const handleConsultAO = (tenderId: string) => {
+    navigate(`/company-details-tender/${tenderId}`);
+  };
+
+  // Sort the tenders based on the sort options
+  const sortedTenders = [...tenders].sort((a, b) => {
+    if (sortBy === 'date') {
+      return sortOrder === 'asc' 
+        ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    } else if (sortBy === 'budget') {
+      return sortOrder === 'asc' 
+        ? a.estimatedAmount - b.estimatedAmount
+        : b.estimatedAmount - a.estimatedAmount;
+    } else {
+      return sortOrder === 'asc'
+        ? a.projectName.localeCompare(b.projectName)
+        : b.projectName.localeCompare(a.projectName);
+    }
+  });
 
   return (
-    <div className="flex-1 bg-white rounded-lg shadow-sm mr-4 overflow-auto p-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex-1 flex flex-col min-w-0 border-x">
+      <div className="p-4 border-b flex justify-between items-center">
         <div className="text-sm text-muted-foreground">
-          {tenders.length} appels d'offres trouvés
+          {tenders.length} appel{tenders.length > 1 ? 's' : ''} d'offres trouvé{tenders.length > 1 ? 's' : ''}
         </div>
         
         <div className="flex items-center gap-2">
+          <ServicesTenderFilterSortMenu 
+            sortBy={sortBy} 
+            sortOrder={sortOrder} 
+            onSortByChange={setSortBy} 
+            onSortOrderChange={setSortOrder} 
+          />
+          
           <ServicesTenderViewModeSelector 
             viewMode={viewMode} 
             onViewModeChange={onViewModeChange} 
           />
-          
-          <ServicesTenderFilterSortMenu
-            sortBy={sortBy}
-            sortDirection={sortDirection}
-            setSortBy={setSortBy}
-            setSortDirection={setSortDirection}
-          />
         </div>
       </div>
-
-      {viewMode === 'grid' ? (
-        <ServicesTenderGridView 
-          tenders={currentTenders} 
-          selectedTenderId={selectedTenderId} 
-          onSelectTender={onSelectTender} 
-        />
-      ) : (
-        <ServicesTenderListView 
-          tenders={currentTenders} 
-          selectedTenderId={selectedTenderId} 
-          onSelectTender={onSelectTender} 
-        />
-      )}
       
-      {totalPages > 1 && (
-        <div className="mt-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  href="#" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage > 1) setCurrentPage(currentPage - 1);
-                  }}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-              
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <PaginationItem key={index}>
-                  <PaginationLink 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentPage(index + 1);
-                    }}
-                    isActive={currentPage === index + 1}
-                  >
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              
-              <PaginationItem>
-                <PaginationNext 
-                  href="#" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-                  }}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+      <ScrollArea className="flex-1 overflow-auto">
+        <div className="p-4">
+          {viewMode === 'grid' ? (
+            <ServicesTenderGridView 
+              tenders={sortedTenders} 
+              selectedTenderId={selectedTenderId} 
+              onSelectTender={onSelectTender}
+              onConsultAO={handleConsultAO}
+            />
+          ) : (
+            <ServicesTenderListView 
+              tenders={sortedTenders} 
+              selectedTenderId={selectedTenderId} 
+              onSelectTender={onSelectTender}
+              onConsultAO={handleConsultAO}
+            />
+          )}
         </div>
-      )}
+      </ScrollArea>
     </div>
   );
 }

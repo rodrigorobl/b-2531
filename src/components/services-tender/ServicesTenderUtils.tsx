@@ -1,30 +1,26 @@
 
-import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { ServiceTenderStatus } from '@/pages/ServicesTenderSearch';
+import { Badge } from '@/components/ui/badge';
+import React from 'react';
+
+export function getServicesTenderStatusText(status: ServiceTenderStatus): string {
+  switch (status) {
+    case 'open':
+      return 'En cours';
+    case 'closed':
+      return 'Clôturé';
+    default:
+      return 'Inconnu';
+  }
+}
 
 export function getServicesTenderStatusBadge(status: ServiceTenderStatus) {
   switch (status) {
     case 'open':
-      return <Badge variant="default">En cours</Badge>;
-    case 'upcoming':
-      return <Badge variant="secondary">À venir</Badge>;
+      return <Badge className="bg-blue-500">En cours</Badge>;
     case 'closed':
       return <Badge variant="outline">Clôturé</Badge>;
     default:
-      return null;
-  }
-}
-
-export function getServicesTenderStatusText(status: ServiceTenderStatus) {
-  switch (status) {
-    case 'open':
-      return 'En cours';
-    case 'upcoming':
-      return 'À venir';
-    case 'closed':
-      return 'Clôturé';
-    default:
-      return '';
+      return <Badge variant="outline">Inconnu</Badge>;
   }
 }

@@ -4,19 +4,21 @@ import { cn } from '@/lib/utils';
 import { ServiceTenderSearchResult } from '@/pages/ServicesTenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building, MapPin, Calendar, Star, Eye, ArrowRight, Users } from 'lucide-react';
+import { Building, MapPin, Calendar, Star, Eye, ArrowRight, FileText } from 'lucide-react';
 import { getServicesTenderStatusBadge } from './ServicesTenderUtils';
 
 interface ServicesTenderGridViewProps {
   tenders: ServiceTenderSearchResult[];
   selectedTenderId: string | null;
   onSelectTender: (tenderId: string) => void;
+  onConsultAO: (tenderId: string) => void;
 }
 
 export default function ServicesTenderGridView({
   tenders,
   selectedTenderId,
-  onSelectTender
+  onSelectTender,
+  onConsultAO
 }: ServicesTenderGridViewProps) {
   if (tenders.length === 0) {
     return (
@@ -75,16 +77,6 @@ export default function ServicesTenderGridView({
           </div>
           
           <div className="mt-3 flex flex-wrap gap-1">
-            <Badge variant="outline" className="font-normal">
-              {tender.consultationMode === 'public' ? 'Public' : 
-               tender.consultationMode === 'private' ? 'Privé' : 'Sur invitation'}
-            </Badge>
-            {tender.competitors > 0 && (
-              <Badge variant="outline" className="font-normal flex items-center gap-1">
-                <Users size={12} />
-                {tender.competitors} concurrent{tender.competitors > 1 ? 's' : ''}
-              </Badge>
-            )}
             {tender.viewed && (
               <Badge variant="outline" className="font-normal bg-gray-100">
                 Consulté
@@ -102,10 +94,13 @@ export default function ServicesTenderGridView({
               {tender.clientName}
             </div>
             <div>
-              <Button variant="ghost" size="sm" className="text-primary flex items-center gap-1">
-                <Eye size={14} />
-                <span>Détails</span>
-                <ArrowRight size={14} />
+              <Button variant="outline" size="sm" className="text-primary flex items-center gap-1"
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       onConsultAO(tender.id);
+                     }}>
+                <FileText size={14} />
+                <span>Consulter l'Appel d'Offres</span>
               </Button>
             </div>
           </div>
