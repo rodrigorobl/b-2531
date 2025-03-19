@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, AlertCircle, Clock, Info } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface Offer {
   id: string;
@@ -24,6 +26,8 @@ interface TenderOffersProps {
 export default function TenderOffers({
   offers
 }: TenderOffersProps) {
+  const { activeProfile } = useProfile();
+  
   const exampleOffers: Offer[] = [
     {
       id: "offer-001",
@@ -55,6 +59,18 @@ export default function TenderOffers({
 
   const enrichedOffers = exampleOffers.map(prepareOfferData);
 
+  // Get the correct quote details page based on profile
+  const getQuoteDetailsLink = (offerId: string) => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/company-details-tender/quote-${offerId}`;
+    } else if (activeProfile === 'entreprise-services') {
+      return `/services-detail-tender/quote-${offerId}`;
+    } else {
+      // Default fallback
+      return `/company-details-tender/quote-${offerId}`;
+    }
+  };
+
   return (
     <div className="h-full animate-fade-in" style={{
       animationDelay: '0.1s'
@@ -67,7 +83,7 @@ export default function TenderOffers({
         {enrichedOffers.length === 0 ? (
           <EmptyState message="Aucune offre disponible" />
         ) : (
-          <OffersTable offers={enrichedOffers} />
+          <OffersTable offers={enrichedOffers} getQuoteDetailsLink={getQuoteDetailsLink} />
         )}
       </div>
     </div>
@@ -80,10 +96,12 @@ interface OffersTableProps {
     submissionDate?: string;
     quoteIndex?: string;
   })[];
+  getQuoteDetailsLink: (offerId: string) => string;
 }
 
 function OffersTable({
-  offers
+  offers,
+  getQuoteDetailsLink
 }: OffersTableProps) {
   return (
     <Table>
@@ -147,7 +165,7 @@ function OffersTable({
                   className="h-8 border-primary text-primary hover:bg-primary/10"
                   asChild
                 >
-                  <Link to={`/company-details-tender/quote-${offer.id}`}>
+                  <Link to={getQuoteDetailsLink(offer.id)}>
                     Détails
                   </Link>
                 </Button>

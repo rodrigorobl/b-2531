@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useProfile } from '@/contexts/ProfileContext';
 
 // Import refactored components
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
@@ -19,6 +20,7 @@ export default function ProjectSpecifications() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project');
   const [activeTab, setActiveTab] = useState('overview');
+  const { activeProfile } = useProfile();
 
   // This would typically come from API based on the ID
   const projectData = {
@@ -46,6 +48,18 @@ export default function ProjectSpecifications() {
       { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours', offerId: 'AO-2023-042-03' },
       { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours', offerId: 'AO-2023-042-04' },
     ]
+  };
+
+  // Get the correct quote details page based on profile
+  const getQuoteDetailsLink = (offerId: string) => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/company-details-tender/quote-${offerId}`;
+    } else if (activeProfile === 'entreprise-services') {
+      return `/services-detail-tender/quote-${offerId}`;
+    } else {
+      // Default fallback
+      return `/company-details-tender/quote-${offerId}`;
+    }
   };
 
   return (
@@ -97,7 +111,7 @@ export default function ProjectSpecifications() {
                       >
                         Demander un métré
                       </Button>
-                      <Link to={`/company-details-tender/quote-${lot.offerId}`}>
+                      <Link to={getQuoteDetailsLink(lot.offerId)}>
                         <Button variant="default" size="sm" className="flex items-center">
                           Déposer une offre
                           <ArrowRight className="ml-2 h-4 w-4" />
