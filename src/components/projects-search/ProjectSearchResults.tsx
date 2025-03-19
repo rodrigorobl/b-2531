@@ -22,12 +22,15 @@ import {
 } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { Project } from '@/pages/ProjectsSearch';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface ProjectSearchResultsProps {
   projects: Project[];
 }
 
 export function ProjectSearchResults({ projects }: ProjectSearchResultsProps) {
+  const { activeProfile } = useProfile();
+
   // Helper functions for rendering different statuses
   const getProjectTypeLabel = (type: 'conception' | 'realisation') => {
     switch (type) {
@@ -80,6 +83,21 @@ export function ProjectSearchResults({ projects }: ProjectSearchResultsProps) {
   const getMockCompanyId = (name: string): string => {
     // Simple hash function to generate pseudo-random but consistent IDs
     return String(name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 1000);
+  };
+
+  // Get the correct project detail link based on project type and user profile
+  const getProjectDetailLink = (project: Project) => {
+    if (activeProfile === 'industriel') {
+      // For "industriel" profile, redirect based on project type
+      if (project.type === 'conception') {
+        return `/product-prescription/${project.id}`;
+      } else if (project.type === 'realisation') {
+        return `/product-reference/${project.id}`;
+      }
+    }
+    
+    // Default fallback for other profiles
+    return `/project/${project.id}`;
   };
 
   return (
@@ -159,7 +177,7 @@ export function ProjectSearchResults({ projects }: ProjectSearchResultsProps) {
                     </TableCell>
                     <TableCell>
                       <Button size="sm" variant="outline" asChild>
-                        <Link to={`/project/${project.id}`}>
+                        <Link to={getProjectDetailLink(project)}>
                           <Eye className="h-4 w-4 mr-2" />
                           Voir détails
                         </Link>
