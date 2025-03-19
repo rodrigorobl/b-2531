@@ -15,13 +15,14 @@ interface TenderAdminDocumentsProps {
 }
 
 const TenderAdminDocuments: React.FC<TenderAdminDocumentsProps> = ({ form }) => {
-  // Default document requirements
+  // Default document requirements with the suggested list
   const defaultDocuments: DocumentRequirement[] = [
-    { id: 'doc-1', name: 'Responsabilité civile 2025' },
-    { id: 'doc-2', name: 'Décennale 2025' },
-    { id: 'doc-3', name: 'Déclaration URSSAF 2025' },
-    { id: 'doc-4', name: 'Kbis de moins de 6 mois' },
-    { id: 'doc-5', name: 'RIB' },
+    { id: 'doc-1', name: 'Extrait Kbis de moins de 6 mois' },
+    { id: 'doc-2', name: 'Attestation de régularité fiscale' },
+    { id: 'doc-3', name: 'Attestation de vigilance URSSAF' },
+    { id: 'doc-4', name: 'Attestation de Responsabilité Civile Professionnelle (RC Pro) 2025' },
+    { id: 'doc-5', name: 'Attestation de Garantie Décennale 2025' },
+    { id: 'doc-6', name: 'RIB' },
   ];
 
   const [documents, setDocuments] = useState<DocumentRequirement[]>(

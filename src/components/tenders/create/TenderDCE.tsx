@@ -26,6 +26,13 @@ const TenderDCE: React.FC<TenderDCEProps> = ({ form }) => {
         Cette section vous permet de gérer les documents techniques de votre appel d'offres.
       </p>
       
+      <div className="bg-secondary/50 p-6 rounded-lg border border-border flex items-center justify-center flex-col h-[300px]">
+        <p className="text-muted-foreground text-center mb-4">
+          Déposez vos documents techniques ici ou parcourez vos dossiers
+        </p>
+        <Button variant="outline">Parcourir</Button>
+      </div>
+      
       <div className="space-y-4">
         <Label className="text-base font-medium">Mode de génération du DPGF</Label>
         <RadioGroup 
@@ -64,13 +71,6 @@ const TenderDCE: React.FC<TenderDCEProps> = ({ form }) => {
           <Button variant="outline">Parcourir</Button>
         </div>
       )}
-      
-      <div className="bg-secondary/50 p-6 rounded-lg border border-border flex items-center justify-center flex-col h-[300px]">
-        <p className="text-muted-foreground text-center mb-4">
-          Déposez vos autres documents techniques ici ou parcourez vos dossiers
-        </p>
-        <Button variant="outline">Parcourir</Button>
-      </div>
     </div>
   );
 };
