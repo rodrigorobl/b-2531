@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
@@ -39,12 +38,7 @@ export default function ConstructionQuoteDetails() {
     totalAmountTTC: 1020000,
     status: 'conforme' as const,
     currentVersion: 1,
-    versions: [],
-    budgetImpact: {
-      lotBudget: 900000,
-      deviation: -50000,
-      deviationPercentage: -5.56
-    }
+    versions: []
   };
   
   // Mock data for quote line items
