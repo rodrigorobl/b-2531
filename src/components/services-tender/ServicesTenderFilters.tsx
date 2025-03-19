@@ -32,15 +32,13 @@ export default function ServicesTenderFilters() {
   
   const serviceTypes = [
     { value: 'all', label: 'Tous les services' },
-    { value: 'etude-thermique', label: 'Étude thermique' },
-    { value: 'geotechnique', label: 'Géotechnique' },
-    { value: 'diagnostic', label: 'Diagnostics techniques' },
-    { value: 'coordination-sps', label: 'Coordination SPS' },
-    { value: 'acoustique', label: 'Étude acoustique' },
-    { value: 'accessibilite', label: 'Accessibilité PMR' },
-    { value: 'economie-construction', label: 'Économie de la construction' },
-    { value: 'bet-structure', label: 'BET Structure' },
-    { value: 'bet-fluides', label: 'BET Fluides' },
+    { value: 'stockage', label: 'LOCATION DE LOCAUX DE STOCKAGE' },
+    { value: 'photo-video', label: 'SERVICES DE PHOTOGRAPHIE ET VIDÉO PROMOTIONNELLE' },
+    { value: 'photographe', label: 'PHOTOGRAPHE DE CHANTIER' },
+    { value: 'drone', label: 'PILOTE DE DRONE POUR VUES AÉRIENNES' },
+    { value: 'marketing', label: 'SERVICES DE MARKETING SUR LE CHANTIER' },
+    { value: 'visites', label: 'ORGANISATION DE VISITES DE CHANTIER POUR LES CLIENTS' },
+    { value: 'amenagement', label: 'SERVICES D\'AMÉNAGEMENT INTÉRIEUR ET HOME STAGING' },
   ];
   
   const locations = [
@@ -57,13 +55,6 @@ export default function ServicesTenderFilters() {
     { value: 'open', label: 'En cours' },
     { value: 'upcoming', label: 'À venir' },
     { value: 'closed', label: 'Clôturés' },
-  ];
-  
-  const consultationModes = [
-    { value: 'all', label: 'Tous les modes' },
-    { value: 'public', label: 'Public' },
-    { value: 'private', label: 'Privé' },
-    { value: 'invited', label: 'Sur invitation' },
   ];
   
   const tenderOrigins = [
@@ -175,25 +166,6 @@ export default function ServicesTenderFilters() {
               {tenderStatuses.map(status => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-muted-foreground" />
-            <Label>Mode de consultation</Label>
-          </div>
-          <Select defaultValue="all">
-            <SelectTrigger>
-              <SelectValue placeholder="Tous les modes" />
-            </SelectTrigger>
-            <SelectContent>
-              {consultationModes.map(mode => (
-                <SelectItem key={mode.value} value={mode.value}>
-                  {mode.label}
                 </SelectItem>
               ))}
             </SelectContent>
