@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Mail, Check, Clock, X } from 'lucide-react';
+import { FileText, ArrowRight, Check, Clock, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface QuoteStatus {
   id: string;
@@ -46,7 +47,13 @@ export default function ConstructionPhaseProjects({ quotes }: ConstructionPhaseP
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Projets en phase de réalisation</CardTitle>
+        <CardTitle>Mes projets en phase de réalisation</CardTitle>
+        <Button asChild>
+          <Link to="/quotes-to-analyze">
+            <ArrowRight className="mr-2 h-4 w-4" />
+            Voir tous
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -76,9 +83,11 @@ export default function ConstructionPhaseProjects({ quotes }: ConstructionPhaseP
                 <TableCell>{quote.amount}</TableCell>
                 <TableCell>{quote.updatedAt}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm">
-                    <Mail className="h-4 w-4" />
-                    <span className="ml-2">Contacter</span>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`/quote-detail/${quote.id}`}>
+                      <FileText className="h-4 w-4 mr-1" />
+                      Détails
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>

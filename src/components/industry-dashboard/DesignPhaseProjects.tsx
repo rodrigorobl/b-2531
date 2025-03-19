@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { FileText, Mail, Check, Clock, AlertTriangle } from 'lucide-react';
+import { FileText, ArrowRight, Clock, AlertTriangle, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface ReferenceStatus {
   id: string;
@@ -45,10 +46,12 @@ export default function DesignPhaseProjects({ references }: DesignPhaseProjectsP
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Projets en phase de conception</CardTitle>
-        <Button>
-          <FileText className="mr-2 h-4 w-4" />
-          Soumettre un produit
+        <CardTitle>Mes projets en phase de conception</CardTitle>
+        <Button asChild>
+          <Link to="/product-reference">
+            <ArrowRight className="mr-2 h-4 w-4" />
+            Voir tous
+          </Link>
         </Button>
       </CardHeader>
       <CardContent>
@@ -77,9 +80,11 @@ export default function DesignPhaseProjects({ references }: DesignPhaseProjectsP
                 <TableCell>{ref.betName}</TableCell>
                 <TableCell>{ref.updatedAt}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm">
-                    <Mail className="h-4 w-4" />
-                    <span className="ml-2">Contacter</span>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`/product-reference/${ref.id}`}>
+                      <FileText className="h-4 w-4 mr-1" />
+                      Détails
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>

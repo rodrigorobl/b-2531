@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Star, ExternalLink } from 'lucide-react';
+import { Star, ExternalLink, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Opportunity {
@@ -29,7 +30,7 @@ export default function OpportunitiesOverview({ opportunities }: OpportunitiesOv
         <Button variant="outline" size="sm" asChild>
           <Link to="/product-reference">
             <ExternalLink className="h-4 w-4 mr-2" />
-            Suivi des référencements
+            Voir tous
           </Link>
         </Button>
       </CardHeader>
@@ -38,21 +39,26 @@ export default function OpportunitiesOverview({ opportunities }: OpportunitiesOv
           {opportunities.map((opportunity) => (
             <div
               key={opportunity.id}
-              className="flex items-start justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+              className="flex flex-col p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
             >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
+              <div className="flex justify-between items-start mb-2">
+                <div className="space-y-1">
                   <span className="font-medium">{opportunity.projectName}</span>
-                  {opportunity.isNew && (
-                    <Badge>Nouveau</Badge>
-                  )}
+                  <p className="text-sm text-muted-foreground">{opportunity.description}</p>
+                  <p className="text-xs text-muted-foreground">{opportunity.createdAt}</p>
                 </div>
-                <p className="text-sm text-muted-foreground">{opportunity.description}</p>
-                <p className="text-xs text-muted-foreground">{opportunity.createdAt}</p>
+                <Badge variant={opportunity.type === 'reference' ? 'secondary' : 'default'}>
+                  {opportunity.type === 'reference' ? 'Référencement' : 'Devis'}
+                </Badge>
               </div>
-              <Badge variant={opportunity.type === 'reference' ? 'secondary' : 'default'}>
-                {opportunity.type === 'reference' ? 'Référencement' : 'Devis'}
-              </Badge>
+              <div className="flex justify-end mt-2">
+                <Button size="sm" variant="outline" asChild>
+                  <Link to={`/${opportunity.type === 'reference' ? 'product-reference' : 'quote-detail'}/${opportunity.id}`}>
+                    <FileText className="h-4 w-4 mr-1" />
+                    Détails
+                  </Link>
+                </Button>
+              </div>
             </div>
           ))}
         </div>
