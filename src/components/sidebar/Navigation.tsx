@@ -125,6 +125,12 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <span>Gestion des devis</span>
               </Link>
             </li>
+            <li>
+              <Link to="/services-tender-search" className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${location.pathname === '/services-tender-search' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
+                <Search size={18} />
+                <span>Recherche d'appels d'offres</span>
+              </Link>
+            </li>
           </>}
         {activeProfile === 'industriel' && <>
             <li>
