@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
@@ -12,6 +12,8 @@ import ProjectTimeline from '@/components/project-specifications/ProjectTimeline
 import ProjectDocuments from '@/components/project-specifications/ProjectDocuments';
 import ProjectLots from '@/components/project-specifications/ProjectLots';
 import ProjectMessages from '@/components/project-specifications/ProjectMessages';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 export default function ProjectSpecifications() {
   const [searchParams] = useSearchParams();
@@ -39,10 +41,10 @@ export default function ProjectSpecifications() {
       '/photo-1449157291145-7efd050a4d0e'
     ],
     lots: [
-      { id: 'lot-1', name: 'Gros œuvre', budget: '850,000 €', deadline: '30/08/2023', minSurveyPrice: 1900, minSurveyDelivery: '5 jours' },
-      { id: 'lot-2', name: 'Menuiseries', budget: '450,000 €', deadline: '15/09/2023', minSurveyPrice: 1500, minSurveyDelivery: '3 jours' },
-      { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours' },
-      { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours' },
+      { id: 'lot-1', name: 'Gros œuvre', budget: '850,000 €', deadline: '30/08/2023', minSurveyPrice: 1900, minSurveyDelivery: '5 jours', offerId: 'AO-2023-042-01' },
+      { id: 'lot-2', name: 'Menuiseries', budget: '450,000 €', deadline: '15/09/2023', minSurveyPrice: 1500, minSurveyDelivery: '3 jours', offerId: 'AO-2023-042-02' },
+      { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours', offerId: 'AO-2023-042-03' },
+      { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours', offerId: 'AO-2023-042-04' },
     ]
   };
 
@@ -79,6 +81,32 @@ export default function ProjectSpecifications() {
             </TabsContent>
 
             <TabsContent value="lots" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {projectData.lots.map((lot) => (
+                  <div key={lot.id} className="border rounded-lg p-4 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-2">{lot.name}</h3>
+                    <div className="space-y-2 mb-4">
+                      <p className="text-sm"><span className="font-medium">Budget:</span> {lot.budget}</p>
+                      <p className="text-sm"><span className="font-medium">Date limite:</span> {lot.deadline}</p>
+                    </div>
+                    <div className="flex justify-between mt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => console.log(`Requesting survey for ${lot.name}`)}
+                      >
+                        Demander un métré
+                      </Button>
+                      <Link to={`/company-details-tender/quote-${lot.offerId}`}>
+                        <Button variant="default" size="sm" className="flex items-center">
+                          Déposer une offre
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
               <ProjectLots projectId={projectData.id} lots={projectData.lots} />
             </TabsContent>
 
