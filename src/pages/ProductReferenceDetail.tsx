@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { 
   Tabs, 
   TabsContent, 
@@ -17,22 +17,16 @@ import {
   FileText, 
   Users, 
   BookOpen, 
-  Phone, 
-  Mail, 
-  MapPin, 
+  MessageSquare,
+  User,
+  File,
+  Home,
   HardHat,
   Briefcase,
   Send,
   CheckCircle,
-  User,
-  MessageSquare,
-  File,
-  Home,
-  BarChart4,
-  DollarSign,
-  Paperclip
+  MapPin,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import ProjectDocuments from '@/components/product-reference/ProjectDocuments';
 import ReferenceTimeline from '@/components/product-reference/ReferenceTimeline';
 import CommunicationHistory from '@/components/product-reference/CommunicationHistory';
@@ -245,6 +239,11 @@ export default function ProductReferenceDetail() {
   const contractorContacts = projectData.type === 'realisation' && projectData.contractor 
     ? projectData.contractor.contacts 
     : [];
+    
+  const handleContactClick = (contactType: string, contactId: string) => {
+    setActiveTab("communications");
+    console.log(`Contact clicked: ${contactType} - ${contactId}`);
+  };
 
   return (
     <Layout>
@@ -300,24 +299,24 @@ export default function ProductReferenceDetail() {
                     <h4 className="text-sm font-medium">Contacts</h4>
                     {projectData.promoter.contacts.map((contact, index) => (
                       <div key={index} className="border rounded-md p-3">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <User size={16} className="text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{contact.name}</p>
-                            <p className="text-sm text-muted-foreground">{contact.role}</p>
-                            <div className="flex flex-col text-sm mt-1 space-y-1">
-                              <div className="flex items-center gap-1">
-                                <Mail size={12} className="text-muted-foreground" />
-                                <span>{contact.email}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Phone size={12} className="text-muted-foreground" />
-                                <span>{contact.phone}</span>
-                              </div>
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                              <User size={16} className="text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium">{contact.name}</p>
+                              <p className="text-sm text-muted-foreground">{contact.role}</p>
                             </div>
                           </div>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleContactClick('promoter', contact.name)}
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            Contacter
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -329,7 +328,7 @@ export default function ProductReferenceDetail() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <HardHat className="w-5 h-5" />
-                    {projectData.type === 'conception' ? 'Bureaux d\'Études' : 'Entreprise Titulaire du Lot'}
+                    {projectData.type === 'conception' ? 'Entreprise Titulaire' : 'Entreprise Titulaire du Lot'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -346,63 +345,30 @@ export default function ProductReferenceDetail() {
                         <h4 className="text-sm font-medium">Contacts</h4>
                         {projectData.contractor.contacts.map((contact, index) => (
                           <div key={index} className="border rounded-md p-3">
-                            <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                <User size={16} className="text-primary" />
-                              </div>
-                              <div>
-                                <p className="font-medium">{contact.name}</p>
-                                <p className="text-sm text-muted-foreground">{contact.role}</p>
-                                <div className="flex flex-col text-sm mt-1 space-y-1">
-                                  <div className="flex items-center gap-1">
-                                    <Mail size={12} className="text-muted-foreground" />
-                                    <span>{contact.email}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <Phone size={12} className="text-muted-foreground" />
-                                    <span>{contact.phone}</span>
-                                  </div>
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                  <User size={16} className="text-primary" />
+                                </div>
+                                <div>
+                                  <p className="font-medium">{contact.name}</p>
+                                  <p className="text-sm text-muted-foreground">{contact.role}</p>
                                 </div>
                               </div>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleContactClick('contractor', contact.name)}
+                              >
+                                <MessageSquare className="w-4 h-4 mr-1" />
+                                Contacter
+                              </Button>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
-                  
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium">{projectData.type === 'conception' ? 'Liste des BET' : 'Bureaux d\'Études Impliqués'}</h4>
-                    {projectData.technicalOffices.map((office, index) => (
-                      <div key={index} className="border rounded-md p-3">
-                        <div className="flex flex-col">
-                          <div className="flex items-center justify-between mb-2">
-                            <Link to={`/company-detail/${office.name.replace(/\s+/g, '-').toLowerCase()}`} className="font-medium text-primary hover:underline">
-                              {office.name}
-                            </Link>
-                            <Badge variant="outline">{office.role}</Badge>
-                          </div>
-                          
-                          {office.contacts.map((contact, idx) => (
-                            <div key={idx} className="pl-3 border-l-2 border-muted mt-2">
-                              <p className="font-medium text-sm">{contact.name}</p>
-                              <p className="text-xs text-muted-foreground">{contact.role}</p>
-                              <div className="flex flex-col text-xs mt-1 space-y-1">
-                                <div className="flex items-center gap-1">
-                                  <Mail size={12} className="text-muted-foreground" />
-                                  <span>{contact.email}</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Phone size={12} className="text-muted-foreground" />
-                                  <span>{contact.phone}</span>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -410,65 +376,43 @@ export default function ProductReferenceDetail() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" />
-                  Informations Devis
+                  <Building className="w-5 h-5" />
+                  Bureaux d'Études Impliqués
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium">Produit référencé</h3>
-                    <div className="flex items-center gap-2 p-3 border rounded-md">
-                      <BookOpen size={18} className="text-primary" />
-                      <span className="font-medium">{projectData.productName}</span>
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium">{projectData.type === 'conception' ? 'Liste des BET' : 'Bureaux d\'Études'}</h4>
+                  {projectData.technicalOffices.map((office, index) => (
+                    <div key={index} className="border rounded-md p-3">
+                      <div className="flex flex-col">
+                        <div className="flex items-center justify-between mb-2">
+                          <Link to={`/company-detail/${office.name.replace(/\s+/g, '-').toLowerCase()}`} className="font-medium text-primary hover:underline">
+                            {office.name}
+                          </Link>
+                          <Badge variant="outline">{office.role}</Badge>
+                        </div>
+                        
+                        {office.contacts.map((contact, idx) => (
+                          <div key={idx} className="pl-3 border-l-2 border-muted mt-2 flex justify-between items-center">
+                            <div>
+                              <p className="font-medium text-sm">{contact.name}</p>
+                              <p className="text-xs text-muted-foreground">{contact.role}</p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleContactClick('bet', contact.name)}
+                            >
+                              <MessageSquare className="w-4 h-4 mr-1" />
+                              Contacter
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium">Montant du devis</h3>
-                    <div className="flex items-center gap-2 p-3 border rounded-md">
-                      <BarChart4 size={18} className="text-primary" />
-                      <span className="font-medium">{projectData.quoteAmount}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium">Date d'envoi</h3>
-                    <div className="flex items-center gap-2 p-3 border rounded-md">
-                      <Calendar size={18} className="text-primary" />
-                      <span className="font-medium">{projectData.quoteSentDate}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                
-                {projectData.quoteStatus === 'to-send' ? (
-                  <Button className="mt-6">
-                    <Send className="mr-2 h-4 w-4" />
-                    Envoyer un devis
-                  </Button>
-                ) : projectData.quoteStatus === 'sent' ? (
-                  <div className="flex gap-3 mt-6">
-                    <Button variant="outline">
-                      <File className="mr-2 h-4 w-4" />
-                      Voir le devis
-                    </Button>
-                    <Button variant="outline">
-                      <Send className="mr-2 h-4 w-4" />
-                      Relancer le client
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex gap-3 mt-6">
-                    <Button variant="outline">
-                      <File className="mr-2 h-4 w-4" />
-                      Voir le devis signé
-                    </Button>
-                    <Button variant="outline">
-                      <Paperclip className="mr-2 h-4 w-4" />
-                      Voir le bon de commande
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -494,4 +438,3 @@ export default function ProductReferenceDetail() {
     </Layout>
   );
 }
-
