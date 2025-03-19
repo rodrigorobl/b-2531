@@ -7,15 +7,18 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 interface TenderDetailsProps {
   tender?: Tender;
 }
+
 export default function TenderDetails({
   tender
 }: TenderDetailsProps) {
   if (!tender) {
     return;
   }
+  
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'open':
@@ -28,6 +31,7 @@ export default function TenderDetails({
         return 'Inconnu';
     }
   };
+  
   const getParticipationStatusLabel = (status: string) => {
     switch (status) {
       case 'to-submit':
@@ -42,6 +46,7 @@ export default function TenderDetails({
         return 'Inconnu';
     }
   };
+  
   return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
@@ -165,6 +170,19 @@ export default function TenderDetails({
                 <Button variant="ghost" size="sm">
                   <FileDown size={14} />
                 </Button>
+              </div>
+              
+              <div className="bg-muted/50 p-3 rounded-lg flex items-center gap-3">
+                <FileText size={20} className="text-muted-foreground" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">Devis détaillé.pdf</p>
+                  <p className="text-xs text-muted-foreground">1.8 MB</p>
+                </div>
+                <Link to={`/quote-analysis/${tender.id}`}>
+                  <Button variant="ghost" size="sm">
+                    <ExternalLink size={14} />
+                  </Button>
+                </Link>
               </div>
             </div>
           </TabsContent>
