@@ -1,114 +1,124 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search } from 'lucide-react';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { X } from 'lucide-react';
 
 interface LotSelectorProps {
   form: UseFormReturn<any>;
 }
 
 const LotSelector: React.FC<LotSelectorProps> = ({ form }) => {
-  const [lotSearchQuery, setLotSearchQuery] = useState('');
+  const formLots = form.getValues('construction.lots' as any);
   
-  // Initialize selected lots from form values
-  const existingLots = form.getValues('construction.lots' as any) || [];
-  const initialSelectedLots: { [key: string]: boolean } = {};
-  
-  const constructionLots = [
-    { id: "lot-1", name: "Gros œuvre", description: "Fondations, structures porteuses, maçonnerie" },
-    { id: "lot-2", name: "Charpente", description: "Structures de toit et supports" },
-    { id: "lot-3", name: "Couverture", description: "Toiture et étanchéité" },
-    { id: "lot-4", name: "Menuiseries extérieures", description: "Fenêtres, portes, façades" },
-    { id: "lot-5", name: "Menuiseries intérieures", description: "Portes, cloisons, aménagements" },
-    { id: "lot-6", name: "Plomberie", description: "Alimentation et évacuation d'eau" },
-    { id: "lot-7", name: "Électricité", description: "Installation électrique et réseau" },
-    { id: "lot-8", name: "CVC", description: "Chauffage, ventilation, climatisation" },
-    { id: "lot-9", name: "Isolation", description: "Isolation thermique et acoustique" },
-    { id: "lot-10", name: "Peinture", description: "Peinture et revêtements muraux" },
-    { id: "lot-11", name: "VRD", description: "Voirie et réseaux divers" },
-    { id: "lot-12", name: "Façades", description: "Revêtements et traitements des façades" },
-    { id: "lot-13", name: "Sols", description: "Carrelage, parquet, revêtements de sol" }
+  // Define standard construction lots if none exist
+  const standardLots = [
+    { name: 'Gros Œuvre', description: 'Fondations, structure, maçonnerie', selected: false },
+    { name: 'Charpente/Couverture', description: 'Éléments de structure et de toiture', selected: false },
+    { name: 'CVC', description: 'Chauffage, ventilation, climatisation', selected: false },
+    { name: 'Plomberie', description: 'Installation des réseaux d\'eau', selected: false },
+    { name: 'Électricité', description: 'Installation des réseaux électriques', selected: false },
+    { name: 'Menuiserie', description: 'Portes, fenêtres, aménagements intérieurs', selected: false },
+    { name: 'Peinture', description: 'Peinture, revêtements muraux', selected: false },
+    { name: 'Revêtements de sols', description: 'Carrelage, parquet, moquette', selected: false },
+    { name: 'VRD', description: 'Voirie et réseaux divers', selected: false }
   ];
-  
-  // Create mapping from existing form values
-  if (Array.isArray(existingLots)) {
-    constructionLots.forEach(lot => {
-      const isSelected = existingLots.some((existing: any) => existing.name === lot.name);
-      initialSelectedLots[lot.id] = isSelected;
-    });
-  }
-  
-  const [selectedLots, setSelectedLots] = useState<{[key: string]: boolean}>(initialSelectedLots);
-  
-  const toggleLot = (lotId: string) => {
-    const newSelectedLots = {
-      ...selectedLots,
-      [lotId]: !selectedLots[lotId]
-    };
-    
-    setSelectedLots(newSelectedLots);
-    
-    const formattedLots = constructionLots
-      .filter(lot => newSelectedLots[lot.id])
-      .map(lot => ({
-        name: lot.name,
-        description: lot.description,
-        selected: true
-      }));
-    
-    form.setValue('construction.lots' as any, formattedLots);
+
+  const initialLots = Array.isArray(formLots) && formLots.length > 0 
+    ? formLots 
+    : standardLots;
+
+  const [lots, setLots] = useState(initialLots);
+  const [newLotName, setNewLotName] = useState('');
+  const [newLotDescription, setNewLotDescription] = useState('');
+
+  const checkIfLotExists = (name: string) => {
+    if (!Array.isArray(lots)) return false;
+    return lots.some(lot => lot.name.toLowerCase() === name.toLowerCase());
   };
 
-  // Filter lots based on search query
-  const filteredLots = constructionLots.filter(lot => 
-    lot.name.toLowerCase().includes(lotSearchQuery.toLowerCase()) ||
-    (lot.description && lot.description.toLowerCase().includes(lotSearchQuery.toLowerCase()))
-  );
+  const handleSelectLot = (index: number, checked: boolean) => {
+    const updatedLots = [...lots];
+    updatedLots[index].selected = checked;
+    
+    setLots(updatedLots);
+    form.setValue('construction.lots' as any, updatedLots);
+  };
+
+  const handleAddCustomLot = () => {
+    if (!newLotName.trim() || checkIfLotExists(newLotName)) return;
+    
+    const newLot = {
+      name: newLotName,
+      description: newLotDescription,
+      selected: true
+    };
+    
+    const updatedLots = [...lots, newLot];
+    setLots(updatedLots);
+    form.setValue('construction.lots' as any, updatedLots);
+    
+    // Reset inputs
+    setNewLotName('');
+    setNewLotDescription('');
+  };
 
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-        <Input
-          placeholder="Rechercher un lot..."
-          value={lotSearchQuery}
-          onChange={(e) => setLotSearchQuery(e.target.value)}
-          className="pl-9"
-        />
-      </div>
+      <h3 className="text-lg font-medium">Lots de construction</h3>
+      <p className="text-sm text-muted-foreground">
+        Sélectionnez les lots pour votre projet de construction
+      </p>
       
-      <div className="space-y-2">
-        {filteredLots.map((lot) => (
-          <div 
-            key={lot.id}
-            className={`p-3 border rounded-md cursor-pointer ${
-              selectedLots[lot.id] ? 'border-primary bg-primary/10' : 'hover:bg-secondary'
-            }`}
-            onClick={() => toggleLot(lot.id)}
-          >
-            <div className="flex items-start gap-2">
-              <Checkbox 
-                checked={selectedLots[lot.id] || false}
-                onCheckedChange={() => toggleLot(lot.id)}
-                className="mt-1"
-              />
-              <div>
-                <div className="font-medium">{lot.name}</div>
-                {lot.description && (
-                  <div className="text-sm text-muted-foreground">{lot.description}</div>
-                )}
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {Array.isArray(lots) && lots.map((lot, index) => (
+          <div key={index} className="flex items-start space-x-2 border p-3 rounded-md">
+            <Checkbox 
+              id={`lot-${index}`} 
+              checked={lot.selected}
+              onCheckedChange={(checked) => handleSelectLot(index, !!checked)}
+            />
+            <div className="grid gap-1 flex-1">
+              <Label htmlFor={`lot-${index}`} className="font-medium">{lot.name}</Label>
+              {lot.description && <p className="text-sm text-muted-foreground">{lot.description}</p>}
             </div>
           </div>
         ))}
-        
-        {filteredLots.length === 0 && (
-          <div className="text-center p-4 text-muted-foreground">
-            Aucun lot correspondant à votre recherche
+      </div>
+      
+      <div className="border-t pt-4 mt-4">
+        <h4 className="text-base font-medium mb-3">Ajouter un lot personnalisé</h4>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <Label htmlFor="newLotName" className="mb-2 block">Nom du lot</Label>
+            <Input
+              id="newLotName"
+              placeholder="Ex: Ascenseurs"
+              value={newLotName}
+              onChange={(e) => setNewLotName(e.target.value)}
+            />
           </div>
-        )}
+          <div className="flex-1">
+            <Label htmlFor="newLotDescription" className="mb-2 block">Description</Label>
+            <Input
+              id="newLotDescription"
+              placeholder="Installation et maintenance des ascenseurs"
+              value={newLotDescription}
+              onChange={(e) => setNewLotDescription(e.target.value)}
+            />
+          </div>
+          <div className="flex items-end">
+            <Button 
+              onClick={handleAddCustomLot}
+              disabled={!newLotName.trim() || checkIfLotExists(newLotName)}
+            >
+              Ajouter
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -16,7 +16,6 @@ const TenderDCE: React.FC<TenderDCEProps> = ({ form }) => {
   
   const handleDpgfMethodChange = (value: 'ai' | 'upload') => {
     setDpgfMethod(value);
-    // Using type assertion to fix the TypeScript error
     form.setValue('construction.dpgfMethod' as any, value);
   };
 
