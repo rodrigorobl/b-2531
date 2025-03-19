@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +26,9 @@ import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import UserProfileSettings from "./pages/UserProfileSettings";
 import CreateTender from "./pages/CreateTender";
+import CreateTenderConception from "./pages/CreateTenderConception";
+import CreateTenderRealisation from "./pages/CreateTenderRealisation";
+import CreateTenderServices from "./pages/CreateTenderServices";
 import CompanyDirectory from "./pages/CompanyDirectory";
 import QuotedDirectory from "./pages/QuotedDirectory";
 import CompanyDetail from "./pages/CompanyDetail";
@@ -86,6 +90,9 @@ const App = () => (
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/moe-list" element={<MoeList />} />
             <Route path="/create-tender" element={<CreateTender />} />
+            <Route path="/create-tender-conception" element={<CreateTenderConception />} />
+            <Route path="/create-tender-realisation" element={<CreateTenderRealisation />} />
+            <Route path="/create-tender-services" element={<CreateTenderServices />} />
             <Route path="/projects" element={<ProjectsList />} />
             <Route path="/projects-search" element={<ProjectsSearch />} />
             <Route path="/company" element={<Company />} />
