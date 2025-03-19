@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, User, Users } from 'lucide-react';
+import { Plus, Trash2, User, Users, Search } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 interface ConstructionTenderFormProps {
@@ -15,8 +15,17 @@ interface ConstructionTenderFormProps {
 }
 
 const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form }) => {
+  // State for managing building information
+  const [buildings, setBuildings] = useState<Array<{id: string, levels: number}>>([]);
+  const [newBuilding, setNewBuilding] = useState({ levels: 0 });
+  
+  // Team members management
   const [newTeamMember, setNewTeamMember] = useState({ name: '', role: 'architecte' });
   const [projectTeam, setProjectTeam] = useState<Array<{name: string, role: string}>>([]);
+  
+  // Lots management
+  const [lotSearchQuery, setLotSearchQuery] = useState('');
+  const [selectedLots, setSelectedLots] = useState<{[key: string]: boolean}>({});
   
   const teamRoles = [
     { value: 'architecte', label: 'Architecte' },
@@ -48,8 +57,6 @@ const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form })
     { id: "lot-13", name: "Sols", description: "Carrelage, parquet, revêtements de sol" }
   ];
   
-  const [selectedLots, setSelectedLots] = useState<{[key: string]: boolean}>({});
-  
   const addTeamMember = () => {
     if (newTeamMember.name.trim() === '') return;
     
@@ -70,6 +77,26 @@ const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form })
     form.setValue('construction.projectTeam', updatedTeam);
   };
   
+  const addBuilding = () => {
+    if (newBuilding.levels < 0) return;
+    
+    const newBuildingItem = {
+      id: `building-${Date.now()}`,
+      levels: newBuilding.levels
+    };
+    
+    const updatedBuildings = [...buildings, newBuildingItem];
+    setBuildings(updatedBuildings);
+    form.setValue('construction.buildings', updatedBuildings);
+    setNewBuilding({ levels: 0 });
+  };
+  
+  const removeBuilding = (id: string) => {
+    const updatedBuildings = buildings.filter(building => building.id !== id);
+    setBuildings(updatedBuildings);
+    form.setValue('construction.buildings', updatedBuildings);
+  };
+  
   const toggleLot = (lotId: string) => {
     const newSelectedLots = {
       ...selectedLots,
@@ -88,6 +115,12 @@ const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form })
     
     form.setValue('construction.lots', formattedLots);
   };
+
+  // Filter lots based on search query
+  const filteredLots = constructionLots.filter(lot => 
+    lot.name.toLowerCase().includes(lotSearchQuery.toLowerCase()) ||
+    (lot.description && lot.description.toLowerCase().includes(lotSearchQuery.toLowerCase()))
+  );
 
   return (
     <div className="space-y-6">
@@ -124,86 +157,62 @@ const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form })
       </div>
       
       <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Users size={18} />
-          <Label className="text-lg font-medium">Équipe de projet</Label>
-        </div>
-        
-        <div className="space-y-3 mt-2">
-          {projectTeam.map((member, index) => (
-            <div key={index} className="flex items-center p-3 border rounded-md bg-background">
+        <Label className="text-lg font-medium">Bâtiments</Label>
+        <div className="space-y-3">
+          {buildings.map((building) => (
+            <div key={building.id} className="flex items-center p-3 border rounded-md bg-background">
               <div className="flex-1">
-                <div className="font-medium">{member.name}</div>
+                <div className="font-medium">Bâtiment</div>
                 <div className="text-sm text-muted-foreground">
-                  {teamRoles.find(role => role.value === member.role)?.label || member.role}
+                  {building.levels === 0 ? 'Rez-de-chaussée' : `R+${building.levels}`}
                 </div>
               </div>
               <Button 
                 type="button" 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => removeTeamMember(index)}
+                onClick={() => removeBuilding(building.id)}
               >
                 <Trash2 size={16} className="text-destructive" />
               </Button>
             </div>
           ))}
           
-          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,auto] gap-2">
-            <Input 
-              placeholder="Nom de l'entreprise ou du contact" 
-              value={newTeamMember.name}
-              onChange={(e) => setNewTeamMember({ ...newTeamMember, name: e.target.value })}
-            />
-            
-            <Select 
-              value={newTeamMember.role}
-              onValueChange={(value) => setNewTeamMember({ ...newTeamMember, role: value })}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {teamRoles.map(role => (
-                  <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto] gap-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="buildingLevels" className="whitespace-nowrap">Nombre de niveaux:</Label>
+              <Select 
+                value={String(newBuilding.levels)}
+                onValueChange={(value) => setNewBuilding({ ...newBuilding, levels: parseInt(value) })}
+              >
+                <SelectTrigger id="buildingLevels" className="w-full">
+                  <SelectValue placeholder="Niveaux" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">RDC (R+0)</SelectItem>
+                  <SelectItem value="1">R+1</SelectItem>
+                  <SelectItem value="2">R+2</SelectItem>
+                  <SelectItem value="3">R+3</SelectItem>
+                  <SelectItem value="4">R+4</SelectItem>
+                  <SelectItem value="5">R+5</SelectItem>
+                  <SelectItem value="6">R+6</SelectItem>
+                  <SelectItem value="7">R+7</SelectItem>
+                  <SelectItem value="8">R+8</SelectItem>
+                  <SelectItem value="9">R+9</SelectItem>
+                  <SelectItem value="10">R+10 ou plus</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             
             <Button 
               type="button" 
-              onClick={addTeamMember}
-              size="icon"
+              onClick={addBuilding}
+              size="default"
             >
-              <Plus size={16} />
+              <Plus size={16} className="mr-2" />
+              Ajouter un bâtiment
             </Button>
           </div>
-        </div>
-      </div>
-      
-      <div className="space-y-2">
-        <Label className="text-lg font-medium">Lots de travaux concernés</Label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-          {constructionLots.map((lot) => (
-            <div key={lot.id} className="flex items-start space-x-2 border p-3 rounded-md">
-              <Checkbox 
-                id={lot.id} 
-                checked={selectedLots[lot.id] || false}
-                onCheckedChange={() => toggleLot(lot.id)}
-              />
-              <div className="grid gap-1.5">
-                <label
-                  htmlFor={lot.id}
-                  className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {lot.name}
-                </label>
-                <p className="text-sm text-muted-foreground">
-                  {lot.description}
-                </p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
       

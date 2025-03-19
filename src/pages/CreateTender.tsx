@@ -14,9 +14,15 @@ import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SaveIcon } from 'lucide-react';
+import { SaveIcon, MapPin } from 'lucide-react';
 import ProjectMap from '@/components/ProjectMap';
 import ConstructionTenderForm from '@/components/tenders/create/ConstructionTenderForm';
+import TenderProjectTeam from '@/components/tenders/create/TenderProjectTeam';
+import TenderLots from '@/components/tenders/create/TenderLots';
+import TenderDCE from '@/components/tenders/create/TenderDCE';
+import TenderAdminDocuments from '@/components/tenders/create/TenderAdminDocuments';
+import TenderKeyDates from '@/components/tenders/create/TenderKeyDates';
+import TenderLotsClosureDate from '@/components/tenders/create/TenderLotsClosureDate';
 
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
@@ -31,6 +37,10 @@ const constructionTenderSchema = z.object({
     lat: z.number().optional(),
     lng: z.number().optional(),
   }).optional(),
+  buildings: z.array(z.object({
+    id: z.string(),
+    levels: z.number(),
+  })).optional(),
   projectTeam: z.array(z.object({
     name: z.string(),
     role: z.string(),
@@ -39,6 +49,16 @@ const constructionTenderSchema = z.object({
     name: z.string(),
     description: z.string().optional(),
     selected: z.boolean(),
+  })).optional(),
+  dpgfMethod: z.enum(['ai', 'upload']).optional(),
+  keyDates: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    date: z.date().optional(),
+  })).optional(),
+  lotClosureDates: z.array(z.object({
+    lotName: z.string(),
+    closureDate: z.date().optional(),
   })).optional(),
 });
 
@@ -67,6 +87,12 @@ const formSchema = z.object({
       selected: z.boolean()
     })
   ),
+  adminDocuments: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    })
+  ).optional(),
 });
 
 export type TenderFormValues = z.infer<typeof formSchema>;
@@ -79,6 +105,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
   const { tenderId } = useParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [location, setLocation] = useState<{address: string; lat: number; lng: number} | null>(null);
+  const [address, setAddress] = useState('');
 
   const form = useForm<TenderFormValues>({
     resolver: zodResolver(formSchema),
@@ -95,14 +122,17 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
         constructionType: "neuf",
         area: "",
         location: undefined,
+        buildings: [],
         projectTeam: [],
-        lots: []
+        lots: [],
+        dpgfMethod: 'ai',
       },
       service: {
         serviceScope: "local",
         serviceDuration: "ponctuel"
       },
       invitedCompanies: [],
+      adminDocuments: [],
     },
   });
 
@@ -118,8 +148,10 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     console.log("Draft saved successfully!");
   }
 
-  // Handle address selection on map
-  const handleAddressChange = (address: string) => {
+  // Handle address search for map
+  const handleLocateAddress = () => {
+    if (!address.trim()) return;
+    
     // This would normally use a geocoding service
     // For demo purposes, we'll set a fixed location
     const mockLocation = {
@@ -149,6 +181,20 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     }
   }, [isEditing, tenderId, form]);
 
+  // Define steps for the tender creation wizard
+  const steps = [
+    { id: 1, label: "Type d'AO" },
+    { id: 2, label: "Confidentialité" },
+    { id: 3, label: "Informations" },
+    { id: 4, label: "Détails" },
+    { id: 5, label: "Équipe projet" },
+    { id: 6, label: "Lots" },
+    { id: 7, label: "DCE" },
+    { id: 8, label: "Administratif" },
+    { id: 9, label: "Invitations" },
+    { id: 10, label: "Publication" },
+  ];
+
   return (
     <Layout>
       <div className="min-h-screen bg-background">
@@ -169,18 +215,9 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
               <div className="flex justify-between items-center">
                 <TenderFormNav 
                   currentStep={currentStep}
-                  totalSteps={9}
+                  totalSteps={steps.length}
                   onStepClick={(step) => setCurrentStep(step)}
                 />
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={saveDraft}
-                  className="flex items-center gap-2"
-                >
-                  <SaveIcon size={16} />
-                  Enregistrer brouillon
-                </Button>
               </div>
 
               {currentStep === 1 && (
@@ -239,12 +276,24 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                     <div className="space-y-3 mt-6">
                       <FormItem>
                         <FormLabel>Adresse du projet</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Entrez l'adresse du projet" 
-                            onChange={(e) => handleAddressChange(e.target.value)}
-                          />
-                        </FormControl>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="Entrez l'adresse du projet" 
+                              value={address}
+                              onChange={(e) => setAddress(e.target.value)}
+                              className="flex-1"
+                            />
+                          </FormControl>
+                          <Button 
+                            type="button" 
+                            onClick={handleLocateAddress}
+                            className="shrink-0"
+                          >
+                            <MapPin size={16} className="mr-2" />
+                            Localiser
+                          </Button>
+                        </div>
                         <FormDescription>
                           Localisation précise du projet
                         </FormDescription>
@@ -396,131 +445,73 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                   )}
                 </div>
               )}
-
-              {currentStep === 5 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Dossier de Consultation des Entreprises (DCE)</h2>
-                  <p className="text-muted-foreground">
-                    Cette section vous permet de gérer les documents techniques de votre appel d'offres.
-                  </p>
-                  
-                  <div className="bg-secondary/50 p-6 rounded-lg border border-border flex items-center justify-center flex-col h-[300px]">
-                    <p className="text-muted-foreground text-center mb-4">
-                      Déposez vos fichiers ici ou parcourez vos dossiers
-                    </p>
-                    <Button variant="outline">Parcourir</Button>
-                  </div>
-                </div>
+              
+              {currentStep === 5 && form.getValues("type") === "construction" && (
+                <TenderProjectTeam form={form} />
               )}
-
-              {currentStep === 6 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Documents administratifs</h2>
-                  <p className="text-muted-foreground">
-                    Ajoutez les documents administratifs nécessaires pour votre appel d'offres.
-                  </p>
-                  
-                  <div className="bg-secondary/50 p-6 rounded-lg border border-border flex items-center justify-center flex-col h-[300px]">
-                    <p className="text-muted-foreground text-center mb-4">
-                      Déposez vos fichiers ici ou parcourez vos dossiers
-                    </p>
-                    <Button variant="outline">Parcourir</Button>
-                  </div>
-                </div>
+              
+              {currentStep === 6 && form.getValues("type") === "construction" && (
+                <TenderLots form={form} />
               )}
 
               {currentStep === 7 && (
-                <TenderCompanyInvitation form={form} />
+                <TenderDCE form={form} />
               )}
 
               {currentStep === 8 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Planification</h2>
-                  <p className="text-muted-foreground">
-                    Définissez le calendrier de votre appel d'offres
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormItem>
-                      <FormLabel>Date de publication</FormLabel>
-                      <FormControl>
-                        <Input type="date" />
-                      </FormControl>
-                      <FormDescription>
-                        Date à laquelle l'appel d'offres sera visible
-                      </FormDescription>
-                    </FormItem>
-                    
-                    <FormItem>
-                      <FormLabel>Date limite de réponse</FormLabel>
-                      <FormControl>
-                        <Input type="date" />
-                      </FormControl>
-                      <FormDescription>
-                        Date limite pour recevoir les propositions
-                      </FormDescription>
-                    </FormItem>
-                    
-                    <FormItem>
-                      <FormLabel>Date de début du projet</FormLabel>
-                      <FormControl>
-                        <Input type="date" />
-                      </FormControl>
-                      <FormDescription>
-                        Date prévue pour le démarrage du projet
-                      </FormDescription>
-                    </FormItem>
-                    
-                    <FormItem>
-                      <FormLabel>Durée estimée (en mois)</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="1" placeholder="12" />
-                      </FormControl>
-                      <FormDescription>
-                        Durée estimée du projet en mois
-                      </FormDescription>
-                    </FormItem>
-                  </div>
-                </div>
+                <TenderAdminDocuments form={form} />
               )}
 
               {currentStep === 9 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Publication</h2>
-                  <p className="text-muted-foreground">
-                    Vérifiez les informations avant de publier votre appel d'offres
-                  </p>
-                  
-                  <div className="bg-secondary/30 p-6 rounded-lg border border-border">
-                    <h3 className="font-medium mb-4">Récapitulatif</h3>
+                <TenderCompanyInvitation form={form} />
+              )}
+
+              {currentStep === 10 && (
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold">Publication</h2>
+                    <p className="text-muted-foreground">
+                      Vérifiez les informations avant de publier votre appel d'offres
+                    </p>
                     
-                    <div className="space-y-2">
-                      <div className="flex justify-between pb-2 border-b">
-                        <span className="text-muted-foreground">Type</span>
-                        <span className="font-medium">
-                          {form.getValues("type") === "design" ? "Conception" : 
-                           form.getValues("type") === "construction" ? "Réalisation" : 
-                           "Services"}
-                        </span>
+                    {form.getValues("type") === "construction" && (
+                      <div className="space-y-6">
+                        <TenderKeyDates form={form} />
+                        <TenderLotsClosureDate form={form} />
                       </div>
+                    )}
+                    
+                    <div className="bg-secondary/30 p-6 rounded-lg border border-border">
+                      <h3 className="font-medium mb-4">Récapitulatif</h3>
                       
-                      <div className="flex justify-between pb-2 border-b">
-                        <span className="text-muted-foreground">Confidentialité</span>
-                        <span className="font-medium">
-                          {form.getValues("privacy") === "open" ? "Ouvert" : 
-                           form.getValues("privacy") === "restricted" ? "Restreint" : 
-                           "Privé"}
-                        </span>
-                      </div>
-                      
-                      <div className="flex justify-between pb-2 border-b">
-                        <span className="text-muted-foreground">Nom du projet</span>
-                        <span className="font-medium">{form.getValues("projectName") || "Non défini"}</span>
-                      </div>
-                      
-                      <div className="flex justify-between pb-2 border-b">
-                        <span className="text-muted-foreground">Entreprises invitées</span>
-                        <span className="font-medium">{form.getValues("invitedCompanies").length}</span>
+                      <div className="space-y-2">
+                        <div className="flex justify-between pb-2 border-b">
+                          <span className="text-muted-foreground">Type</span>
+                          <span className="font-medium">
+                            {form.getValues("type") === "design" ? "Conception" : 
+                             form.getValues("type") === "construction" ? "Réalisation" : 
+                             "Services"}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between pb-2 border-b">
+                          <span className="text-muted-foreground">Confidentialité</span>
+                          <span className="font-medium">
+                            {form.getValues("privacy") === "open" ? "Ouvert" : 
+                             form.getValues("privacy") === "restricted" ? "Restreint" : 
+                             "Privé"}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between pb-2 border-b">
+                          <span className="text-muted-foreground">Nom du projet</span>
+                          <span className="font-medium">{form.getValues("projectName") || "Non défini"}</span>
+                        </div>
+                        
+                        <div className="flex justify-between pb-2 border-b">
+                          <span className="text-muted-foreground">Entreprises invitées</span>
+                          <span className="font-medium">{form.getValues("invitedCompanies").length}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -532,12 +523,23 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                   <Button
                     variant="secondary"
                     onClick={() => setCurrentStep(currentStep - 1)}
-                    className="mr-2"
+                    className="mr-auto"
                   >
                     Précédent
                   </Button>
                 )}
-                {currentStep < 9 ? (
+                
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={saveDraft}
+                  className="mr-2"
+                >
+                  <SaveIcon size={16} className="mr-2" />
+                  Enregistrer brouillon
+                </Button>
+                
+                {currentStep < steps.length ? (
                   <Button onClick={() => setCurrentStep(currentStep + 1)}>Suivant</Button>
                 ) : (
                   <Button type="submit">
