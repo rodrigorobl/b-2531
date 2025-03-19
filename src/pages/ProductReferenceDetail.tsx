@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useParams, Link } from 'react-router-dom';
@@ -23,10 +24,16 @@ import {
   Home,
   HardHat,
   Briefcase,
-  Send,
   CheckCircle,
   MapPin,
+  ExternalLink,
 } from 'lucide-react';
+import { 
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ProjectDocuments from '@/components/product-reference/ProjectDocuments';
 import ReferenceTimeline from '@/components/product-reference/ReferenceTimeline';
 import CommunicationHistory from '@/components/product-reference/CommunicationHistory';
@@ -70,27 +77,6 @@ const ProjectDetailHeader = ({ project }: { project: any }) => {
               <><Clock size={14} className="mr-1" /> Référencement à démarrer</>
             )}
           </Badge>
-          {project.quoteStatus && (
-            <div className="mt-2">
-              <Badge 
-                variant="outline" 
-                className={`
-                  ${project.quoteStatus === 'signed' ? 'border-green-500 text-green-600 bg-green-50' : ''}
-                  ${project.quoteStatus === 'sent' ? 'border-blue-500 text-blue-600 bg-blue-50' : ''}
-                  ${project.quoteStatus === 'to-send' ? 'border-yellow-500 text-yellow-600 bg-yellow-50' : ''}
-                  px-3 py-1.5
-                `}
-              >
-                {project.quoteStatus === 'signed' ? (
-                  <><CheckCircle size={14} className="mr-1" /> Devis signé</>
-                ) : project.quoteStatus === 'sent' ? (
-                  <><Send size={14} className="mr-1" /> Devis envoyé</>
-                ) : (
-                  <><FileText size={14} className="mr-1" /> Devis à réaliser</>
-                )}
-              </Badge>
-            </div>
-          )}
         </div>
       </div>
       <div className="prose prose-sm max-w-none">
@@ -112,9 +98,6 @@ export default function ProductReferenceDetail() {
     location: "Lyon",
     description: "Projet de construction d'une résidence de 45 logements répartis sur 3 bâtiments. Les bâtiments sont conçus pour respecter la norme RT2020 et intégrer des solutions innovantes en matière d'isolation thermique et de ventilation.",
     referenceStatus: "in-progress",
-    quoteStatus: "sent",
-    quoteAmount: "45 000 €",
-    quoteSentDate: "2024-03-15",
     productName: "Panneaux isolants A+",
     promoter: {
       name: "Immobilier Moderne",
@@ -245,6 +228,43 @@ export default function ProductReferenceDetail() {
     console.log(`Contact clicked: ${contactType} - ${contactId}`);
   };
 
+  // Contact card component used for hovering over contact names
+  const ContactHoverCard = ({ contact }: { contact: any }) => {
+    return (
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <button className="font-medium hover:text-primary hover:underline focus:outline-none">
+            {contact.name}
+          </button>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80">
+          <div className="flex justify-between space-x-4">
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold">{contact.name}</h4>
+              <div className="flex items-center pt-2">
+                <Briefcase className="h-4 w-4 text-muted-foreground mr-1" />
+                <p className="text-sm text-muted-foreground">{contact.company}</p>
+              </div>
+              <div className="flex items-center">
+                <User className="h-4 w-4 text-muted-foreground mr-1" />
+                <p className="text-sm text-muted-foreground">{contact.role}</p>
+              </div>
+              <div className="pt-2">
+                <Link 
+                  to={`/contacts/${contact.name.replace(/\s+/g, '-').toLowerCase()}`}
+                  className="text-sm text-primary flex items-center hover:underline"
+                >
+                  Voir la fiche détaillée
+                  <ExternalLink className="ml-1 h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    );
+  };
+
   return (
     <Layout>
       <div className="container p-6">
@@ -305,7 +325,7 @@ export default function ProductReferenceDetail() {
                               <User size={16} className="text-primary" />
                             </div>
                             <div>
-                              <p className="font-medium">{contact.name}</p>
+                              <ContactHoverCard contact={contact} />
                               <p className="text-sm text-muted-foreground">{contact.role}</p>
                             </div>
                           </div>
@@ -351,7 +371,7 @@ export default function ProductReferenceDetail() {
                                   <User size={16} className="text-primary" />
                                 </div>
                                 <div>
-                                  <p className="font-medium">{contact.name}</p>
+                                  <ContactHoverCard contact={contact} />
                                   <p className="text-sm text-muted-foreground">{contact.role}</p>
                                 </div>
                               </div>
@@ -396,7 +416,7 @@ export default function ProductReferenceDetail() {
                         {office.contacts.map((contact, idx) => (
                           <div key={idx} className="pl-3 border-l-2 border-muted mt-2 flex justify-between items-center">
                             <div>
-                              <p className="font-medium text-sm">{contact.name}</p>
+                              <ContactHoverCard contact={{...contact, company: office.name}} />
                               <p className="text-xs text-muted-foreground">{contact.role}</p>
                             </div>
                             <Button 
