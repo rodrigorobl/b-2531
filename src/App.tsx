@@ -56,6 +56,7 @@ import ServicesTenderSearch from "./pages/ServicesTenderSearch";
 import ServicesTenderDetails from "./pages/ServicesTenderDetails";
 import SubmitServicesQuote from "./pages/SubmitServicesQuote";
 import ServicesDetailTender from "./pages/ServicesDetailTender";
+import ConstructionQuoteDetails from "./pages/ConstructionQuoteDetails";
 
 const queryClient = new QueryClient();
 
@@ -116,11 +117,11 @@ const App = () => (
             <Route path="/services-quote-tracking/:quoteId" element={<ServicesQuoteTracking />} />
             <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
             <Route path="/quote-analysis/:quoteId" element={<QuoteAnalysis />} />
-            <Route path="/company-details-tender/:quoteId" element={<CompanyDetailsTender />} />
+            <Route path="/company-details-tender/:quoteId" element={<ConstructionQuoteDetails />} />
+            <Route path="/services-detail-tender/:quoteId" element={<ServicesDetailTender />} />
             <Route path="/services-tender-search" element={<ServicesTenderSearch />} />
             <Route path="/services-tender-details/:tenderId" element={<ServicesTenderDetails />} />
             <Route path="/submit-services-quote/:tenderId" element={<SubmitServicesQuote />} />
-            <Route path="/services-detail-tender/:quoteId" element={<ServicesDetailTender />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

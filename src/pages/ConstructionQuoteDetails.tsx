@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,6 +16,11 @@ export default function ConstructionQuoteDetails() {
   const { quoteId } = useParams<{ quoteId: string }>();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('details');
+  
+  useEffect(() => {
+    console.log('ConstructionQuoteDetails - Rendered with quoteId:', quoteId);
+    console.log('ConstructionQuoteDetails - Current location:', location.pathname);
+  }, [quoteId, location]);
   
   // Extract quote ID from the URL path if it's in the format /company-details-tender/quote-XXXX
   const extractedQuoteId = location.pathname.split('quote-')[1] || quoteId || 'unknown';
