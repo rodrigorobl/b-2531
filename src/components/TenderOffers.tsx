@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, AlertCircle, Clock, Info } from 'lucide-react';
@@ -25,8 +24,6 @@ interface TenderOffersProps {
 export default function TenderOffers({
   offers
 }: TenderOffersProps) {
-  // Two example offers: one for Gros Œuvre with pending status
-  // and one for Peinture with status "conforme"
   const exampleOffers: Offer[] = [
     {
       id: "offer-001",
@@ -47,18 +44,15 @@ export default function TenderOffers({
     }
   ];
 
-  // Préparer les données pour l'affichage
   const prepareOfferData = (offer: Offer) => {
     return {
       ...offer,
       amount: offer.amount || Math.floor(Math.random() * 50000) + 10000,
-      // Valeur aléatoire si non définie
       submissionDate: offer.submissionDate || (offer.status === 'submitted' ? '10/05/2024' : ''),
       quoteIndex: offer.quoteIndex || `QT-${offer.id.substring(offer.id.length - 3)}`
     };
   };
 
-  // Utiliser les exemples au lieu des offres passées en props
   const enrichedOffers = exampleOffers.map(prepareOfferData);
 
   return (
