@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Wrench, MapPin, Clock, Building } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Wrench, MapPin, Clock, Building, Crane, Truck, LampFloor, Droplet, Scale, Trash2, Flame, FirstAid, Wind } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -22,21 +22,21 @@ export default function DashboardServices() {
     unreadMessages: 4
   };
 
-  // Sample projects data for Services
+  // Projets en cours liés aux services spécifiés
   const projects = [
     {
       id: 'project-001',
-      name: 'Résidence Les Ormes - Électricité',
-      client: 'NEXITY',
-      type: 'Logement',
+      name: 'Tour Eiffel - Location de grues mobiles',
+      client: 'VINCI',
+      type: 'Tertiaire',
       status: 'in-progress' as const,
       progress: 40,
       deadline: '30/07/2024'
     },
     {
       id: 'project-002',
-      name: 'Centre commercial - Climatisation',
-      client: 'VINCI',
+      name: 'Siège Social Michelin - Éclairage temporaire',
+      client: 'BOUYGUES',
       type: 'Tertiaire',
       status: 'assigned' as const,
       progress: 15,
@@ -44,8 +44,8 @@ export default function DashboardServices() {
     },
     {
       id: 'project-003',
-      name: 'École Saint-Pierre - Plomberie',
-      client: 'Mairie de Lyon',
+      name: 'Hôpital Saint-Louis - Équipements premiers secours',
+      client: 'Mairie de Paris',
       type: 'Public',
       status: 'in-progress' as const,
       progress: 60,
@@ -53,66 +53,66 @@ export default function DashboardServices() {
     }
   ];
 
-  // Sample tender offers data for Services
+  // Appels d'offres liés aux services spécifiés
   const tenderOffers = [
     {
       id: 'tender-001',
-      title: 'Lot 5 - Électricité',
-      project: 'Résidence Les Cerisiers',
+      title: 'Location de réservoirs d\'eau temporaire',
+      project: 'Éco-quartier Confluence',
       status: 'open' as const,
       deadline: '15/05/2024',
-      estimatedValue: '95 000 €'
-    },
-    {
-      id: 'tender-002',
-      title: 'Lot 7 - Plomberie/Sanitaires',
-      project: 'Éco-quartier Les Saules',
-      status: 'open' as const,
-      deadline: '20/05/2024',
       estimatedValue: '75 000 €'
     },
     {
+      id: 'tender-002',
+      title: 'Service de déménagement bureaux temporaires',
+      project: 'Tour Alto La Défense',
+      status: 'open' as const,
+      deadline: '20/05/2024',
+      estimatedValue: '45 000 €'
+    },
+    {
       id: 'tender-003',
-      title: 'Lot 8 - Climatisation',
-      project: 'Centre commercial Grand Place',
+      title: 'Location d\'équipements contrôle qualité air',
+      project: 'Métro Grand Paris Express',
       status: 'open' as const,
       deadline: '25/05/2024',
       estimatedValue: '110 000 €'
     }
   ];
 
-  // Sample priority actions for Services
+  // Actions prioritaires liées aux services spécifiés
   const priorityActions = [
     {
       id: 'action-001',
-      title: 'Soumettre devis Électricité',
-      project: 'Résidence Les Cerisiers',
+      title: 'Soumettre devis Grues Mobiles',
+      project: 'Stade de France',
       deadline: '15/05/2024',
       type: 'quote' as const
     },
     {
       id: 'action-002',
-      title: 'Commander matériel plomberie',
-      project: 'École Saint-Pierre',
+      title: 'Commander matériel soudage',
+      project: 'Centrale Nucléaire',
       deadline: '12/05/2024',
       type: 'purchase' as const
     },
     {
       id: 'action-003',
-      title: 'Intervention dépannage',
-      project: 'Centre commercial',
+      title: 'Intervention nettoyage urbain',
+      project: 'Quartier La Part-Dieu',
       deadline: '10/05/2024',
       type: 'service' as const
     }
   ];
 
-  // Sample pending quotes data
+  // Devis en attente liés aux services spécifiés
   const pendingQuotes = [
     {
       id: 'quote-001',
-      projectName: 'Résidence Les Cerisiers',
-      lot: 'Électricité',
-      amount: '92 300 €',
+      projectName: 'Consultation juridique - Chantier Médipôle',
+      lot: 'Services juridiques',
+      amount: '12 800 €',
       status: 'in-progress' as const,
       urgency: 'high' as const,
       date: '05/05/2024',
@@ -120,9 +120,9 @@ export default function DashboardServices() {
     },
     {
       id: 'quote-002',
-      projectName: 'Éco-quartier Les Saules',
-      lot: 'Plomberie',
-      amount: '71 500 €',
+      projectName: 'Location grues mobiles - Tour Trinity',
+      lot: 'Équipements lourds',
+      amount: '85 500 €',
       status: 'to-analyze' as const,
       urgency: 'medium' as const,
       date: '08/05/2024',
@@ -256,21 +256,21 @@ export default function DashboardServices() {
                   {
                     id: 'activity-001',
                     title: 'Nouvel appel d\'offres',
-                    description: 'Lot Électricité sur Résidence Les Cerisiers',
+                    description: 'Location d\'équipements contrôle qualité air',
                     timestamp: 'Il y a 2 heures',
                     type: 'tender' as const
                   },
                   {
                     id: 'activity-002',
                     title: 'Nouveau message',
-                    description: 'Question technique sur installation électrique',
+                    description: 'Question technique sur fourniture d\'éclairage',
                     timestamp: 'Il y a 5 heures',
                     type: 'message' as const
                   },
                   {
                     id: 'activity-003',
                     title: 'Contrat signé',
-                    description: 'Contrat plomberie pour École Saint-Pierre validé',
+                    description: 'Service juridique pour Consortium BTP',
                     timestamp: 'Hier, 14:30',
                     type: 'document' as const
                   }
