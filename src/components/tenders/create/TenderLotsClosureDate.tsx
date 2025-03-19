@@ -26,11 +26,19 @@ const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) =
   // Get lots from form
   const lots = form.getValues('construction.lots') || [];
   
-  // Initialize closure dates
-  const [lotClosureDates, setLotClosureDates] = useState<LotClosureDate[]>(
-    form.getValues('construction.lotClosureDates') || 
-    lots.map(lot => ({ lotName: lot.name, closureDate: undefined }))
-  );
+  // Initialize closure dates with proper typing
+  const existingClosureDates = form.getValues('construction.lotClosureDates');
+  const initialLotClosureDates: LotClosureDate[] = existingClosureDates ? 
+    existingClosureDates.map(item => ({
+      lotName: item.lotName || '',
+      closureDate: item.closureDate
+    })) : 
+    lots.map(lot => ({ 
+      lotName: lot.name, 
+      closureDate: undefined 
+    }));
+
+  const [lotClosureDates, setLotClosureDates] = useState<LotClosureDate[]>(initialLotClosureDates);
   
   // Apply the same date to all lots
   const applyGlobalDate = () => {

@@ -33,9 +33,17 @@ const TenderKeyDates: React.FC<TenderKeyDatesProps> = ({ form }) => {
     { id: 'delivery', name: 'Livraison', date: undefined },
   ];
 
-  const [keyDates, setKeyDates] = useState<KeyDate[]>(
-    form.getValues('construction.keyDates') || defaultKeyDates
-  );
+  // Make sure we handle the form value properly, ensuring it matches KeyDate[]
+  const existingDates = form.getValues('construction.keyDates');
+  const initialKeyDates: KeyDate[] = existingDates ? 
+    existingDates.map(date => ({
+      id: date.id || '', 
+      name: date.name || '', 
+      date: date.date
+    })) : 
+    defaultKeyDates;
+
+  const [keyDates, setKeyDates] = useState<KeyDate[]>(initialKeyDates);
 
   const updateDate = (id: string, date: Date | undefined) => {
     const updatedDates = keyDates.map(item => 

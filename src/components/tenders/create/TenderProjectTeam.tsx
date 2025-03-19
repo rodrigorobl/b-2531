@@ -8,15 +8,28 @@ import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Users } from 'lucide-react';
 
+interface TeamMember {
+  name: string;
+  role: string;
+}
+
 interface TenderProjectTeamProps {
   form: UseFormReturn<TenderFormValues>;
 }
 
 const TenderProjectTeam: React.FC<TenderProjectTeamProps> = ({ form }) => {
-  const [newTeamMember, setNewTeamMember] = useState({ name: '', role: 'architecte' });
-  const [projectTeam, setProjectTeam] = useState<Array<{name: string, role: string}>>(
-    form.getValues('construction.projectTeam') || []
-  );
+  const [newTeamMember, setNewTeamMember] = useState<TeamMember>({ name: '', role: 'architecte' });
+  
+  // Handle existing team members properly, ensuring they match TeamMember type
+  const existingTeam = form.getValues('construction.projectTeam');
+  const initialProjectTeam: TeamMember[] = existingTeam ? 
+    existingTeam.map(member => ({
+      name: member.name || '',
+      role: member.role || ''
+    })) : 
+    [];
+  
+  const [projectTeam, setProjectTeam] = useState<TeamMember[]>(initialProjectTeam);
   
   const teamRoles = [
     { value: 'architecte', label: 'Architecte' },
