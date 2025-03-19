@@ -14,14 +14,20 @@ interface BuildingManagerProps {
 const BuildingManager: React.FC<BuildingManagerProps> = ({ form }) => {
   // State for managing building information
   const initialBuildings = form.getValues('construction.buildings') || [];
-  const [buildings, setBuildings] = useState<Array<{id: string, levels: number}>>(initialBuildings);
+  // Ensure that the initial buildings have all required properties with default values if missing
+  const safeInitialBuildings = initialBuildings.map(building => ({
+    id: building.id || `building-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    levels: building.levels || 0
+  }));
+  
+  const [buildings, setBuildings] = useState<Array<{id: string, levels: number}>>(safeInitialBuildings);
   const [newBuilding, setNewBuilding] = useState({ levels: 0 });
   
   const addBuilding = () => {
     if (newBuilding.levels < 0) return;
     
     const newBuildingItem = {
-      id: `building-${Date.now()}`,
+      id: `building-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       levels: newBuilding.levels
     };
     
