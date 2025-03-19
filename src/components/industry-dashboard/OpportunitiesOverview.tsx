@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, ExternalLink, FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface Opportunity {
   id: string;
@@ -20,6 +20,16 @@ interface OpportunitiesOverviewProps {
 }
 
 export default function OpportunitiesOverview({ opportunities }: OpportunitiesOverviewProps) {
+  const navigate = useNavigate();
+  
+  const handleDetailsClick = (opportunity: Opportunity) => {
+    if (opportunity.type === 'reference') {
+      navigate(`/product-reference/${opportunity.id}`);
+    } else {
+      navigate(`/quote-detail/${opportunity.id}`);
+    }
+  };
+  
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -52,11 +62,13 @@ export default function OpportunitiesOverview({ opportunities }: OpportunitiesOv
                 </Badge>
               </div>
               <div className="flex justify-end mt-2">
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/${opportunity.type === 'reference' ? 'product-reference' : 'quote-detail'}/${opportunity.id}`}>
-                    <FileText className="h-4 w-4 mr-1" />
-                    Détails
-                  </Link>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => handleDetailsClick(opportunity)}
+                >
+                  <FileText className="h-4 w-4 mr-1" />
+                  Détails
                 </Button>
               </div>
             </div>

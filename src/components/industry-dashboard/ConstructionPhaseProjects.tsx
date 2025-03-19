@@ -1,13 +1,12 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { FileText, ArrowRight, Check, Clock, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from 'react-router-dom';
+import { Clock, FileText, ExternalLink } from 'lucide-react';
 
-interface QuoteStatus {
+interface Quote {
   id: string;
   projectName: string;
   lot: string;
@@ -18,82 +17,84 @@ interface QuoteStatus {
 }
 
 interface ConstructionPhaseProjectsProps {
-  quotes: QuoteStatus[];
+  quotes: Quote[];
 }
 
 export default function ConstructionPhaseProjects({ quotes }: ConstructionPhaseProjectsProps) {
-  const getStatusBadge = (status: QuoteStatus['status']) => {
+  const navigate = useNavigate();
+  
+  const getStatusLabel = (status: 'pending' | 'approved' | 'rejected') => {
     switch (status) {
-      case 'pending':
-        return <Badge variant="secondary">En attente</Badge>;
-      case 'approved':
-        return <Badge variant="default">Validé</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive">Refusé</Badge>;
+      case 'pending': return 'En attente';
+      case 'approved': return 'Approuvé';
+      case 'rejected': return 'Rejeté';
+      default: return status;
+    }
+  };
+  
+  const getStatusVariant = (status: 'pending' | 'approved' | 'rejected') => {
+    switch (status) {
+      case 'pending': return 'secondary';
+      case 'approved': return 'default';
+      case 'rejected': return 'destructive';
+      default: return 'secondary';
     }
   };
 
-  const getStatusIcon = (status: QuoteStatus['status']) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="h-4 w-4 text-muted-foreground" />;
-      case 'approved':
-        return <Check className="h-4 w-4 text-green-500" />;
-      case 'rejected':
-        return <X className="h-4 w-4 text-destructive" />;
-    }
+  const handleDetailsClick = (id: string) => {
+    navigate(`/quote-detail/${id}`);
   };
-
+  
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Mes projets en phase de réalisation</CardTitle>
-        <Button asChild>
-          <Link to="/quotes-to-analyze">
-            <ArrowRight className="mr-2 h-4 w-4" />
+        <CardTitle className="text-xl">Mes projets en phase de réalisation</CardTitle>
+        <Button variant="outline" size="sm" asChild>
+          <Link to="/quotes-list">
+            <ExternalLink className="h-4 w-4 mr-2" />
             Voir tous
           </Link>
         </Button>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Projet</TableHead>
-              <TableHead>Lot</TableHead>
-              <TableHead>Entreprise</TableHead>
-              <TableHead>Statut du devis</TableHead>
-              <TableHead>Montant</TableHead>
-              <TableHead>Dernière mise à jour</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {quotes.map((quote) => (
-              <TableRow key={quote.id}>
-                <TableCell className="font-medium">{quote.projectName}</TableCell>
-                <TableCell>{quote.lot}</TableCell>
-                <TableCell>{quote.contractor}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(quote.status)}
-                    {getStatusBadge(quote.status)}
-                  </div>
-                </TableCell>
-                <TableCell>{quote.amount}</TableCell>
-                <TableCell>{quote.updatedAt}</TableCell>
-                <TableCell>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to={`/quote-detail/${quote.id}`}>
-                      <FileText className="h-4 w-4 mr-1" />
-                      Détails
-                    </Link>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="space-y-4">
+          {quotes.map((quote) => (
+            <div
+              key={quote.id}
+              className="flex flex-col p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div className="space-y-1">
+                  <h3 className="font-medium">{quote.projectName}</h3>
+                  <p className="text-sm font-medium">{quote.lot}</p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">Entreprise:</span> {quote.contractor}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <Badge variant={getStatusVariant(quote.status)}>
+                    {getStatusLabel(quote.status)}
+                  </Badge>
+                  <span className="text-sm font-medium">{quote.amount}</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="flex items-center text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3 mr-1" />
+                  Mis à jour le {quote.updatedAt}
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleDetailsClick(quote.id)}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Détails
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

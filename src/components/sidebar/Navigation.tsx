@@ -41,6 +41,11 @@ export const Navigation: React.FC<NavigationProps> = ({
     }
     return '/company';
   };
+
+  // This function ensures we preserve the active profile when navigating to profile-specific pages
+  const getProfilePrefixedRoute = (basePath: string) => {
+    return `${basePath}?profile=${activeProfile}`;
+  };
   
   return <nav className="flex-1 overflow-y-auto p-4">
       <div className="mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">

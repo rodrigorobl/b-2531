@@ -1,96 +1,96 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { FileText, ArrowRight, Clock, AlertTriangle, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from 'react-router-dom';
+import { FileText, Clock, ExternalLink } from 'lucide-react';
 
-interface ReferenceStatus {
+interface Reference {
   id: string;
   projectName: string;
   productName: string;
-  status: 'non-reference' | 'en-cours' | 'valide';
+  status: 'en-cours' | 'valide' | 'non-reference';
   betName: string;
   updatedAt: string;
 }
 
 interface DesignPhaseProjectsProps {
-  references: ReferenceStatus[];
+  references: Reference[];
 }
 
 export default function DesignPhaseProjects({ references }: DesignPhaseProjectsProps) {
-  const getStatusBadge = (status: ReferenceStatus['status']) => {
+  const navigate = useNavigate();
+  
+  const getStatusLabel = (status: 'en-cours' | 'valide' | 'non-reference') => {
     switch (status) {
-      case 'non-reference':
-        return <Badge variant="destructive">Non référencé</Badge>;
-      case 'en-cours':
-        return <Badge variant="secondary">En cours</Badge>;
-      case 'valide':
-        return <Badge variant="default">Validé</Badge>;
+      case 'en-cours': return 'En cours';
+      case 'valide': return 'Validé';
+      case 'non-reference': return 'Non référencé';
+      default: return status;
+    }
+  };
+  
+  const getStatusVariant = (status: 'en-cours' | 'valide' | 'non-reference') => {
+    switch (status) {
+      case 'en-cours': return 'secondary';
+      case 'valide': return 'default';
+      case 'non-reference': return 'destructive';
+      default: return 'secondary';
     }
   };
 
-  const getStatusIcon = (status: ReferenceStatus['status']) => {
-    switch (status) {
-      case 'non-reference':
-        return <AlertTriangle className="h-4 w-4 text-destructive" />;
-      case 'en-cours':
-        return <Clock className="h-4 w-4 text-muted-foreground" />;
-      case 'valide':
-        return <Check className="h-4 w-4 text-green-500" />;
-    }
+  const handleDetailsClick = (id: string) => {
+    navigate(`/product-reference/${id}`);
   };
-
+  
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Mes projets en phase de conception</CardTitle>
-        <Button asChild>
+        <CardTitle className="text-xl">Mes projets en phase de conception</CardTitle>
+        <Button variant="outline" size="sm" asChild>
           <Link to="/product-reference">
-            <ArrowRight className="mr-2 h-4 w-4" />
+            <ExternalLink className="h-4 w-4 mr-2" />
             Voir tous
           </Link>
         </Button>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Projet</TableHead>
-              <TableHead>Produit</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>BET</TableHead>
-              <TableHead>Dernière mise à jour</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {references.map((ref) => (
-              <TableRow key={ref.id}>
-                <TableCell className="font-medium">{ref.projectName}</TableCell>
-                <TableCell>{ref.productName}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(ref.status)}
-                    {getStatusBadge(ref.status)}
-                  </div>
-                </TableCell>
-                <TableCell>{ref.betName}</TableCell>
-                <TableCell>{ref.updatedAt}</TableCell>
-                <TableCell>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to={`/product-reference/${ref.id}`}>
-                      <FileText className="h-4 w-4 mr-1" />
-                      Détails
-                    </Link>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="space-y-4">
+          {references.slice(0, 5).map((reference) => (
+            <div
+              key={reference.id}
+              className="flex flex-col p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div className="space-y-1">
+                  <h3 className="font-medium">{reference.projectName}</h3>
+                  <p className="text-sm font-medium">{reference.productName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">BET:</span> {reference.betName}
+                  </p>
+                </div>
+                <Badge variant={getStatusVariant(reference.status)}>
+                  {getStatusLabel(reference.status)}
+                </Badge>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="flex items-center text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3 mr-1" />
+                  Mis à jour le {reference.updatedAt}
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleDetailsClick(reference.id)}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Détails
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

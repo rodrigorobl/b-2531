@@ -7,8 +7,9 @@ import OpportunitiesOverview from '@/components/industry-dashboard/Opportunities
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, FileText } from 'lucide-react';
+import { useProfile } from '@/contexts/ProfileContext';
 
 // Mock data for demonstration
 const projects = [
@@ -172,6 +173,13 @@ const newOpportunities = [
 ];
 
 export default function DashboardIndustry() {
+  const { activeProfile } = useProfile();
+  const navigate = useNavigate();
+
+  const handleProjectDetailClick = (id: string) => {
+    navigate(`/product-reference/${id}`);
+  };
+
   return (
     <Layout>
       <div className="w-full p-6 space-y-6">
@@ -213,11 +221,13 @@ export default function DashboardIndustry() {
                     </div>
                     <div className="flex justify-between items-center mt-4">
                       <span className="text-xs text-muted-foreground">Publication: {opportunity.publishedDate}</span>
-                      <Button asChild variant="outline" size="sm">
-                        <Link to={`/product-reference/${opportunity.id}`}>
-                          <FileText className="h-4 w-4 mr-1" />
-                          Détails
-                        </Link>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleProjectDetailClick(opportunity.id)}
+                      >
+                        <FileText className="h-4 w-4 mr-1" />
+                        Détails
                       </Button>
                     </div>
                   </div>
