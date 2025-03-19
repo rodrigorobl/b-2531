@@ -7,7 +7,7 @@ import { fr } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Calendar, Building, Users, Package, FileText, ClipboardList } from 'lucide-react';
+import { MapPin, Calendar, Building, Users, Package, FileText, ClipboardList, Layout } from 'lucide-react';
 
 interface TenderSummaryProps {
   form: UseFormReturn<TenderFormValues>;
@@ -135,6 +135,20 @@ const TenderSummary: React.FC<TenderSummaryProps> = ({ form }) => {
                   <p className="font-medium">{formValues.construction.area ? `${formValues.construction.area} m²` : "-"}</p>
                 </div>
               </div>
+              
+              {/* Project usages */}
+              {formValues.construction.usages && formValues.construction.usages.length > 0 && (
+                <div>
+                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Layout className="h-4 w-4" /> Usage du projet
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {formValues.construction.usages.map((usage, index) => (
+                      <Badge key={index} variant="outline">{usage.name}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {formValues.construction.location && (
                 <div>

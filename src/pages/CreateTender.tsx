@@ -13,7 +13,7 @@ import TenderTypeSelector from '@/components/tenders/create/TenderTypeSelector';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SaveIcon, MapPin } from 'lucide-react';
+import { SaveIcon, MapPin, ArrowLeft, ArrowRight } from 'lucide-react';
 import ProjectMap from '@/components/ProjectMap';
 import ConstructionTenderForm from '@/components/tenders/create/ConstructionTenderForm';
 import TenderProjectTeam from '@/components/tenders/create/TenderProjectTeam';
@@ -59,6 +59,10 @@ const constructionTenderSchema = z.object({
   lotClosureDates: z.array(z.object({
     lotName: z.string(),
     closureDate: z.date().optional(),
+  })).optional(),
+  usages: z.array(z.object({
+    name: z.string(),
+    description: z.string().optional(),
   })).optional(),
 });
 
@@ -126,6 +130,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
         projectTeam: [],
         lots: [],
         dpgfMethod: 'ai',
+        usages: [],
       },
       service: {
         serviceScope: "local",
@@ -163,6 +168,18 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     form.setValue('construction.location', mockLocation);
   };
 
+  const goToPreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToNextStep = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
   useEffect(() => {
     if (isEditing && tenderId) {
       const mockTenderData: TenderFormValues = {
@@ -185,7 +202,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     { id: 2, label: "Confidentialité" },
     { id: 3, label: "Informations" },
     { id: 4, label: "Détails" },
-    { id: 5, label: "Équipe projet" },
+    { id: 5, label: "Équipe" },
     { id: 6, label: "Lots" },
     { id: 7, label: "DCE" },
     { id: 8, label: "Administratif" },
@@ -210,6 +227,26 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="flex justify-between items-center mb-4">
+                <Button
+                  variant="outline"
+                  onClick={goToPreviousStep}
+                  disabled={currentStep === 1}
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Précédent
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={goToNextStep}
+                  disabled={currentStep === steps.length}
+                >
+                  Suivant
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
               <div className="flex justify-between items-center">
                 <TenderFormNav 
                   currentStep={currentStep}
@@ -443,7 +480,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                   )}
                 </div>
               )}
-              
+
               {currentStep === 5 && form.getValues("type") === "construction" && (
                 <TenderProjectTeam form={form} />
               )}

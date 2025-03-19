@@ -54,6 +54,7 @@ const TenderAdminDocuments: React.FC<TenderAdminDocumentsProps> = ({ form }) => 
 
   return (
     <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Documents administratifs</h2>
       <p className="text-muted-foreground">
         Spécifiez les documents administratifs que les soumissionnaires doivent fournir avec leur offre.
       </p>
