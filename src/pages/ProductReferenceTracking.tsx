@@ -122,7 +122,7 @@ const projectReferences = [
 export default function ProductReferenceTracking() {
   return (
     <Layout>
-      <div className="container p-6 space-y-6">
+      <div className="w-full p-6 space-y-6">
         <header>
           <h1 className="text-3xl font-bold mb-2">Suivi des référencements produits</h1>
           <p className="text-muted-foreground">
