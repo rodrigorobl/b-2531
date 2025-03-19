@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useParams, Link } from 'react-router-dom';
@@ -34,9 +33,11 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 import ProjectDocuments from '@/components/product-reference/ProjectDocuments';
-import ReferenceTimeline from '@/components/product-reference/ReferenceTimeline';
+import ReferenceTimeline, { TimelineEvent } from '@/components/product-reference/ReferenceTimeline';
 import CommunicationHistory from '@/components/product-reference/CommunicationHistory';
+import { useProfile } from '@/contexts/ProfileContext';
 
 const ProjectDetailHeader = ({ project }: { project: any }) => {
   return (
@@ -89,8 +90,10 @@ const ProjectDetailHeader = ({ project }: { project: any }) => {
 export default function ProductReferenceDetail() {
   const { referenceId } = useParams<{ referenceId: string }>();
   const [activeTab, setActiveTab] = useState("information");
+  const { activeProfile } = useProfile();
+  const { toast } = useToast();
   
-  const projectData = {
+  const [projectData, setProjectData] = useState({
     id: referenceId,
     name: "Résidence Les Cerisiers",
     type: "realisation",
@@ -208,7 +211,7 @@ export default function ProductReferenceDetail() {
       { id: "doc3", name: "Métré détaillé projet.xlsx", type: "measurement", uploadDate: "2024-03-01", size: "850 KB" },
       { id: "doc4", name: "Devis Panneaux A+ v1.pdf", type: "quote", uploadDate: "2024-03-15", size: "1.8 MB" }
     ]
-  };
+  });
 
   const promoterContacts = projectData.promoter.contacts;
   
@@ -228,7 +231,22 @@ export default function ProductReferenceDetail() {
     console.log(`Contact clicked: ${contactType} - ${contactId}`);
   };
 
-  // Contact card component used for hovering over contact names
+  const handleTimelineChange = (newTimeline: TimelineEvent[]) => {
+    setProjectData(prev => ({
+      ...prev,
+      timeline: newTimeline
+    }));
+    
+    console.log('Timeline updated:', newTimeline);
+    
+    if (activeProfile === 'industriel') {
+      toast({
+        title: "Planification mise à jour",
+        description: "Les modifications ont été enregistrées avec succès.",
+      });
+    }
+  };
+
   const ContactHoverCard = ({ contact }: { contact: any }) => {
     return (
       <HoverCard>
@@ -438,7 +456,10 @@ export default function ProductReferenceDetail() {
           </TabsContent>
           
           <TabsContent value="timeline">
-            <ReferenceTimeline timeline={projectData.timeline} />
+            <ReferenceTimeline 
+              timeline={projectData.timeline} 
+              onTimelineChange={handleTimelineChange}
+            />
           </TabsContent>
           
           <TabsContent value="communications">
