@@ -30,6 +30,7 @@ interface ProjectReference {
   sentDate: string | null;
   productName: string;
   phase: 'conception' | 'realisation';
+  isMarketAssigned?: boolean;
 }
 
 interface ProductReferenceTableProps {
@@ -37,11 +38,8 @@ interface ProductReferenceTableProps {
 }
 
 export function ProductReferenceTable({ references }: ProductReferenceTableProps) {
-  const [phaseFilter, setPhaseFilter] = useState<'all' | 'conception' | 'realisation'>('all');
-  
-  const filteredReferences = references.filter(ref => 
-    phaseFilter === 'all' || ref.phase === phaseFilter
-  );
+  // We're only showing realisation phase projects so no need for phase filter
+  const filteredReferences = references.filter(ref => ref.phase === 'realisation');
 
   const getStatusBadge = (status: ProjectReference['quoteStatus']) => {
     switch (status) {
@@ -51,15 +49,6 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
         return <Badge variant="default" className="gap-1"><Send className="h-3 w-3" /> Envoyé</Badge>;
       case 'signed':
         return <Badge variant="default" className="bg-green-600 gap-1"><CheckCircle className="h-3 w-3" /> Signé</Badge>;
-    }
-  };
-
-  const getPhaseBadge = (phase: ProjectReference['phase']) => {
-    switch (phase) {
-      case 'conception':
-        return <Badge variant="secondary">Conception</Badge>;
-      case 'realisation':
-        return <Badge variant="default">Réalisation</Badge>;
     }
   };
 
@@ -76,25 +65,6 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
         <div className="font-medium">
           {filteredReferences.length} projet{filteredReferences.length !== 1 ? 's' : ''} trouvé{filteredReferences.length !== 1 ? 's' : ''}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Phase:</span>
-          </div>
-          <Select
-            value={phaseFilter}
-            onValueChange={(value) => setPhaseFilter(value as 'all' | 'conception' | 'realisation')}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Toutes les phases" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les phases</SelectItem>
-              <SelectItem value="conception">Conception</SelectItem>
-              <SelectItem value="realisation">Réalisation</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -102,7 +72,6 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
             <TableRow>
               <TableHead>Projet</TableHead>
               <TableHead>MOE</TableHead>
-              <TableHead>Phase</TableHead>
               <TableHead>Entreprise titulaire</TableHead>
               <TableHead>Statut du devis</TableHead>
               <TableHead>Date d'envoi</TableHead>
@@ -137,11 +106,8 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
                   </div>
                 </TableCell>
                 <TableCell>
-                  {getPhaseBadge(reference.phase)}
-                </TableCell>
-                <TableCell>
-                  {reference.phase === 'conception' ? (
-                    <span className="text-sm text-muted-foreground italic">Non défini</span>
+                  {reference.isMarketAssigned === false ? (
+                    <span className="text-sm text-muted-foreground italic">Marché non attribué</span>
                   ) : (
                     <div className="space-y-1">
                       <div className="font-medium">
@@ -168,7 +134,7 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
                   {reference.sentDate ? reference.sentDate : '-'}
                 </TableCell>
                 <TableCell>
-                  {reference.quoteStatus === 'to-send' ? (
+                  {reference.quoteStatus === 'to-send' && reference.isMarketAssigned !== false ? (
                     <Button size="sm">
                       <Send className="h-4 w-4 mr-2" />
                       Envoyer un devis
