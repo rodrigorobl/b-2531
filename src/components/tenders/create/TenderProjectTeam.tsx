@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Users } from 'lucide-react';
+import { X } from 'lucide-react';
 
-interface TeamMember {
+interface ProjectTeamMember {
   name: string;
   role: string;
 }
@@ -17,115 +16,119 @@ interface TenderProjectTeamProps {
 }
 
 const TenderProjectTeam: React.FC<TenderProjectTeamProps> = ({ form }) => {
-  const [newTeamMember, setNewTeamMember] = useState<TeamMember>({ name: '', role: 'architecte' });
-  
-  // Handle existing team members properly, ensuring they match TeamMember type
+  // Initialize team members from form or empty array
   const existingTeam = form.getValues('construction.projectTeam' as any);
-  const initialProjectTeam: TeamMember[] = existingTeam && Array.isArray(existingTeam) ? 
-    existingTeam.map(member => ({
+  
+  let initialTeam: ProjectTeamMember[] = [];
+  if (existingTeam && Array.isArray(existingTeam)) {
+    initialTeam = existingTeam.map(member => ({
       name: member.name || '',
       role: member.role || ''
-    })) : 
-    [];
+    }));
+  }
   
-  const [projectTeam, setProjectTeam] = useState<TeamMember[]>(initialProjectTeam);
-  
-  const teamRoles = [
-    { value: 'architecte', label: 'Architecte' },
-    { value: 'bet-structure', label: 'BET Structure' },
-    { value: 'bet-fluides', label: 'BET Fluides' },
-    { value: 'bet-electricite', label: 'BET Électricité' },
-    { value: 'bet-thermique', label: 'BET Thermique' },
-    { value: 'acousticien', label: 'Acousticien' },
-    { value: 'bureau-controle', label: 'Bureau de contrôle' },
-    { value: 'coordinateur-sps', label: 'Coordinateur SPS' },
-    { value: 'economiste', label: 'Économiste' },
-    { value: 'paysagiste', label: 'Paysagiste' },
-    { value: 'autre', label: 'Autre' }
-  ];
+  const [teamMembers, setTeamMembers] = useState<ProjectTeamMember[]>(initialTeam);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberRole, setNewMemberRole] = useState('');
   
   const addTeamMember = () => {
-    if (newTeamMember.name.trim() === '') return;
+    if (!newMemberName.trim() || !newMemberRole.trim()) return;
     
-    const updatedTeam = [...projectTeam, { 
-      name: newTeamMember.name, 
-      role: newTeamMember.role 
-    }];
+    const newTeamMember = {
+      name: newMemberName,
+      role: newMemberRole
+    };
     
-    setProjectTeam(updatedTeam);
+    const updatedTeam = [...teamMembers, newTeamMember];
+    setTeamMembers(updatedTeam);
+    
     form.setValue('construction.projectTeam' as any, updatedTeam);
-    setNewTeamMember({ name: '', role: 'architecte' });
+    
+    // Reset input fields
+    setNewMemberName('');
+    setNewMemberRole('');
   };
   
   const removeTeamMember = (index: number) => {
-    const updatedTeam = [...projectTeam];
-    updatedTeam.splice(index, 1);
-    setProjectTeam(updatedTeam);
+    const updatedTeam = teamMembers.filter((_, i) => i !== index);
+    setTeamMembers(updatedTeam);
     form.setValue('construction.projectTeam' as any, updatedTeam);
   };
-  
+
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Users size={18} />
-          <Label className="text-lg font-medium">Équipe de projet</Label>
-        </div>
-        
-        <p className="text-muted-foreground">
-          Ajoutez les membres de l'équipe de projet (architecte, bureaux d'études, etc.)
+      <div>
+        <h2 className="text-xl font-semibold">Équipe projet</h2>
+        <p className="text-muted-foreground mt-1">
+          Définissez les membres clés de l'équipe projet
         </p>
-        
-        <div className="space-y-3 mt-2">
-          {projectTeam.map((member, index) => (
-            <div key={index} className="flex items-center p-3 border rounded-md bg-background">
-              <div className="flex-1">
-                <div className="font-medium">{member.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {teamRoles.find(role => role.value === member.role)?.label || member.role}
-                </div>
-              </div>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => removeTeamMember(index)}
-              >
-                <Trash2 size={16} className="text-destructive" />
-              </Button>
-            </div>
-          ))}
-          
-          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,auto] gap-2">
-            <Input 
-              placeholder="Nom de l'entreprise ou du contact" 
-              value={newTeamMember.name}
-              onChange={(e) => setNewTeamMember({ ...newTeamMember, name: e.target.value })}
+      </div>
+      
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <Label htmlFor="memberName" className="mb-2 block">Nom du membre</Label>
+            <Input
+              id="memberName"
+              placeholder="Jean Dupont"
+              value={newMemberName}
+              onChange={(e) => setNewMemberName(e.target.value)}
             />
-            
-            <Select 
-              value={newTeamMember.role}
-              onValueChange={(value) => setNewTeamMember({ ...newTeamMember, role: value })}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {teamRoles.map(role => (
-                  <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
+          </div>
+          <div className="flex-1">
+            <Label htmlFor="memberRole" className="mb-2 block">Rôle</Label>
+            <Input
+              id="memberRole"
+              placeholder="Architecte"
+              value={newMemberRole}
+              onChange={(e) => setNewMemberRole(e.target.value)}
+            />
+          </div>
+          <div className="flex items-end">
             <Button 
-              type="button" 
               onClick={addTeamMember}
-              size="icon"
+              disabled={!newMemberName.trim() || !newMemberRole.trim()}
+              className="mb-0 h-10"
             >
-              <Plus size={16} />
+              Ajouter
             </Button>
           </div>
         </div>
+        
+        {teamMembers.length > 0 ? (
+          <div className="border rounded-md overflow-hidden">
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Nom</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Rôle</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-background divide-y divide-border">
+                {teamMembers.map((member, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-3 whitespace-nowrap">{member.name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">{member.role}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => removeTeamMember(index)}
+                      >
+                        <X size={16} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="text-center p-6 border rounded-md text-muted-foreground">
+            Aucun membre d'équipe ajouté
+          </div>
+        )}
       </div>
     </div>
   );

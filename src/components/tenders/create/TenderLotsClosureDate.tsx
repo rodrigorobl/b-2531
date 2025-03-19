@@ -20,128 +20,150 @@ interface TenderLotsClosureDateProps {
 }
 
 const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) => {
-  const [globalClosureDate, setGlobalClosureDate] = useState<Date | undefined>(undefined);
+  // Get the current lots from the form
+  const selectedLots = form.getValues('construction.lots' as any) || [];
+  let lotsList: string[] = [];
   
-  // Get lots from form with safe type checking
-  const lots = form.getValues('construction.lots' as any) || [];
-  const lotsArray = Array.isArray(lots) ? lots : [];
+  if (Array.isArray(selectedLots)) {
+    lotsList = selectedLots.map(lot => lot.name);
+  }
   
-  // Initialize closure dates with proper typing
+  // Initialize closure dates from existing values or create new ones
   const existingClosureDates = form.getValues('construction.lotClosureDates' as any);
-  const initialLotClosureDates: LotClosureDate[] = existingClosureDates && Array.isArray(existingClosureDates) ? 
-    existingClosureDates.map(item => ({
-      lotName: item.lotName || '',
-      closureDate: item.closureDate
-    })) : 
-    lotsArray.map(lot => ({ 
-      lotName: lot.name, 
-      closureDate: undefined 
-    }));
+  
+  let initialClosureDates: LotClosureDate[] = [];
+  
+  if (Array.isArray(lotsList) && lotsList.length > 0) {
+    // Create closure dates for each lot
+    initialClosureDates = lotsList.map(lotName => {
+      // Try to find an existing date for this lot
+      const existingDate = Array.isArray(existingClosureDates) 
+        ? existingClosureDates.find((item: LotClosureDate) => item.lotName === lotName)
+        : undefined;
+        
+      return {
+        lotName,
+        closureDate: existingDate?.closureDate || undefined
+      };
+    });
+  }
 
-  const [lotClosureDates, setLotClosureDates] = useState<LotClosureDate[]>(initialLotClosureDates);
-  
-  // Apply the same date to all lots
-  const applyGlobalDate = () => {
-    if (!globalClosureDate) return;
-    
-    const updatedDates = lotClosureDates.map(item => ({
-      ...item,
-      closureDate: globalClosureDate
-    }));
-    
-    setLotClosureDates(updatedDates);
-    form.setValue('construction.lotClosureDates' as any, updatedDates);
-  };
-  
-  // Update a specific lot's date
-  const updateLotDate = (lotName: string, date: Date | undefined) => {
-    const updatedDates = lotClosureDates.map(item => 
+  const [closureDates, setClosureDates] = useState<LotClosureDate[]>(initialClosureDates);
+  const [globalDate, setGlobalDate] = useState<Date>();
+
+  const updateDate = (lotName: string, date: Date | undefined) => {
+    const updatedDates = closureDates.map(item => 
       item.lotName === lotName ? { ...item, closureDate: date } : item
     );
     
-    setLotClosureDates(updatedDates);
+    setClosureDates(updatedDates);
     form.setValue('construction.lotClosureDates' as any, updatedDates);
   };
 
-  // Format date for display
+  const applyGlobalDate = () => {
+    if (!globalDate) return;
+    
+    const updatedDates = closureDates.map(item => ({
+      ...item,
+      closureDate: globalDate
+    }));
+    
+    setClosureDates(updatedDates);
+    form.setValue('construction.lotClosureDates' as any, updatedDates);
+  };
+
   const formatDate = (date: Date | undefined) => {
     if (!date) return '';
     return format(date, "dd MMMM yyyy", { locale: fr });
   };
 
+  // If no lots are selected, show a message
+  if (!Array.isArray(lotsList) || lotsList.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold">Dates de clôture par lot</h2>
+          <p className="text-muted-foreground mt-1">
+            Veuillez d'abord sélectionner des lots de travaux pour définir les dates de clôture.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold">Clôture des appels d'offres</h2>
+        <h2 className="text-xl font-semibold">Dates de clôture par lot</h2>
         <p className="text-muted-foreground mt-1">
-          Définissez les dates limites de réponse pour chaque lot
+          Définissez les dates de clôture pour chaque lot de travaux
         </p>
       </div>
 
-      <div className="flex items-center gap-4 p-4 border rounded-md bg-muted/30">
-        <div className="flex-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !globalClosureDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {globalClosureDate ? formatDate(globalClosureDate) : <span>Choisir une date pour tous les lots</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={globalClosureDate}
-                onSelect={setGlobalClosureDate}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <Button onClick={applyGlobalDate} disabled={!globalClosureDate}>
-          Appliquer à tous
-        </Button>
-      </div>
-
       <div className="space-y-4">
-        {lotsArray.map((lot, index) => {
-          const lotClosure = lotClosureDates.find(item => item.lotName === lot.name);
-          
-          return (
-            <div key={index} className="flex items-center justify-between border-b pb-2">
-              <Label className="font-medium">{lot.name}</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-[200px] justify-start text-left font-normal",
-                      !lotClosure?.closureDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {lotClosure?.closureDate ? formatDate(lotClosure.closureDate) : <span>Choisir une date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end">
-                  <Calendar
-                    mode="single"
-                    selected={lotClosure?.closureDate}
-                    onSelect={(date) => updateLotDate(lot.name, date)}
-                    initialFocus
-                    className={cn("p-3 pointer-events-auto")}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          );
-        })}
+        <div className="p-4 border rounded-md bg-muted/50">
+          <h3 className="text-md font-medium mb-3">Date de clôture globale</h3>
+          <div className="flex items-center space-x-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[200px] justify-start text-left font-normal",
+                    !globalDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {globalDate ? formatDate(globalDate) : <span>Choisir une date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={globalDate}
+                  onSelect={setGlobalDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <Button 
+              onClick={applyGlobalDate}
+              disabled={!globalDate}
+            >
+              Appliquer à tous les lots
+            </Button>
+          </div>
+        </div>
+
+        {lotsList && lotsList.map((lotName) => (
+          <div key={lotName} className="flex items-center justify-between border-b pb-2">
+            <Label className="font-medium">{lotName}</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[200px] justify-start text-left font-normal",
+                    !closureDates.find(d => d.lotName === lotName)?.closureDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {closureDates.find(d => d.lotName === lotName)?.closureDate ? 
+                    formatDate(closureDates.find(d => d.lotName === lotName)?.closureDate) : 
+                    <span>Choisir une date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={closureDates.find(d => d.lotName === lotName)?.closureDate}
+                  onSelect={(date) => updateDate(lotName, date)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        ))}
       </div>
     </div>
   );
