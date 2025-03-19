@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -9,6 +8,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { TenderFormProps } from './TenderFormProps';
 
 interface KeyDate {
   id: string;
@@ -16,11 +16,7 @@ interface KeyDate {
   date: Date | undefined;
 }
 
-interface TenderKeyDatesProps {
-  form: UseFormReturn<any>;
-}
-
-const TenderKeyDates: React.FC<TenderKeyDatesProps> = ({ form }) => {
+const TenderKeyDates: React.FC<TenderFormProps> = ({ form }) => {
   // Default key dates for construction projects
   const defaultKeyDates: KeyDate[] = [
     { id: 'start', name: 'Démarrage du projet', date: undefined },

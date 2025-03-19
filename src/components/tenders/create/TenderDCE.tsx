@@ -1,17 +1,13 @@
 
 import React, { useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Upload } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TenderFormProps } from './TenderFormProps';
 
-interface TenderDCEProps {
-  form: UseFormReturn<any>;
-}
-
-const TenderDCE: React.FC<TenderDCEProps> = ({ form }) => {
+const TenderDCE: React.FC<TenderFormProps> = ({ form }) => {
   const [dpgfMethod, setDpgfMethod] = useState<'ai' | 'upload'>('ai');
   
   const handleDpgfMethodChange = (value: 'ai' | 'upload') => {

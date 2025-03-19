@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -8,17 +7,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { TenderFormProps } from './TenderFormProps';
 
 interface LotClosureDate {
   lotName: string;
   closureDate?: Date;
 }
 
-interface TenderLotsClosureDateProps {
-  form: UseFormReturn<any>;
-}
-
-const TenderLotsClosureDate: React.FC<TenderLotsClosureDateProps> = ({ form }) => {
+const TenderLotsClosureDate: React.FC<TenderFormProps> = ({ form }) => {
   const [lotClosureDates, setLotClosureDates] = useState<LotClosureDate[]>([]);
   
   useEffect(() => {
