@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -19,7 +20,6 @@ import { Textarea } from '@/components/ui/textarea';
 
 interface AlertFormValues {
   name: string;
-  tenderType: string[];
   projectType: string[];
   location: string;
   sector: string[];
@@ -37,7 +37,6 @@ export default function TenderAlert() {
   const form = useForm<AlertFormValues>({
     defaultValues: {
       name: '',
-      tenderType: [],
       projectType: [],
       location: '',
       sector: [],
@@ -137,23 +136,6 @@ export default function TenderAlert() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-4">
-                      <div>
-                        <Label className="mb-2 block">Type d'appel d'offres</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                          {['Conception', 'Réalisation', 'Services', 'Fourniture'].map((type) => (
-                            <div key={type} className="flex items-center space-x-2">
-                              <Checkbox id={`tender-type-${type}`} />
-                              <label
-                                htmlFor={`tender-type-${type}`}
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                              >
-                                {type}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
                       <div>
                         <Label className="mb-2 block">Nature du projet</Label>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
