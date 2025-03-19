@@ -52,6 +52,9 @@ import ViewCompany from "./pages/ViewCompany";
 import ViewCompanyServices from "./pages/ViewCompanyServices";
 import CompanyDetailsTender from "./pages/CompanyDetailsTender";
 import ServicesTenderSearch from "./pages/ServicesTenderSearch";
+import ServicesTenderDetails from "./pages/ServicesTenderDetails";
+import SubmitServicesQuote from "./pages/SubmitServicesQuote";
+import ServicesDetailTender from "./pages/ServicesDetailTender";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +115,9 @@ const App = () => (
             <Route path="/quote-analysis/:quoteId" element={<QuoteAnalysis />} />
             <Route path="/company-details-tender/:quoteId" element={<CompanyDetailsTender />} />
             <Route path="/services-tender-search" element={<ServicesTenderSearch />} />
+            <Route path="/services-tender-details/:tenderId" element={<ServicesTenderDetails />} />
+            <Route path="/submit-services-quote/:tenderId" element={<SubmitServicesQuote />} />
+            <Route path="/services-detail-tender/:quoteId" element={<ServicesDetailTender />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
