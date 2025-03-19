@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -23,6 +22,7 @@ import TenderDCE from '@/components/tenders/create/TenderDCE';
 import TenderAdminDocuments from '@/components/tenders/create/TenderAdminDocuments';
 import TenderKeyDates from '@/components/tenders/create/TenderKeyDates';
 import TenderLotsClosureDate from '@/components/tenders/create/TenderLotsClosureDate';
+import TenderSummary from '@/components/tenders/create/TenderSummary';
 
 const designTenderSchema = z.object({
   projectNature: z.enum(['logement', 'tertiaire', 'industriel', 'commercial', 'hospitalier', 'scolaire', 'autres']),
@@ -148,8 +148,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     console.log("Draft saved successfully!");
   }
 
-  // Handle address search for map
-  const handleLocateAddress = () => {
+  function handleLocateAddress() {
     if (!address.trim()) return;
     
     // This would normally use a geocoding service
@@ -181,7 +180,6 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
     }
   }, [isEditing, tenderId, form]);
 
-  // Define steps for the tender creation wizard
   const steps = [
     { id: 1, label: "Type d'AO" },
     { id: 2, label: "Confidentialité" },
@@ -481,39 +479,7 @@ export default function CreateTender({ isEditing = false }: CreateTenderProps) {
                       </div>
                     )}
                     
-                    <div className="bg-secondary/30 p-6 rounded-lg border border-border">
-                      <h3 className="font-medium mb-4">Récapitulatif</h3>
-                      
-                      <div className="space-y-2">
-                        <div className="flex justify-between pb-2 border-b">
-                          <span className="text-muted-foreground">Type</span>
-                          <span className="font-medium">
-                            {form.getValues("type") === "design" ? "Conception" : 
-                             form.getValues("type") === "construction" ? "Réalisation" : 
-                             "Services"}
-                          </span>
-                        </div>
-                        
-                        <div className="flex justify-between pb-2 border-b">
-                          <span className="text-muted-foreground">Confidentialité</span>
-                          <span className="font-medium">
-                            {form.getValues("privacy") === "open" ? "Ouvert" : 
-                             form.getValues("privacy") === "restricted" ? "Restreint" : 
-                             "Privé"}
-                          </span>
-                        </div>
-                        
-                        <div className="flex justify-between pb-2 border-b">
-                          <span className="text-muted-foreground">Nom du projet</span>
-                          <span className="font-medium">{form.getValues("projectName") || "Non défini"}</span>
-                        </div>
-                        
-                        <div className="flex justify-between pb-2 border-b">
-                          <span className="text-muted-foreground">Entreprises invitées</span>
-                          <span className="font-medium">{form.getValues("invitedCompanies").length}</span>
-                        </div>
-                      </div>
-                    </div>
+                    <TenderSummary form={form} />
                   </div>
                 </div>
               )}
