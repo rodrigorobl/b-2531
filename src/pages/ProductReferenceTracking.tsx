@@ -17,7 +17,8 @@ const projectReferences = [
     },
     quoteStatus: 'to-send' as const,
     sentDate: null,
-    productName: "Panneaux isolants A+"
+    productName: "Panneaux isolants A+",
+    phase: 'conception' as const
   },
   {
     id: "2",
@@ -31,7 +32,8 @@ const projectReferences = [
     },
     quoteStatus: 'sent' as const,
     sentDate: "2024-03-15",
-    productName: "Revêtement sol B2"
+    productName: "Revêtement sol B2",
+    phase: 'realisation' as const
   },
   {
     id: "3",
@@ -45,7 +47,8 @@ const projectReferences = [
     },
     quoteStatus: 'signed' as const,
     sentDate: "2024-02-28",
-    productName: "Vitrage intelligent V3"
+    productName: "Vitrage intelligent V3",
+    phase: 'realisation' as const
   },
   {
     id: "4",
@@ -59,7 +62,8 @@ const projectReferences = [
     },
     quoteStatus: 'to-send' as const,
     sentDate: null,
-    productName: "Panneaux solaires PS200"
+    productName: "Panneaux solaires PS200",
+    phase: 'conception' as const
   },
   {
     id: "5",
@@ -73,7 +77,8 @@ const projectReferences = [
     },
     quoteStatus: 'sent' as const,
     sentDate: "2024-03-10",
-    productName: "Système ventilation ECO+"
+    productName: "Système ventilation ECO+",
+    phase: 'realisation' as const
   },
   {
     id: "6",
@@ -87,7 +92,8 @@ const projectReferences = [
     },
     quoteStatus: 'to-send' as const,
     sentDate: null,
-    productName: "Revêtement antimicrobien AM100"
+    productName: "Revêtement antimicrobien AM100",
+    phase: 'conception' as const
   },
   {
     id: "7",
@@ -101,7 +107,8 @@ const projectReferences = [
     },
     quoteStatus: 'signed' as const,
     sentDate: "2024-01-20",
-    productName: "Système domotique D500"
+    productName: "Système domotique D500",
+    phase: 'realisation' as const
   },
   {
     id: "8",
@@ -115,7 +122,8 @@ const projectReferences = [
     },
     quoteStatus: 'sent' as const,
     sentDate: "2024-03-01",
-    productName: "Climatisation haute performance CP400"
+    productName: "Climatisation haute performance CP400",
+    phase: 'conception' as const
   }
 ];
 

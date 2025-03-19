@@ -1,11 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building, Mail, Phone, Send, Clock, CheckCircle, Eye } from 'lucide-react';
+import { MapPin, Building, Mail, Phone, Send, Clock, CheckCircle, Eye, Filter } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 
 interface Contractor {
   name: string;
@@ -22,6 +29,7 @@ interface ProjectReference {
   quoteStatus: 'to-send' | 'sent' | 'signed';
   sentDate: string | null;
   productName: string;
+  phase: 'conception' | 'realisation';
 }
 
 interface ProductReferenceTableProps {
@@ -29,6 +37,12 @@ interface ProductReferenceTableProps {
 }
 
 export function ProductReferenceTable({ references }: ProductReferenceTableProps) {
+  const [phaseFilter, setPhaseFilter] = useState<'all' | 'conception' | 'realisation'>('all');
+  
+  const filteredReferences = references.filter(ref => 
+    phaseFilter === 'all' || ref.phase === phaseFilter
+  );
+
   const getStatusBadge = (status: ProjectReference['quoteStatus']) => {
     switch (status) {
       case 'to-send':
@@ -37,6 +51,15 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
         return <Badge variant="default" className="gap-1"><Send className="h-3 w-3" /> Envoyé</Badge>;
       case 'signed':
         return <Badge variant="default" className="bg-green-600 gap-1"><CheckCircle className="h-3 w-3" /> Signé</Badge>;
+    }
+  };
+
+  const getPhaseBadge = (phase: ProjectReference['phase']) => {
+    switch (phase) {
+      case 'conception':
+        return <Badge variant="secondary">Conception</Badge>;
+      case 'realisation':
+        return <Badge variant="default">Réalisation</Badge>;
     }
   };
 
@@ -49,12 +72,37 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
 
   return (
     <Card>
+      <div className="p-4 border-b flex items-center justify-between">
+        <div className="font-medium">
+          {filteredReferences.length} projet{filteredReferences.length !== 1 ? 's' : ''} trouvé{filteredReferences.length !== 1 ? 's' : ''}
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Phase:</span>
+          </div>
+          <Select
+            value={phaseFilter}
+            onValueChange={(value) => setPhaseFilter(value as 'all' | 'conception' | 'realisation')}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Toutes les phases" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les phases</SelectItem>
+              <SelectItem value="conception">Conception</SelectItem>
+              <SelectItem value="realisation">Réalisation</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Projet</TableHead>
               <TableHead>MOE</TableHead>
+              <TableHead>Phase</TableHead>
               <TableHead>Entreprise titulaire</TableHead>
               <TableHead>Statut du devis</TableHead>
               <TableHead>Date d'envoi</TableHead>
@@ -63,7 +111,7 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
             </TableRow>
           </TableHeader>
           <TableBody>
-            {references.map((reference) => (
+            {filteredReferences.map((reference) => (
               <TableRow key={reference.id}>
                 <TableCell>
                   <div className="space-y-1">
@@ -89,24 +137,31 @@ export function ProductReferenceTable({ references }: ProductReferenceTableProps
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="space-y-1">
-                    <div className="font-medium">
-                      <Link 
-                        to={`/company/${getMockCompanyId(reference.contractor.name)}`}
-                        className="text-primary hover:underline"
-                      >
-                        {reference.contractor.name}
-                      </Link>
+                  {getPhaseBadge(reference.phase)}
+                </TableCell>
+                <TableCell>
+                  {reference.phase === 'conception' ? (
+                    <span className="text-sm text-muted-foreground italic">Non défini</span>
+                  ) : (
+                    <div className="space-y-1">
+                      <div className="font-medium">
+                        <Link 
+                          to={`/company/${getMockCompanyId(reference.contractor.name)}`}
+                          className="text-primary hover:underline"
+                        >
+                          {reference.contractor.name}
+                        </Link>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Mail className="h-4 w-4" />
+                        {reference.contractor.contact}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Phone className="h-4 w-4" />
+                        {reference.contractor.phone}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Mail className="h-4 w-4" />
-                      {reference.contractor.contact}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4" />
-                      {reference.contractor.phone}
-                    </div>
-                  </div>
+                  )}
                 </TableCell>
                 <TableCell>{getStatusBadge(reference.quoteStatus)}</TableCell>
                 <TableCell>
