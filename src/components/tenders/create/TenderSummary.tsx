@@ -303,7 +303,7 @@ const TenderSummary: React.FC<TenderSummaryProps> = ({ form }) => {
                     <p>{company.name}</p>
                     {company.lotId && formValues.construction?.lots && (
                       <Badge variant="outline">
-                        {formValues.construction.lots.find(lot => lot.id === company.lotId)?.name || 'Lot inconnu'}
+                        {formValues.construction.lots.find(lot => lot.name === company.lotId)?.name || company.lotId}
                       </Badge>
                     )}
                   </div>
