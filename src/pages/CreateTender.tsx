@@ -5,7 +5,30 @@ import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PenTool, Building, Briefcase } from 'lucide-react';
 
-export default function CreateTender() {
+// Define the base TenderFormValues type
+export type TenderFormValues = {
+  type: 'design' | 'construction' | 'service';
+  privacy: 'open' | 'restricted' | 'closed';
+  projectName: string;
+  description: string;
+  // Add more common fields as needed
+  invitedCompanies: Array<{
+    id: string;
+    name: string;
+    lotId?: string;
+    selected: boolean;
+  }>;
+  adminDocuments?: Array<{
+    id: string;
+    name: string;
+  }>;
+};
+
+interface CreateTenderProps {
+  isEditing?: boolean;
+}
+
+export default function CreateTender({ isEditing = false }: CreateTenderProps) {
   const navigate = useNavigate();
 
   return (

@@ -107,7 +107,7 @@ const App = () => (
             <Route path="/directory" element={<CompanyDirectory />} />
             <Route path="/quoted-directory" element={<QuotedDirectory />} />
             <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
-            <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing />} />
+            <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing={true} />} />
             <Route path="/product-reference" element={<ProductReferenceTracking />} />
             <Route path="/product-prescription" element={<ProductPrescriptionTracking />} />
             <Route path="/product-reference/:referenceId" element={<ProductReferenceDetail />} />

@@ -7,7 +7,7 @@ import ProjectUsageSelector from './construction/ProjectUsageSelector';
 import BuildingManager from './construction/BuildingManager';
 
 interface ConstructionTenderFormProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const ConstructionTenderForm: React.FC<ConstructionTenderFormProps> = ({ form }) => {

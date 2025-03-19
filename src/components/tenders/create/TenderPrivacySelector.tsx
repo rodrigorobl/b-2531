@@ -1,13 +1,12 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Globe, Lock, Users } from 'lucide-react';
 
 interface TenderPrivacySelectorProps {
-  form: UseFormReturn<TenderFormValues>;
+  form: UseFormReturn<any>;
 }
 
 const TenderPrivacySelector: React.FC<TenderPrivacySelectorProps> = ({ form }) => {
