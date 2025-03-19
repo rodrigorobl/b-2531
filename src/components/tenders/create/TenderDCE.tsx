@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Upload } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TenderDCEProps {
   form: UseFormReturn<TenderFormValues>;
