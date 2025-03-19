@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProfileProvider } from "./contexts/ProfileContext";
+
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import DashboardPromoteur from "./pages/DashboardPromoteur";
@@ -38,6 +38,7 @@ import QuoteAnalysis from "./pages/QuoteAnalysis";
 import SubmitQuote from "./pages/SubmitQuote";
 import ProjectSpecifications from "./pages/ProjectSpecifications";
 import ProductReferenceTracking from "./pages/ProductReferenceTracking";
+import ProductPrescriptionTracking from "./pages/ProductPrescriptionTracking";
 import ProjectsSearch from "./pages/ProjectsSearch";
 import ProductReferenceDetail from "./pages/ProductReferenceDetail";
 import QuantitySurveyRequest from "./pages/QuantitySurveyRequest";
@@ -100,7 +101,9 @@ const App = () => (
             <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
             <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing />} />
             <Route path="/product-reference" element={<ProductReferenceTracking />} />
+            <Route path="/product-prescription" element={<ProductPrescriptionTracking />} />
             <Route path="/product-reference/:referenceId" element={<ProductReferenceDetail />} />
+            <Route path="/product-prescription/:referenceId" element={<ProductReferenceDetail />} />
             <Route path="/quantity-survey-request" element={<QuantitySurveyRequest />} />
             <Route path="/tender-alerte" element={<TenderAlert />} />
             <Route path="/alerte-management" element={<AlertManagement />} />

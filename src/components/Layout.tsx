@@ -14,6 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isFullWidthPage = [
     '/dashboard-industry',
     '/product-reference',
+    '/product-prescription',
     '/projects-search'
   ].includes(location.pathname);
 
