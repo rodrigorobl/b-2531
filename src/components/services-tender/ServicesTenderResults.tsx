@@ -33,7 +33,7 @@ export default function ServicesTenderResults({
 }: ServicesTenderResultsProps) {
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'alphabetical'>('date');
+  const [sortBy, setSortBy] = useState<'date' | 'budget' | 'location' | 'relevance'>('date');
 
   const handleConsultAO = (tenderId: string) => {
     navigate(`/company-details-tender/${tenderId}`);
@@ -49,7 +49,12 @@ export default function ServicesTenderResults({
       return sortOrder === 'asc' 
         ? a.estimatedAmount - b.estimatedAmount
         : b.estimatedAmount - a.estimatedAmount;
+    } else if (sortBy === 'location') {
+      return sortOrder === 'asc'
+        ? a.location.localeCompare(b.location)
+        : b.location.localeCompare(a.location);
     } else {
+      // Default to sorting by relevance (project name in this case)
       return sortOrder === 'asc'
         ? a.projectName.localeCompare(b.projectName)
         : b.projectName.localeCompare(a.projectName);

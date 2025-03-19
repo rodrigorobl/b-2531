@@ -38,14 +38,16 @@ export default function ServicesTenderFilterSortMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuLabel>Type de service</DropdownMenuLabel>
-          <DropdownMenuItem>Étude thermique</DropdownMenuItem>
-          <DropdownMenuItem>Géotechnique</DropdownMenuItem>
-          <DropdownMenuItem>Diagnostics</DropdownMenuItem>
-          <DropdownMenuItem>BET Structure</DropdownMenuItem>
+          <DropdownMenuItem>LOCATION DE LOCAUX DE STOCKAGE</DropdownMenuItem>
+          <DropdownMenuItem>SERVICES DE PHOTOGRAPHIE ET VIDÉO PROMOTIONNELLE</DropdownMenuItem>
+          <DropdownMenuItem>PHOTOGRAPHE DE CHANTIER</DropdownMenuItem>
+          <DropdownMenuItem>PILOTE DE DRONE POUR VUES AÉRIENNES</DropdownMenuItem>
+          <DropdownMenuItem>SERVICES DE MARKETING SUR LE CHANTIER</DropdownMenuItem>
+          <DropdownMenuItem>ORGANISATION DE VISITES DE CHANTIER POUR LES CLIENTS</DropdownMenuItem>
+          <DropdownMenuItem>SERVICES D'AMÉNAGEMENT INTÉRIEUR ET HOME STAGING</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Statut</DropdownMenuLabel>
           <DropdownMenuItem>En cours</DropdownMenuItem>
-          <DropdownMenuItem>À venir</DropdownMenuItem>
           <DropdownMenuItem>Clôturés</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

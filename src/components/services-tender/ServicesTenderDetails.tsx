@@ -62,10 +62,7 @@ export default function ServicesTenderDetails({ tender }: ServicesTenderDetailsP
                 <MapPin size={14} />
                 <span>{tender.location}</span>
               </div>
-              <Badge variant={
-                tender.status === 'open' ? 'default' : 
-                tender.status === 'upcoming' ? 'secondary' : 'outline'
-              }>
+              <Badge variant={tender.status === 'open' ? 'default' : 'outline'}>
                 {getServicesTenderStatusText(tender.status)}
               </Badge>
             </div>
