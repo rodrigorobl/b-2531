@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Layout } from '@/components/Layout';
-import ProjectOverview from '@/components/industry-dashboard/ProjectOverview';
 import DesignPhaseProjects from '@/components/industry-dashboard/DesignPhaseProjects';
 import ConstructionPhaseProjects from '@/components/industry-dashboard/ConstructionPhaseProjects';
 import OpportunitiesOverview from '@/components/industry-dashboard/OpportunitiesOverview';
@@ -184,7 +183,7 @@ export default function DashboardIndustry() {
         </header>
 
         <div className="space-y-6">
-          <ProjectOverview projects={projects} />
+          {/* Removed ProjectOverview component */}
           
           {/* Nouvelles opportunités */}
           <Card>
