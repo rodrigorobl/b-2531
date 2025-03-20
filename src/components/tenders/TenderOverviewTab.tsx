@@ -1,13 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PieChart, MapPin } from 'lucide-react';
+import { PieChart, MapPin, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import ProjectMap from '@/components/ProjectMap';
+import { RelaunchCompaniesDialog } from './RelaunchCompaniesDialog';
 
 interface Category {
   id: string;
@@ -62,6 +64,8 @@ export function TenderOverviewTab({
   budgetDifferencePercentage,
   totalQuotesAmount
 }: TenderOverviewTabProps) {
+  const [relaunchDialogOpen, setRelaunchDialogOpen] = useState(false);
+
   // Get evaluation based on number of quotes
   const getCategoryEvaluation = (quotesCount: number) => {
     if (quotesCount >= 4) return {
@@ -200,8 +204,17 @@ export function TenderOverviewTab({
 
       {/* Categories overview */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">Vue d'ensemble des lots</CardTitle>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setRelaunchDialogOpen(true)}
+            className="flex items-center gap-1"
+          >
+            <Send size={14} />
+            Relancer les entreprises
+          </Button>
         </CardHeader>
         <CardContent>
           <Table>
@@ -255,6 +268,12 @@ export function TenderOverviewTab({
           </Table>
         </CardContent>
       </Card>
+
+      <RelaunchCompaniesDialog 
+        open={relaunchDialogOpen} 
+        onOpenChange={setRelaunchDialogOpen}
+        categories={tender.categories}
+      />
     </div>
   );
 }
