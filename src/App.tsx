@@ -41,6 +41,7 @@ import QuoteDetail from "./pages/QuoteDetail";
 import QuoteAnalysis from "./pages/QuoteAnalysis";
 import SubmitQuote from "./pages/SubmitQuote";
 import ProjectSpecifications from "./pages/ProjectSpecifications";
+import ConstructionTenderSpecifications from "./pages/ConstructionTenderSpecifications";
 import ProductReferenceTracking from "./pages/ProductReferenceTracking";
 import ProductPrescriptionTracking from "./pages/ProductPrescriptionTracking";
 import ProjectsSearch from "./pages/ProjectsSearch";
@@ -91,6 +92,7 @@ const App = () => (
             <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
             <Route path="/project-survey" element={<ProjectSurvey />} />
             <Route path="/project-specifications" element={<ProjectSpecifications />} />
+            <Route path="/construction-tender-specifications" element={<ConstructionTenderSpecifications />} />
             <Route path="/tender-specifications" element={<ProjectSpecifications />} />
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/moe-list" element={<MoeList />} />

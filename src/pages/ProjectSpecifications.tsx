@@ -14,7 +14,7 @@ import ProjectDocuments from '@/components/project-specifications/ProjectDocumen
 import ProjectLots from '@/components/project-specifications/ProjectLots';
 import ProjectMessages from '@/components/project-specifications/ProjectMessages';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, HardHat } from 'lucide-react';
 
 export default function ProjectSpecifications() {
   const [searchParams] = useSearchParams();
@@ -67,6 +67,21 @@ export default function ProjectSpecifications() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <div className="container py-6 space-y-6 max-w-7xl">
+          {activeProfile === 'entreprise-construction' && (
+            <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg flex justify-between items-center">
+              <div>
+                <h3 className="text-base font-medium">Vous êtes une entreprise de construction</h3>
+                <p className="text-sm text-muted-foreground">Accédez à la vue spécifique pour les entreprises de construction avec des détails techniques et les outils de chiffrage.</p>
+              </div>
+              <Link to={`/construction-tender-specifications?project=${projectId}`}>
+                <Button className="gap-2">
+                  <HardHat size={16} />
+                  <span>Vue Construction</span>
+                </Button>
+              </Link>
+            </div>
+          )}
+          
           <div className="flex flex-col md:flex-row gap-6">
             {/* Project Perspective Image */}
             <div className="md:w-1/3">
