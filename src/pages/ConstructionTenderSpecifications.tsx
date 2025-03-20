@@ -5,7 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useProfile } from '@/contexts/ProfileContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileText, Tool, Pencil, CalendarClock } from 'lucide-react';
+import { ArrowLeft, FileText, Wrench, Pencil, CalendarClock } from 'lucide-react';
 
 // Import the same components as ProjectSpecifications
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
@@ -117,7 +117,7 @@ export default function ConstructionTenderSpecifications() {
 
                 <div className="border rounded-lg p-4 shadow-sm">
                   <div className="flex items-center gap-2 mb-4">
-                    <Tool className="h-5 w-5 text-primary" />
+                    <Wrench className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold">Méthodes de Construction</h3>
                   </div>
                   <div className="space-y-4">
