@@ -61,6 +61,7 @@ import ServicesTenderDetails from "./pages/ServicesTenderDetails";
 import SubmitServicesQuote from "./pages/SubmitServicesQuote";
 import ServicesDetailTender from "./pages/ServicesDetailTender";
 import ConstructionQuoteDetails from "./pages/ConstructionQuoteDetails";
+import ProjectTenderAnalysis from "./pages/ProjectTenderAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,8 @@ const App = () => (
             <Route path="/tender-search" element={<TenderSearch />} />
             <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
+            <Route path="/tender/:tenderId/analysis" element={<ProjectTenderAnalysis />} />
+            <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
             <Route path="/tender/:projectId/lot/:lotId" element={<LotAnalysis />} />
             <Route path="/tender-specifications" element={<Index />} />
             <Route path="/project-specifications" element={<ProjectSpecifications />} />

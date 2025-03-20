@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Sidebar from '@/components/Sidebar';
 import { TenderHeader } from '@/components/tenders/TenderHeader';
@@ -9,6 +9,8 @@ import { TenderQuotesTab } from '@/components/tenders/TenderQuotesTab';
 import { TenderMessagesTab } from '@/components/tenders/TenderMessagesTab';
 import { TenderDocumentsTab } from '@/components/tenders/TenderDocumentsTab';
 import { TenderContactsTab } from '@/components/tenders/TenderContactsTab';
+import { Button } from '@/components/ui/button';
+import { BarChart } from 'lucide-react';
 
 // Types
 interface Tender {
@@ -295,7 +297,15 @@ export default function TenderDetail() {
     <div className="flex min-h-screen bg-background">
       <Sidebar />
       <main className="flex-1 p-6">
-        <TenderHeader tender={tender} />
+        <div className="flex justify-between items-start mb-4">
+          <TenderHeader tender={tender} />
+          <Button variant="outline" asChild>
+            <Link to={`/tender/${tenderId}/analysis`}>
+              <BarChart className="h-4 w-4 mr-2" />
+              Analyse des réponses
+            </Link>
+          </Button>
+        </div>
 
         {/* Main content with tabs */}
         <Tabs defaultValue="overview" className="space-y-4">
