@@ -52,20 +52,20 @@ export default function ConstructionTenderSpecifications() {
       { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours', offerId: 'AO-2023-042-03' },
       { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours', offerId: 'AO-2023-042-04' },
     ],
-    // Données d'exemple pour les offres
+    // Fixed offers data with appropriate status types
     offers: [
       {
         id: "offer-001",
         lot: "01",
         description: "Gros Œuvre",
-        status: "pending",
+        status: "pending" as const,
         deadline: "15/05/2024",
       },
       {
         id: "offer-002",
         lot: "02",
         description: "Menuiseries",
-        status: "submitted",
+        status: "submitted" as const,
         deadline: "20/05/2024",
         isCompliant: true,
         submissionDate: "10/05/2024",
