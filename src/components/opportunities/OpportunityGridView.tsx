@@ -129,7 +129,7 @@ export default function OpportunityGridView({
               />
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/tender/${opportunity.id}`}>
+              <Link to={`/project-specifications?project=${opportunity.id}`}>
                 <Eye size={14} className="mr-1" />
                 Voir détails
               </Link>

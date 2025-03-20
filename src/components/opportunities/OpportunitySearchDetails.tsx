@@ -170,7 +170,7 @@ export default function OpportunitySearchDetails({
       
       <div className="mt-6">
         <Button asChild className="w-full">
-          <Link to={`/tender/${opportunity.id}`}>
+          <Link to={`/project-specifications?project=${opportunity.id}`}>
             <Eye size={16} className="mr-2" />
             Voir détails du projet
           </Link>

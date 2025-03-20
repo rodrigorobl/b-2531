@@ -141,7 +141,7 @@ export default function OpportunityListView({
               <TableCell className="text-right">
                 <Button variant="outline" size="sm" asChild>
                   <Link 
-                    to={`/tender/${opportunity.id}`}
+                    to={`/project-specifications?project=${opportunity.id}`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Eye size={14} className="mr-1" />
