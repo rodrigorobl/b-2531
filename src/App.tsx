@@ -87,6 +87,7 @@ const App = () => (
             <Route path="/tender-search" element={<TenderSearch />} />
             <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
+            <Route path="/tender/:tenderId/lot/:lotId" element={<LotAnalysis />} />
             <Route path="/tender/:tenderId/analysis" element={<ProjectTenderAnalysis />} />
             <Route path="/tender/:tenderId/survey" element={<ProjectSurvey />} />
             <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
