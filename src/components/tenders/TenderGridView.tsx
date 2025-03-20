@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Building, MapPin, Calendar, Star, Eye, ArrowRight, ExternalLink } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
 import { Link } from 'react-router-dom';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderGridViewProps {
   tenders: TenderSearchResult[];
@@ -19,6 +20,8 @@ export default function TenderGridView({
   selectedTenderId,
   onSelectTender
 }: TenderGridViewProps) {
+  const { activeProfile } = useProfile();
+  
   if (tenders.length === 0) {
     return (
       <div className="text-center py-10 text-muted-foreground">
@@ -26,6 +29,13 @@ export default function TenderGridView({
       </div>
     );
   }
+
+  const getTenderUrl = (tenderId: string) => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/construction-tender-specifications?project=${tenderId}`;
+    }
+    return `/tender-specifications?project=${tenderId}`;
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -95,7 +105,7 @@ export default function TenderGridView({
                 className="text-primary flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
-                  window.location.href = `/tender-specifications?project=${tender.id}`;
+                  window.location.href = getTenderUrl(tender.id);
                 }}
               >
                 <ExternalLink size={14} />

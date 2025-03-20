@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Building, MapPin, Calendar, Star, ExternalLink } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
 import { Link } from 'react-router-dom';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderListViewProps {
   tenders: TenderSearchResult[];
@@ -18,6 +19,8 @@ export default function TenderListView({
   selectedTenderId,
   onSelectTender
 }: TenderListViewProps) {
+  const { activeProfile } = useProfile();
+  
   if (tenders.length === 0) {
     return (
       <div className="text-center py-10 text-muted-foreground">
@@ -25,6 +28,13 @@ export default function TenderListView({
       </div>
     );
   }
+
+  const getTenderUrl = (tenderId: string) => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/construction-tender-specifications?project=${tenderId}`;
+    }
+    return `/tender-specifications?project=${tenderId}`;
+  };
 
   return (
     <div className="space-y-2">
@@ -73,7 +83,7 @@ export default function TenderListView({
               {tender.budget}
             </div>
             <Button variant="ghost" size="sm" className="text-primary" asChild>
-              <Link to={`/tender-specifications?project=${tender.id}`}>
+              <Link to={getTenderUrl(tender.id)}>
                 <ExternalLink size={14} className="mr-1" />
                 <span>Accéder à l'Appel d'Offres</span>
               </Link>

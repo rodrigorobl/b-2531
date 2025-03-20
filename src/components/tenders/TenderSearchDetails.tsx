@@ -46,7 +46,7 @@ export default function TenderSearchDetails({
   
   const getButtonDestination = () => {
     if (activeProfile === 'entreprise-construction') {
-      return `/project-tender-analysis?project=${tender.id}`;
+      return `/construction-tender-specifications?project=${tender.id}`;
     }
     return `/tender-specifications?project=${tender.id}`;
   };

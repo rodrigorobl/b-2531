@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, ExternalLink, BarChart, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderDetailsProps {
   tender?: Tender;
@@ -16,6 +17,8 @@ interface TenderDetailsProps {
 export default function TenderDetails({
   tender
 }: TenderDetailsProps) {
+  const { activeProfile } = useProfile();
+  
   if (!tender) {
     return;
   }
@@ -46,6 +49,13 @@ export default function TenderDetails({
       default:
         return 'Inconnu';
     }
+  };
+  
+  const getTenderUrl = () => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/construction-tender-specifications?project=${tender.id}`;
+    }
+    return `/tender-specifications?project=${tender.id}`;
   };
   
   return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
@@ -136,7 +146,7 @@ export default function TenderDetails({
               
               <div className="grid grid-cols-1 gap-2">
                 {tender.status === 'open' && <Button className="w-full gap-1" asChild>
-                    <Link to={`/tender-specifications?project=${tender.id}`}>
+                    <Link to={getTenderUrl()}>
                       <ExternalLink size={14} />
                       <span>Accéder à l'Appel d'Offres</span>
                     </Link>

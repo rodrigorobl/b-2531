@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { OpportunitySearchResult } from '@/pages/OpportunitiesSearch';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ import {
   Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface OpportunitySearchDetailsProps {
   opportunity: OpportunitySearchResult | undefined;
@@ -30,6 +32,8 @@ export default function OpportunitySearchDetails({
   onToggleFavorite,
   isFavorite
 }: OpportunitySearchDetailsProps) {
+  const { activeProfile } = useProfile();
+  
   if (!opportunity) {
     return (
       <div className="w-96 bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center">
@@ -76,6 +80,13 @@ export default function OpportunitySearchDetails({
       case 'travaux': return 'Travaux';
       default: return '';
     }
+  };
+  
+  const getTenderUrl = () => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/construction-tender-specifications?project=${opportunity.id}`;
+    }
+    return `/tender-specifications?project=${opportunity.id}`;
   };
 
   return (
@@ -169,7 +180,7 @@ export default function OpportunitySearchDetails({
       
       <div className="mt-6">
         <Button asChild className="w-full">
-          <Link to={`/tender-specifications?project=${opportunity.id}`}>
+          <Link to={getTenderUrl()}>
             <ExternalLink size={16} className="mr-2" />
             Accéder à l'Appel d'Offres
           </Link>

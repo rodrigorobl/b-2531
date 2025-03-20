@@ -4,6 +4,7 @@ import { Calendar, ArrowRight, FileText, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderOffer {
   id: string;
@@ -19,6 +20,8 @@ interface TenderOffersListProps {
 }
 
 export default function TenderOffersList({ tenderOffers }: TenderOffersListProps) {
+  const { activeProfile } = useProfile();
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'open':
@@ -30,6 +33,13 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
       default:
         return <Badge>Inconnu</Badge>;
     }
+  };
+  
+  const getDestinationUrl = (offerId: string) => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/construction-tender-specifications?project=${offerId}`;
+    }
+    return `/tender-specifications?project=${offerId}`;
   };
 
   return (
@@ -56,7 +66,7 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
           
           {offer.status === 'open' && (
             <div className="mt-3 flex justify-center">
-              <Link to={`/tender-specifications?project=${offer.id}`} className="flex-1">
+              <Link to={getDestinationUrl(offer.id)} className="flex-1">
                 <Button variant="default" size="sm" className="w-full">
                   <ExternalLink size={14} className="mr-1.5" />
                   Accéder à l'Appel d'offres
