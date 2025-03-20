@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
@@ -11,18 +11,71 @@ interface LotData {
   interestedCompanies: number;
   declinedCompanies: number;
   noResponseCompanies: number;
-  plannedBudget: number;
-  simulatedBudget: number;
-  viewedCompanies: number;
-  downloadedDCE: number;
-  addedToQuote: number;
 }
 
 interface TenderLotsBarChartProps {
-  data: LotData[];
+  tenderId: string;
 }
 
-const TenderLotsBarChart: React.FC<TenderLotsBarChartProps> = ({ data }) => {
+// Mock data for demonstration
+const mockLotsData: LotData[] = [
+  {
+    id: 'lot-001',
+    name: 'Gros Œuvre',
+    nonCompliantQuotes: 1,
+    compliantQuotes: 1,
+    interestedCompanies: 0,
+    declinedCompanies: 1,
+    noResponseCompanies: 1
+  },
+  {
+    id: 'lot-002',
+    name: 'Charpente',
+    nonCompliantQuotes: 0,
+    compliantQuotes: 0,
+    interestedCompanies: 1,
+    declinedCompanies: 0,
+    noResponseCompanies: 1
+  },
+  {
+    id: 'lot-003',
+    name: 'Électricité',
+    nonCompliantQuotes: 0,
+    compliantQuotes: 1,
+    interestedCompanies: 0,
+    declinedCompanies: 1,
+    noResponseCompanies: 1
+  },
+  {
+    id: 'lot-004',
+    name: 'Plomberie',
+    nonCompliantQuotes: 0,
+    compliantQuotes: 0,
+    interestedCompanies: 0,
+    declinedCompanies: 0,
+    noResponseCompanies: 2
+  },
+  {
+    id: 'lot-005',
+    name: 'Menuiseries',
+    nonCompliantQuotes: 0,
+    compliantQuotes: 1,
+    interestedCompanies: 0,
+    declinedCompanies: 1,
+    noResponseCompanies: 1
+  }
+];
+
+const TenderLotsBarChart: React.FC<TenderLotsBarChartProps> = ({ tenderId }) => {
+  const [data, setData] = useState<LotData[]>([]);
+
+  useEffect(() => {
+    console.log("Loading lots chart data for tender:", tenderId);
+    // In a real app, we would fetch data based on tenderId
+    // For now, use mock data
+    setData(mockLotsData);
+  }, [tenderId]);
+
   const chartData = data.map(lot => ({
     name: lot.name,
     "Offres non conformes": lot.nonCompliantQuotes,
@@ -50,8 +103,12 @@ const TenderLotsBarChart: React.FC<TenderLotsBarChartProps> = ({ data }) => {
     },
   };
 
+  if (data.length === 0) {
+    return <div>Chargement des données...</div>;
+  }
+
   return (
-    <ChartContainer className="h-full w-full" config={chartConfig}>
+    <ChartContainer className="h-[300px] w-full" config={chartConfig}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}

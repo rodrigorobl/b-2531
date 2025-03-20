@@ -5,11 +5,10 @@ import { TenderHeader } from '@/components/tenders/TenderHeader';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExportActions } from '@/components/services-quotes/ExportActions';
-import { TenderLotsBarChart } from '@/components/tenders/analysis/TenderLotsBarChart';
-import { TenderBudgetComparison } from '@/components/tenders/analysis/TenderBudgetComparison';
-import { TenderInterestStatistics } from '@/components/tenders/analysis/TenderInterestStatistics';
+import TenderLotsBarChart from '@/components/tenders/analysis/TenderLotsBarChart';
+import TenderBudgetComparison from '@/components/tenders/analysis/TenderBudgetComparison';
+import TenderInterestStatistics from '@/components/tenders/analysis/TenderInterestStatistics';
 
-// Types (if needed)
 interface Company {
   id: string;
   name: string;
@@ -42,7 +41,6 @@ interface Tender {
   lots: Lot[];
 }
 
-// Mock data for demonstration
 const mockTender: Tender = {
   id: 'tender-001',
   name: 'Résidence Les Cerisiers - Construction',
@@ -112,25 +110,20 @@ const mockTender: Tender = {
 
 export default function ProjectTenderAnalysis() {
   const { tenderId } = useParams<{ tenderId: string }>();
-  const [tender, setTender, ] = useState<Tender | null>(null);
+  const [tender, setTender] = useState<Tender | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Fetch tender data
   useEffect(() => {
     console.log("Loading tender analysis for ID:", tenderId);
-    // In a real app, we would fetch the data based on tenderId
-    // For now, use mock data
     setTender(mockTender);
   }, [tenderId]);
 
   const handleExportPDF = () => {
     console.log('Exporting PDF...');
-    // Implementation would go here
   };
 
   const handleExportXLS = () => {
     console.log('Exporting XLS...');
-    // Implementation would go here
   };
 
   if (!tender) {

@@ -1,21 +1,36 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 
 interface TenderBudgetComparisonProps {
-  plannedBudget: number;
-  simulatedBudget: number;
-  difference: number;
-  differencePercentage: number;
+  tenderId: string;
 }
 
-const TenderBudgetComparison: React.FC<TenderBudgetComparisonProps> = ({
-  plannedBudget,
-  simulatedBudget,
-  difference,
-  differencePercentage
-}) => {
+// Mock data for demonstration
+const mockBudgetData = {
+  plannedBudget: 2400000,
+  simulatedBudget: 2320000,
+  difference: 80000,
+  differencePercentage: 3.33
+};
+
+const TenderBudgetComparison: React.FC<TenderBudgetComparisonProps> = ({ tenderId }) => {
+  const [data, setData] = useState({
+    plannedBudget: 0,
+    simulatedBudget: 0,
+    difference: 0,
+    differencePercentage: 0
+  });
+
+  useEffect(() => {
+    console.log("Loading budget comparison for tender:", tenderId);
+    // In a real app, we would fetch budget data based on tenderId
+    // For now, use mock data
+    setData(mockBudgetData);
+  }, [tenderId]);
+
+  const { plannedBudget, simulatedBudget, difference, differencePercentage } = data;
   const isPositiveDifference = difference > 0;
   const formattedPlannedBudget = plannedBudget.toLocaleString() + ' €';
   const formattedSimulatedBudget = simulatedBudget.toLocaleString() + ' €';
@@ -42,7 +57,6 @@ const TenderBudgetComparison: React.FC<TenderBudgetComparisonProps> = ({
         <Progress 
           value={progressPercentage} 
           className="h-4" 
-          indicatorClassName={isPositiveDifference ? "bg-green-500" : "bg-red-500"}
         />
       </div>
       
