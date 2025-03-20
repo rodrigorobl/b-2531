@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
 export default function ProjectAlert() {
   const [alertName, setAlertName] = useState('');
@@ -121,7 +121,6 @@ export default function ProjectAlert() {
   };
 
   const handleCreateAlert = () => {
-    // Logique pour créer une alerte
     console.log({
       name: alertName,
       projectTypes: selectedProjectTypes,
@@ -129,7 +128,6 @@ export default function ProjectAlert() {
       regions: selectedRegions,
     });
     
-    // Reset form
     setAlertName('');
     setSelectedProjectTypes([]);
     setSelectedMissions([]);
@@ -154,7 +152,7 @@ export default function ProjectAlert() {
           <Tabs defaultValue="create">
             <TabsList className="mb-6">
               <TabsTrigger value="create">Créer une alerte</TabsTrigger>
-              <TabsTrigger value="manage">Gérer mes alertes ({mockAlerts.length})</TabsTrigger>
+              <TabsTrigger value="manage">Gérer mes alertes</TabsTrigger>
             </TabsList>
             
             <TabsContent value="create">

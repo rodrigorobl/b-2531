@@ -60,18 +60,20 @@ export function LocationFilter() {
         </SelectContent>
       </Select>
       
-      <Select defaultValue="all" className="mt-2">
-        <SelectTrigger>
-          <SelectValue placeholder="Tous départements" />
-        </SelectTrigger>
-        <SelectContent>
-          {departements.map(departement => (
-            <SelectItem key={departement.value} value={departement.value}>
-              {departement.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="mt-2">
+        <Select defaultValue="all">
+          <SelectTrigger>
+            <SelectValue placeholder="Tous départements" />
+          </SelectTrigger>
+          <SelectContent>
+            {departements.map(departement => (
+              <SelectItem key={departement.value} value={departement.value}>
+                {departement.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
