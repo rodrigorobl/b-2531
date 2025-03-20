@@ -336,32 +336,9 @@ export default function QuoteAnalysis() {
         </div>
 
         <QuoteGeneralInfo quote={quote} />
-
-        <Tabs 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="mt-6"
-        >
-          <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3">
-            <TabsTrigger value="details">Détail du devis</TabsTrigger>
-            <TabsTrigger value="annotations">Annotations</TabsTrigger>
-            <TabsTrigger value="comparison">Comparaison</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="details" className="mt-4">
-            <QuoteLineItems lineItems={quote.lineItems} />
-          </TabsContent>
-          
-          <TabsContent value="annotations" className="mt-4">
-            <QuoteAnnotations quoteId={quote.id} lineItems={quote.lineItems} />
-          </TabsContent>
-          
-          <TabsContent value="comparison" className="mt-4">
-            <QuoteComparisonView quoteId={quote.id} />
-          </TabsContent>
-        </Tabs>
-
-        <div className="mt-8 flex flex-wrap gap-3">
+        
+        {/* Moved action buttons to here, above the tabs */}
+        <div className="mt-6 mb-6 flex flex-wrap gap-3">
           {quote.status !== 'conforme' && (
             <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleMarkAs('conforme')}>
               Marquer comme conforme
@@ -396,6 +373,31 @@ export default function QuoteAnalysis() {
             Envoyer un retour
           </Button>
         </div>
+
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+        >
+          <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3">
+            <TabsTrigger value="details">Détail du devis</TabsTrigger>
+            <TabsTrigger value="annotations">Annotations</TabsTrigger>
+            <TabsTrigger value="comparison">Comparaison</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="details" className="mt-4">
+            <QuoteLineItems lineItems={quote.lineItems} />
+          </TabsContent>
+          
+          <TabsContent value="annotations" className="mt-4">
+            <QuoteAnnotations quoteId={quote.id} lineItems={quote.lineItems} />
+          </TabsContent>
+          
+          <TabsContent value="comparison" className="mt-4">
+            <QuoteComparisonView quoteId={quote.id} />
+          </TabsContent>
+        </Tabs>
+
+        {/* Removed the action buttons from here as they were moved above */}
       </div>
     </Layout>
   );
