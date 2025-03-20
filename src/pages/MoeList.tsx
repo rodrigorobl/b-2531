@@ -516,7 +516,7 @@ function ExtendedTenderManagementTable({
                 <td className="py-3 px-4 text-right font-medium">{tender.budget}</td>
                 <td className="py-3 px-4">
                   <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/tender/${tender.id}/lot/${tender.id}`}>
+                    <Link to={`/tender/project-${tender.id.split('-')[1]}`}>
                       Détails
                     </Link>
                   </Button>
