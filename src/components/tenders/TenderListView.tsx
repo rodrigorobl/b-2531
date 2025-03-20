@@ -7,6 +7,7 @@ import { Building, MapPin, Calendar, Star, ExternalLink } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
 import { Link } from 'react-router-dom';
 import { useProfile } from '@/contexts/ProfileContext';
+import { MatchingProgress } from './MatchingProgress';
 
 interface TenderListViewProps {
   tenders: TenderSearchResult[];
@@ -34,6 +35,13 @@ export default function TenderListView({
       return `/construction-tender-specifications?project=${tenderId}`;
     }
     return `/tender-specifications?project=${tenderId}`;
+  };
+
+  // Generate a random matching score for demo purposes
+  const getMatchingScore = (tenderId: string) => {
+    // Use the tender ID to generate a consistent but seemingly random score
+    const hash = tenderId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return Math.min(100, Math.max(25, (hash % 75) + 25)); // Score between 25-100
   };
 
   return (
@@ -76,6 +84,12 @@ export default function TenderListView({
                 <span>{tender.deadline}</span>
               </div>
             </div>
+            
+            {activeProfile === 'entreprise-construction' && (
+              <div className="mt-2 max-w-60">
+                <MatchingProgress score={getMatchingScore(tender.id)} size="sm" />
+              </div>
+            )}
           </div>
           
           <div className="ml-4 flex items-center gap-3">
