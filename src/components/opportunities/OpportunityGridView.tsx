@@ -11,7 +11,8 @@ import {
   Clock, 
   Eye, 
   Star, 
-  Briefcase
+  Briefcase,
+  ExternalLink
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -129,9 +130,9 @@ export default function OpportunityGridView({
               />
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/project-specifications?project=${opportunity.id}`}>
-                <Eye size={14} className="mr-1" />
-                Voir détails
+              <Link to={`/tender-specifications?project=${opportunity.id}`}>
+                <ExternalLink size={14} className="mr-1" />
+                Accéder à l'Appel d'Offres
               </Link>
             </Button>
           </CardFooter>
