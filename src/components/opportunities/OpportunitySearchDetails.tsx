@@ -11,7 +11,6 @@ import {
   Euro, 
   Bookmark, 
   Clock, 
-  FileText,
   Users,
   Phone,
   Mail,
@@ -151,22 +150,6 @@ export default function OpportunitySearchDetails({
         </div>
       </Card>
       
-      <Card className="p-3 mb-4">
-        <h4 className="font-medium mb-2">Statistiques</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Candidatures totales:</span>
-            <span className="font-medium">{opportunity.applicantsCount.total}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Concurrents similaires:</span>
-            <span className={`font-medium ${opportunity.applicantsCount.similar > 3 ? 'text-red-600' : 'text-amber-600'}`}>
-              {opportunity.applicantsCount.similar}
-            </span>
-          </div>
-        </div>
-      </Card>
-      
       <Separator className="my-4" />
       
       <div className="space-y-3">
@@ -185,17 +168,11 @@ export default function OpportunitySearchDetails({
         </div>
       </div>
       
-      <div className="flex flex-col gap-2 mt-6">
+      <div className="mt-6">
         <Button asChild className="w-full">
-          <Link to={`/project-specifications/${opportunity.id}`}>
+          <Link to={`/tender/${opportunity.id}`}>
             <Eye size={16} className="mr-2" />
             Voir détails du projet
-          </Link>
-        </Button>
-        <Button asChild variant="outline" className="w-full">
-          <Link to={`/project-specifications/${opportunity.id}/documents`}>
-            <FileText size={16} className="mr-2" />
-            Accéder aux documents
           </Link>
         </Button>
       </div>

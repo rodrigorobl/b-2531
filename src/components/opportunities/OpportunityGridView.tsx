@@ -11,7 +11,6 @@ import {
   Clock, 
   Eye, 
   Star, 
-  Users,
   Briefcase
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -113,17 +112,6 @@ export default function OpportunityGridView({
                 </span>
               </div>
             </div>
-            <div className="flex items-center text-sm text-muted-foreground gap-4">
-              <div className="flex items-center">
-                <Users size={14} className="mr-1" />
-                <span>{opportunity.applicantsCount.total} candidats</span>
-              </div>
-              {opportunity.applicantsCount.similar > 0 && (
-                <div className={`flex items-center ${opportunity.applicantsCount.similar > 3 ? 'text-red-600' : 'text-amber-600'}`}>
-                  <span>{opportunity.applicantsCount.similar} concurrents similaires</span>
-                </div>
-              )}
-            </div>
           </CardContent>
           <CardFooter className="p-4 pt-2 flex justify-between">
             <Button
@@ -141,7 +129,7 @@ export default function OpportunityGridView({
               />
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/project-specifications/${opportunity.id}`}>
+              <Link to={`/tender/${opportunity.id}`}>
                 <Eye size={14} className="mr-1" />
                 Voir détails
               </Link>

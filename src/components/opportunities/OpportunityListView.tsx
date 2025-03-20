@@ -13,8 +13,7 @@ import {
 } from '@/components/ui/table';
 import { 
   Eye, 
-  Star,
-  Users
+  Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -81,7 +80,6 @@ export default function OpportunityListView({
             <TableHead>Missions</TableHead>
             <TableHead>Phase</TableHead>
             <TableHead>Échéance</TableHead>
-            <TableHead>Candidats</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -140,21 +138,10 @@ export default function OpportunityListView({
                 </Badge>
               </TableCell>
               <TableCell>{opportunity.deadline}</TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <Users size={14} className="mr-1" />
-                  <span>{opportunity.applicantsCount.total}</span>
-                </div>
-                {opportunity.applicantsCount.similar > 0 && (
-                  <div className={`text-xs ${opportunity.applicantsCount.similar > 3 ? 'text-red-600' : 'text-amber-600'}`}>
-                    {opportunity.applicantsCount.similar} concurrents similaires
-                  </div>
-                )}
-              </TableCell>
               <TableCell className="text-right">
                 <Button variant="outline" size="sm" asChild>
                   <Link 
-                    to={`/project-specifications/${opportunity.id}`}
+                    to={`/tender/${opportunity.id}`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Eye size={14} className="mr-1" />
@@ -166,7 +153,7 @@ export default function OpportunityListView({
           ))}
           {opportunities.length === 0 && (
             <TableRow>
-              <TableCell colSpan={9} className="text-center h-24">
+              <TableCell colSpan={8} className="text-center h-24">
                 Aucune opportunité ne correspond à vos critères de recherche.
               </TableCell>
             </TableRow>
