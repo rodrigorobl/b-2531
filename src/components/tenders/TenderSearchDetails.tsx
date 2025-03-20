@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
@@ -130,10 +129,10 @@ export default function TenderSearchDetails({
             </Card>
           </div>
           
-          <Link to={`${projectUrlPath}?project=${tender.id}`} className="w-full">
+          <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
             <Button className="w-full gap-2">
               <ExternalLink size={14} />
-              <span>{projectButtonText}</span>
+              <span>Accéder à l'Appel d'Offres</span>
             </Button>
           </Link>
         </div>

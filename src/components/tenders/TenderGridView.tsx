@@ -4,8 +4,9 @@ import { cn } from '@/lib/utils';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building, MapPin, Calendar, Star, Eye, ArrowRight } from 'lucide-react';
+import { Building, MapPin, Calendar, Star, Eye, ArrowRight, ExternalLink } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
+import { Link } from 'react-router-dom';
 
 interface TenderGridViewProps {
   tenders: TenderSearchResult[];
@@ -88,10 +89,17 @@ export default function TenderGridView({
               {tender.client.name}
             </div>
             <div>
-              <Button variant="ghost" size="sm" className="text-primary flex items-center gap-1">
-                <Eye size={14} />
-                <span>Détails</span>
-                <ArrowRight size={14} />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-primary flex items-center gap-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.location.href = `/tender-specifications?project=${tender.id}`;
+                }}
+              >
+                <ExternalLink size={14} />
+                <span>Accéder à l'Appel d'Offres</span>
               </Button>
             </div>
           </div>

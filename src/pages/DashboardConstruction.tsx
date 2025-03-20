@@ -111,7 +111,7 @@ export default function DashboardConstruction() {
       description: 'Lot Charpente sur Résidence Les Cerisiers',
       timestamp: 'Il y a 1 heure',
       type: 'tender' as const,
-      link: '/tender-search?project=Résidence+Les+Cerisiers'
+      link: '/tender-specifications?project=tender-001'
     },
     {
       id: 'activity-002',
@@ -119,7 +119,7 @@ export default function DashboardConstruction() {
       description: 'Votre devis pour École Saint-Pierre a été retenu',
       timestamp: 'Hier, 14:30',
       type: 'quote' as const,
-      link: '/company-details-tender/quote-002'
+      link: '/tender-specifications?project=tender-002'
     },
     {
       id: 'activity-003',
@@ -127,7 +127,7 @@ export default function DashboardConstruction() {
       description: 'Devis rejeté pour Entrepôt Logistique',
       timestamp: 'Hier, 10:15',
       type: 'document' as const,
-      link: '/company-details-tender/quote-003'
+      link: '/tender-specifications?project=tender-003'
     }
   ];
 

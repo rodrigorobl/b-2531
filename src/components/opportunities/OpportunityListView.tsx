@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { OpportunitySearchResult } from '@/pages/OpportunitiesSearch';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +11,7 @@ import {
   TableCell 
 } from '@/components/ui/table';
 import { 
-  Eye, 
+  ExternalLink, 
   Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -141,11 +140,11 @@ export default function OpportunityListView({
               <TableCell className="text-right">
                 <Button variant="outline" size="sm" asChild>
                   <Link 
-                    to={`/project-specifications?project=${opportunity.id}`}
+                    to={`/tender-specifications?project=${opportunity.id}`}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Eye size={14} className="mr-1" />
-                    Voir détails
+                    <ExternalLink size={14} className="mr-1" />
+                    Accéder à l'Appel d'Offres
                   </Link>
                 </Button>
               </TableCell>

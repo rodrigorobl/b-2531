@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { OpportunitySearchResult } from '@/pages/OpportunitiesSearch';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +13,7 @@ import {
   Users,
   Phone,
   Mail,
-  Eye,
+  ExternalLink,
   Calendar,
   Star
 } from 'lucide-react';
@@ -170,9 +169,9 @@ export default function OpportunitySearchDetails({
       
       <div className="mt-6">
         <Button asChild className="w-full">
-          <Link to={`/project-specifications?project=${opportunity.id}`}>
-            <Eye size={16} className="mr-2" />
-            Voir détails du projet
+          <Link to={`/tender-specifications?project=${opportunity.id}`}>
+            <ExternalLink size={16} className="mr-2" />
+            Accéder à l'Appel d'Offres
           </Link>
         </Button>
       </div>
