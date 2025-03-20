@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -62,6 +61,7 @@ import SubmitServicesQuote from "./pages/SubmitServicesQuote";
 import ServicesDetailTender from "./pages/ServicesDetailTender";
 import ConstructionQuoteDetails from "./pages/ConstructionQuoteDetails";
 import ProjectTenderAnalysis from "./pages/ProjectTenderAnalysis";
+import ProjectSurvey from "./pages/ProjectSurvey";
 
 const queryClient = new QueryClient();
 
@@ -86,9 +86,9 @@ const App = () => (
             <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
             <Route path="/tender/:tenderId" element={<TenderDetail />} />
             <Route path="/tender/:tenderId/analysis" element={<ProjectTenderAnalysis />} />
+            <Route path="/tender/:tenderId/survey" element={<ProjectSurvey />} />
             <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
-            <Route path="/tender/:projectId/lot/:lotId" element={<LotAnalysis />} />
-            <Route path="/tender-specifications" element={<Index />} />
+            <Route path="/project-survey" element={<ProjectSurvey />} />
             <Route path="/project-specifications" element={<ProjectSpecifications />} />
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/moe-list" element={<MoeList />} />

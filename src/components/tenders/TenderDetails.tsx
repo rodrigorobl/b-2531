@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tender } from '@/pages/TenderOffers';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, ExternalLink } from 'lucide-react';
+import { FileText, MessageSquare, Calendar, Upload, Map, Building, FileDown, Clock, Users, ExternalLink, BarChart, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface TenderDetailsProps {
@@ -140,6 +141,18 @@ export default function TenderDetails({
                       <span>Accéder à l'Appel d'Offres</span>
                     </Link>
                   </Button>}
+                <Button variant="outline" size="sm" className="w-full gap-1" asChild>
+                  <Link to={`/tender/${tender.id}/survey`}>
+                    <ClipboardList size={14} />
+                    <span>Suivi des entreprises</span>
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" className="w-full gap-1" asChild>
+                  <Link to={`/tender/${tender.id}/analysis`}>
+                    <BarChart size={14} />
+                    <span>Analyse des réponses</span>
+                  </Link>
+                </Button>
                 <Button variant="outline" size="sm" className="w-full gap-1">
                   <FileDown size={14} />
                   <span>Télécharger DCE</span>
