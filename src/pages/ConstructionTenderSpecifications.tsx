@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useProfile } from '@/contexts/ProfileContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileText, Wrench, Pencil, CalendarClock } from 'lucide-react';
+import { FileText, Wrench, Pencil, CalendarClock, Download, Send, Ruler, MapPin } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Import the same components as ProjectSpecifications
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
@@ -15,6 +16,8 @@ import ProjectTimeline from '@/components/project-specifications/ProjectTimeline
 import ProjectDocuments from '@/components/project-specifications/ProjectDocuments';
 import ProjectLots from '@/components/project-specifications/ProjectLots';
 import ProjectMessages from '@/components/project-specifications/ProjectMessages';
+import ProjectMap from '@/components/ProjectMap';
+import TenderOffers from '@/components/TenderOffers';
 
 export default function ConstructionTenderSpecifications() {
   const [searchParams] = useSearchParams();
@@ -26,6 +29,8 @@ export default function ConstructionTenderSpecifications() {
     id: projectId || 'unknown',
     name: 'Centre Commercial Riviera',
     location: 'Paris, France',
+    address: '123 Avenue des Champs-Élysées, 75008 Paris',
+    coordinates: { lat: 48.8566, lng: 2.3522 },
     status: 'open',
     createdDate: '01/07/2023',
     deadline: '30/08/2023',
@@ -46,6 +51,38 @@ export default function ConstructionTenderSpecifications() {
       { id: 'lot-2', name: 'Menuiseries', budget: '450,000 €', deadline: '15/09/2023', minSurveyPrice: 1500, minSurveyDelivery: '3 jours', offerId: 'AO-2023-042-02' },
       { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours', offerId: 'AO-2023-042-03' },
       { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours', offerId: 'AO-2023-042-04' },
+    ],
+    // Données d'exemple pour les offres
+    offers: [
+      {
+        id: "offer-001",
+        lot: "01",
+        description: "Gros Œuvre",
+        status: "pending",
+        deadline: "15/05/2024",
+      },
+      {
+        id: "offer-002",
+        lot: "02",
+        description: "Menuiseries",
+        status: "submitted",
+        deadline: "20/05/2024",
+        isCompliant: true,
+        submissionDate: "10/05/2024",
+        quoteIndex: "QT-002",
+        amount: 325000
+      }
+    ],
+    // Étapes clés du chantier
+    keyStages: [
+      { id: 'stage-1', name: 'Installation de chantier', date: '01/09/2023', status: 'completed' },
+      { id: 'stage-2', name: 'Terrassement', date: '15/09/2023 - 15/10/2023', status: 'completed' },
+      { id: 'stage-3', name: 'Fondations', date: '20/10/2023 - 20/12/2023', status: 'in-progress' },
+      { id: 'stage-4', name: 'Gros œuvre', date: '05/01/2024 - 30/05/2024', status: 'upcoming' },
+      { id: 'stage-5', name: 'Clos-couvert', date: '01/06/2024 - 31/08/2024', status: 'upcoming' },
+      { id: 'stage-6', name: 'Second œuvre', date: '01/09/2024 - 31/12/2024', status: 'upcoming' },
+      { id: 'stage-7', name: 'Finitions', date: '01/01/2025 - 28/02/2025', status: 'upcoming' },
+      { id: 'stage-8', name: 'Livraison', date: '15/03/2025', status: 'upcoming' }
     ]
   };
 
@@ -54,10 +91,6 @@ export default function ConstructionTenderSpecifications() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <div className="container py-6 space-y-6 max-w-7xl">
-          <Link to={`/tender-specifications?project=${projectId}`} className="inline-flex items-center text-primary hover:underline mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour aux spécifications standard
-          </Link>
           
           <div className="flex flex-col md:flex-row gap-6">
             {/* Project Perspective Image */}
@@ -69,10 +102,53 @@ export default function ConstructionTenderSpecifications() {
             <ProjectHeader projectData={projectData} />
           </div>
 
-          <div className="bg-accent/30 p-4 rounded-lg mb-6">
-            <h3 className="text-lg font-medium mb-2">Vue Construction et Chiffrage</h3>
-            <p className="text-muted-foreground">Cette vue est spécialement conçue pour les entreprises de construction, avec des informations techniques et économiques supplémentaires pour faciliter votre réponse à l'appel d'offres.</p>
+          {/* Actions principales - Boutons en évidence */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button className="h-auto py-3 bg-primary text-primary-foreground hover:bg-primary/90 flex flex-col items-center">
+              <Download className="h-8 w-8 mb-2" />
+              <span>Télécharger le DCE</span>
+            </Button>
+            <Button className="h-auto py-3 bg-green-500 hover:bg-green-600 text-white flex flex-col items-center">
+              <Send className="h-8 w-8 mb-2" />
+              <span>Déposer une offre</span>
+            </Button>
+            <Button variant="outline" className="h-auto py-3 flex flex-col items-center">
+              <FileText className="h-8 w-8 mb-2" />
+              <span>Télécharger le DPGF</span>
+            </Button>
+            <Button variant="outline" className="h-auto py-3 flex flex-col items-center">
+              <Ruler className="h-8 w-8 mb-2" />
+              <span>Faire réaliser les métrés</span>
+              <span className="text-xs mt-1">à partir de 1500€ HT - 3 jours</span>
+            </Button>
           </div>
+
+          {/* Localisation du projet */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                Localisation du projet
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="col-span-1">
+                  <p className="font-medium">{projectData.address}</p>
+                  <p className="text-muted-foreground mt-2">{projectData.location}</p>
+                </div>
+                <div className="col-span-1 md:col-span-2 h-64">
+                  <ProjectMap 
+                    location={{
+                      address: projectData.address,
+                      lat: projectData.coordinates.lat,
+                      lng: projectData.coordinates.lng
+                    }}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-5 mb-6">
@@ -85,6 +161,32 @@ export default function ConstructionTenderSpecifications() {
 
             <TabsContent value="overview" className="space-y-6">
               <ProjectOverview projectData={projectData} />
+              
+              {/* Étapes clés du chantier */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Étapes clés du chantier</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {projectData.keyStages.map((stage) => (
+                      <div key={stage.id} className="flex items-center gap-3">
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center text-primary-foreground
+                          ${stage.status === 'completed' ? 'bg-green-500' : 
+                           stage.status === 'in-progress' ? 'bg-primary' : 'bg-muted'}`}>
+                          {stage.status === 'completed' ? '✓' : 
+                           stage.status === 'in-progress' ? '→' : '○'}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium">{stage.name}</h3>
+                          <p className="text-sm text-muted-foreground">{stage.date}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              
               <ProjectTimeline />
             </TabsContent>
 
@@ -210,6 +312,16 @@ export default function ConstructionTenderSpecifications() {
               <ProjectMessages />
             </TabsContent>
           </Tabs>
+          
+          {/* Section Mes Offres */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Mes offres</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TenderOffers offers={projectData.offers} />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
