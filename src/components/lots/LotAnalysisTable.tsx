@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { LotBidDetails } from './LotBidDetails';
-import { FileText, MessageSquare, Check, CheckCircle, XCircle } from 'lucide-react';
+import { FileText, MessageSquare, Check, CheckCircle, XCircle, Flag } from 'lucide-react';
 
 interface Bid {
   id: string;
@@ -26,6 +26,7 @@ interface Bid {
   solvencyScore: 'excellent' | 'average' | 'at-risk';
   administrativeScore: number;
   selected: boolean;
+  isFavorite?: boolean;
 }
 
 interface LotAnalysisTableProps {
@@ -35,6 +36,7 @@ interface LotAnalysisTableProps {
   onToggleBidSelection: (bidId: string) => void;
   onOpenCommentDialog: (bidId: string) => void;
   onSelectWinningBid: (bidId: string) => void;
+  onSelectFavoriteBid: (bidId: string) => void;
   formatPrice: (amount: number) => string;
   formatDate: (dateString: string) => string;
   getSolvencyBadge: (score: 'excellent' | 'average' | 'at-risk') => React.ReactNode;
@@ -48,6 +50,7 @@ export function LotAnalysisTable({
   onToggleBidSelection,
   onOpenCommentDialog,
   onSelectWinningBid,
+  onSelectFavoriteBid,
   formatPrice,
   formatDate,
   getSolvencyBadge,
@@ -64,12 +67,13 @@ export function LotAnalysisTable({
           <TableHead>Conformité</TableHead>
           <TableHead>Solvabilité</TableHead>
           <TableHead>Score Admin.</TableHead>
+          <TableHead>Entreprise présentie</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {bids.map((bid) => (
-          <TableRow key={bid.id} className={bid.selected ? "bg-primary/5" : ""}>
+          <TableRow key={bid.id} className={bid.selected ? "bg-primary/5" : bid.isFavorite ? "bg-blue-50" : ""}>
             <TableCell>
               <Checkbox 
                 checked={selectedBids.includes(bid.id)} 
@@ -77,7 +81,9 @@ export function LotAnalysisTable({
                 disabled={isAssigned}
               />
             </TableCell>
-            <TableCell className="font-medium">{bid.companyName}</TableCell>
+            <TableCell className={`font-medium ${bid.isFavorite ? "text-blue-600 font-bold" : ""}`}>
+              {bid.companyName}
+            </TableCell>
             <TableCell>{formatPrice(bid.amount)}</TableCell>
             <TableCell>{formatDate(bid.submissionDate)}</TableCell>
             <TableCell>
@@ -93,6 +99,22 @@ export function LotAnalysisTable({
             </TableCell>
             <TableCell>{getSolvencyBadge(bid.solvencyScore)}</TableCell>
             <TableCell>{getAdministrativeScoreBadge(bid.administrativeScore)}</TableCell>
+            <TableCell>
+              {bid.isFavorite ? (
+                <Badge className="bg-blue-500 flex items-center gap-1 w-fit">
+                  <Flag className="h-3 w-3" /> Présentie
+                </Badge>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onSelectFavoriteBid(bid.id)}
+                  disabled={!bid.compliant || isAssigned}
+                >
+                  Définir
+                </Button>
+              )}
+            </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
                 <Dialog>
@@ -139,7 +161,7 @@ export function LotAnalysisTable({
         
         {bids.length === 0 && (
           <TableRow>
-            <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+            <TableCell colSpan={9} className="text-center py-6 text-muted-foreground">
               Aucun devis trouvé avec les critères actuels.
             </TableCell>
           </TableRow>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,7 +32,9 @@ interface Bid {
   solvencyScore: 'excellent' | 'average' | 'at-risk';
   administrativeScore: number;
   selected: boolean;
+  isFavorite?: boolean;
 }
+
 interface Lot {
   id: string;
   name: string;
@@ -40,16 +43,33 @@ interface Lot {
   projectName: string;
   estimatedBudget: number;
   bids: Bid[];
+  projectDetails?: {
+    shabSurface: number;
+    sdpSurface: number;
+    unitCount: number;
+  };
 }
-export default function LotAnalysis() {
-  const {
-    lotId,
-    tenderId
-  } = useParams<{
-    lotId: string;
-    tenderId: string;
-  }>();
+
+interface BudgetRatios {
+  perSHAB: number;
+  perSDP: number;
+  perUnit: number;
+}
+
+export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }: { tenderId?: string; lotId?: string }) {
+  const params = useParams<{ tenderId: string; lotId: string }>();
   const navigate = useNavigate();
+  
+  // Use props if provided, otherwise use params from the URL
+  const tenderId = propTenderId || params.tenderId;
+  const lotId = propLotId || params.lotId;
+
+  // Mock project details for our ratios
+  const projectDetails = {
+    shabSurface: 1200, // m²
+    sdpSurface: 1500, // m²
+    unitCount: 15 // number of units/logements
+  };
 
   // Mock data for demonstration
   const [lot, setLot] = useState<Lot>({
@@ -59,6 +79,7 @@ export default function LotAnalysis() {
     projectId: tenderId || '1',
     projectName: 'Centre Commercial Riviera',
     estimatedBudget: 180000,
+    projectDetails: projectDetails,
     bids: [{
       id: '1',
       companyId: 'c1',
@@ -69,7 +90,8 @@ export default function LotAnalysis() {
       complianceNotes: 'Conforme aux spécifications techniques. Délais respectés.',
       solvencyScore: 'excellent',
       administrativeScore: 98,
-      selected: false
+      selected: false,
+      isFavorite: false
     }, {
       id: '2',
       companyId: 'c2',
@@ -80,7 +102,8 @@ export default function LotAnalysis() {
       complianceNotes: 'Conforme aux spécifications, mais délai d\'exécution un peu long.',
       solvencyScore: 'average',
       administrativeScore: 85,
-      selected: false
+      selected: false,
+      isFavorite: false
     }, {
       id: '3',
       companyId: 'c3',
@@ -91,7 +114,8 @@ export default function LotAnalysis() {
       complianceNotes: 'Non conforme: certaines spécifications techniques ne sont pas respectées.',
       solvencyScore: 'at-risk',
       administrativeScore: 72,
-      selected: false
+      selected: false,
+      isFavorite: false
     }, {
       id: '4',
       companyId: 'c4',
@@ -102,7 +126,8 @@ export default function LotAnalysis() {
       complianceNotes: 'Conforme à toutes les spécifications. Excellente méthodologie.',
       solvencyScore: 'excellent',
       administrativeScore: 100,
-      selected: false
+      selected: false,
+      isFavorite: false
     }]
   });
   const [selectedBids, setSelectedBids] = useState<string[]>([]);
@@ -126,6 +151,27 @@ export default function LotAnalysis() {
       projectId: tenderId || prevLot.projectId
     }));
   }, [tenderId, lotId]);
+
+  // Calculate budget ratios
+  const calculateBudgetRatios = (amount: number): BudgetRatios | undefined => {
+    if (!lot.projectDetails) return undefined;
+    
+    return {
+      perSHAB: amount / lot.projectDetails.shabSurface,
+      perSDP: amount / lot.projectDetails.sdpSurface,
+      perUnit: amount / lot.projectDetails.unitCount
+    };
+  };
+
+  const budgetRatios = calculateBudgetRatios(lot.estimatedBudget);
+
+  // Get the favorite bid, if any
+  const favoriteBid = lot.bids.find(bid => bid.isFavorite);
+  const favoriteBidWithRatios = favoriteBid ? {
+    companyName: favoriteBid.companyName,
+    amount: favoriteBid.amount,
+    ratios: calculateBudgetRatios(favoriteBid.amount)
+  } : undefined;
 
   // Filter and sort the bids
   const filteredBids = lot.bids.filter(bid => {
@@ -158,6 +204,7 @@ export default function LotAnalysis() {
       setSelectedBids([...selectedBids, bidId]);
     }
   };
+  
   const selectWinningBid = (bidId: string) => {
     setLot(prevLot => ({
       ...prevLot,
@@ -172,6 +219,20 @@ export default function LotAnalysis() {
     });
     setShowAssignDialog(false);
   };
+  
+  const selectFavoriteBid = (bidId: string) => {
+    setLot(prevLot => ({
+      ...prevLot,
+      bids: prevLot.bids.map(bid => ({
+        ...bid,
+        isFavorite: bid.id === bidId
+      }))
+    }));
+    toast.success('Entreprise présentie définie', {
+      description: 'L\'entreprise a été définie comme présentie pour ce lot.'
+    });
+  };
+  
   const openAssignDialog = (bidId: string) => {
     setBidToAssign(bidId);
     setShowAssignDialog(true);
@@ -212,7 +273,8 @@ export default function LotAnalysis() {
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
+      maximumFractionDigits: 0
     }).format(amount);
   };
   const formatDate = (dateString: string) => {
@@ -234,7 +296,16 @@ export default function LotAnalysis() {
         
         <LotAnalysisHeader lotName={lot.name} projectName={lot.projectName} projectId={lot.projectId} onDownloadSummary={downloadSummary} />
         
-        <LotAnalysisStats estimatedBudget={lot.estimatedBudget} bidsCount={lot.bids.length} compliantBidsCount={lot.bids.filter(bid => bid.compliant).length} status={lot.status} selectedCompanyName={lot.bids.find(bid => bid.selected)?.companyName} formatPrice={formatPrice} />
+        <LotAnalysisStats 
+          estimatedBudget={lot.estimatedBudget} 
+          bidsCount={lot.bids.length} 
+          compliantBidsCount={lot.bids.filter(bid => bid.compliant).length} 
+          status={lot.status} 
+          selectedCompanyName={lot.bids.find(bid => bid.selected)?.companyName}
+          favoriteBid={favoriteBidWithRatios}
+          budgetRatios={budgetRatios}
+          formatPrice={formatPrice} 
+        />
         
         <Tabs defaultValue="table" className="space-y-4">
           <div className="flex justify-between items-center">
@@ -275,7 +346,19 @@ export default function LotAnalysis() {
           <TabsContent value="table" className="space-y-4">
             <Card>
               <CardContent className="p-0">
-                <LotAnalysisTable bids={sortedBids} selectedBids={selectedBids} isAssigned={lot.status === 'assigned'} onToggleBidSelection={toggleBidSelection} onOpenCommentDialog={openCommentDialog} onSelectWinningBid={openAssignDialog} formatPrice={formatPrice} formatDate={formatDate} getSolvencyBadge={getSolvencyBadge} getAdministrativeScoreBadge={getAdministrativeScoreBadge} />
+                <LotAnalysisTable 
+                  bids={sortedBids} 
+                  selectedBids={selectedBids} 
+                  isAssigned={lot.status === 'assigned'} 
+                  onToggleBidSelection={toggleBidSelection} 
+                  onOpenCommentDialog={openCommentDialog} 
+                  onSelectWinningBid={openAssignDialog}
+                  onSelectFavoriteBid={selectFavoriteBid}
+                  formatPrice={formatPrice} 
+                  formatDate={formatDate} 
+                  getSolvencyBadge={getSolvencyBadge} 
+                  getAdministrativeScoreBadge={getAdministrativeScoreBadge} 
+                />
               </CardContent>
             </Card>
             
