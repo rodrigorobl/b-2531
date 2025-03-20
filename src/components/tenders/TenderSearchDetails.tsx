@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { FileText, Calendar, Map, Building, Clock, Users, Star, ExternalLink } from 'lucide-react';
+import { FileText, Calendar, Map, Building, Clock, Users, Star, ExternalLink, BarChart } from 'lucide-react';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
@@ -19,6 +20,8 @@ export default function TenderSearchDetails({
   projectButtonText = "Accéder à l'Appel d'offres",
   projectUrlPath = "/tender-specifications"
 }: TenderSearchDetailsProps) {
+  const { activeProfile } = useProfile();
+  
   if (!tender) {
     return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
         <div className="text-center p-6 text-muted-foreground">
@@ -39,6 +42,20 @@ export default function TenderSearchDetails({
       default:
         return 'Inconnu';
     }
+  };
+  
+  const getButtonDestination = () => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/project-tender-analysis?project=${tender.id}`;
+    }
+    return `/tender-specifications?project=${tender.id}`;
+  };
+
+  const getButtonIcon = () => {
+    if (activeProfile === 'entreprise-construction') {
+      return <BarChart size={14} />;
+    }
+    return <ExternalLink size={14} />;
   };
   
   return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
@@ -130,9 +147,9 @@ export default function TenderSearchDetails({
             </Card>
           </div>
           
-          <Link to={`/tender-specifications?project=${tender.id}`} className="w-full">
+          <Link to={getButtonDestination()} className="w-full">
             <Button className="w-full gap-2">
-              <ExternalLink size={14} />
+              {getButtonIcon()}
               <span>Accéder à l'Appel d'Offres</span>
             </Button>
           </Link>
