@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, ArrowDownUp, Users, PieChart, FileText, CheckCircle, Calendar, AlertTriangle } from 'lucide-react';
@@ -36,10 +35,8 @@ export function TenderQuotesTab({ tenderId, categories }: TenderQuotesTabProps) 
     direction: 'asc' | 'desc';
   } | null>(null);
 
-  // Get selected category data
   const selectedCategoryData = categories.find(cat => cat.id === selectedCategory);
 
-  // Sort quotes if sort config is set
   const getSortedQuotes = (quotes: Quote[]) => {
     if (!sortConfig) return quotes;
     return [...quotes].sort((a, b) => {
@@ -55,7 +52,6 @@ export function TenderQuotesTab({ tenderId, categories }: TenderQuotesTabProps) 
     });
   };
 
-  // Handle sorting
   const requestSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -67,7 +63,6 @@ export function TenderQuotesTab({ tenderId, categories }: TenderQuotesTabProps) 
     });
   };
 
-  // Get evaluation based on number of quotes
   const getCategoryEvaluation = (quotesCount: number) => {
     if (quotesCount >= 4) return {
       label: 'Bon',
@@ -85,7 +80,6 @@ export function TenderQuotesTab({ tenderId, categories }: TenderQuotesTabProps) 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-      {/* Categories sidebar */}
       <div className="space-y-1">
         {categories.map(category => {
           const evaluation = getCategoryEvaluation(category.quotes.length);
@@ -120,7 +114,6 @@ export function TenderQuotesTab({ tenderId, categories }: TenderQuotesTabProps) 
         })}
       </div>
 
-      {/* Quotes list */}
       <div className="md:col-span-3">
         {selectedCategoryData ? (
           <Card>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -44,10 +44,10 @@ interface Lot {
 export default function LotAnalysis() {
   const {
     lotId,
-    projectId
+    tenderId
   } = useParams<{
     lotId: string;
-    projectId: string;
+    tenderId: string;
   }>();
   const navigate = useNavigate();
 
@@ -56,7 +56,7 @@ export default function LotAnalysis() {
     id: lotId || '1-2',
     name: 'Électricité',
     status: 'pending',
-    projectId: projectId || '1',
+    projectId: tenderId || '1',
     projectName: 'Centre Commercial Riviera',
     estimatedBudget: 180000,
     bids: [{
@@ -113,6 +113,19 @@ export default function LotAnalysis() {
   const [commentText, setCommentText] = useState('');
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [bidToAssign, setBidToAssign] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Log parameters for debugging
+    console.log("Route params:", { tenderId, lotId });
+    
+    // Here you would typically fetch the lot data from an API
+    // For now, we're just using the mock data and updating it with the route params
+    setLot(prevLot => ({
+      ...prevLot,
+      id: lotId || prevLot.id,
+      projectId: tenderId || prevLot.projectId
+    }));
+  }, [tenderId, lotId]);
 
   // Filter and sort the bids
   const filteredBids = lot.bids.filter(bid => {
