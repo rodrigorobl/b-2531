@@ -98,8 +98,24 @@ export default function ConstructionTenderSpecifications() {
               <ProjectGallery images={projectData.perspectiveImages} />
             </div>
             
-            {/* Project Title & Info */}
-            <ProjectHeader projectData={projectData} />
+            {/* Project Title & Info - Without the buttons */}
+            <div className="md:w-2/3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-bold">{projectData.name}</h1>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin size={14} />
+                      <span>{projectData.location}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">•</span>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <span>Publié le {projectData.createdDate}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Actions principales - Boutons en évidence */}
@@ -108,15 +124,17 @@ export default function ConstructionTenderSpecifications() {
               <Download className="h-8 w-8 mb-2" />
               <span>Télécharger le DCE</span>
             </Button>
-            <Button className="h-auto py-3 bg-green-500 hover:bg-green-600 text-white flex flex-col items-center">
-              <Send className="h-8 w-8 mb-2" />
-              <span>Déposer une offre</span>
-            </Button>
+            <Link to={`/submit-quote/${projectData.id}`}>
+              <Button className="h-auto py-3 w-full bg-green-500 hover:bg-green-600 text-white flex flex-col items-center">
+                <Send className="h-8 w-8 mb-2" />
+                <span>Déposer une offre</span>
+              </Button>
+            </Link>
             <Button variant="outline" className="h-auto py-3 flex flex-col items-center">
               <FileText className="h-8 w-8 mb-2" />
               <span>Télécharger le DPGF</span>
             </Button>
-            <Link to={`/construction-tender-specifications?project=${projectId}`}>
+            <Link to={`/quantity-survey-request?project=${projectData.id}&lot=lot-1`}>
               <Button variant="outline" className="h-auto py-3 w-full flex flex-col items-center">
                 <Ruler className="h-8 w-8 mb-2" />
                 <span>Faire réaliser les métrés</span>
@@ -153,10 +171,9 @@ export default function ConstructionTenderSpecifications() {
           </Card>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="technical">Détails Techniques</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
 
