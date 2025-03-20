@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -116,11 +116,13 @@ export default function ConstructionTenderSpecifications() {
               <FileText className="h-8 w-8 mb-2" />
               <span>Télécharger le DPGF</span>
             </Button>
-            <Button variant="outline" className="h-auto py-3 flex flex-col items-center">
-              <Ruler className="h-8 w-8 mb-2" />
-              <span>Faire réaliser les métrés</span>
-              <span className="text-xs mt-1">à partir de 1500€ HT - 3 jours</span>
-            </Button>
+            <Link to={`/construction-tender-specifications?project=${projectId}`}>
+              <Button variant="outline" className="h-auto py-3 w-full flex flex-col items-center">
+                <Ruler className="h-8 w-8 mb-2" />
+                <span>Faire réaliser les métrés</span>
+                <span className="text-xs mt-1">à partir de 1500€ HT - 3 jours</span>
+              </Button>
+            </Link>
           </div>
 
           {/* Localisation du projet */}
@@ -151,43 +153,46 @@ export default function ConstructionTenderSpecifications() {
           </Card>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-6">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
               <TabsTrigger value="technical">Détails Techniques</TabsTrigger>
-              <TabsTrigger value="lots">Lots et Chiffrage</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
               <ProjectOverview projectData={projectData} />
               
-              {/* Étapes clés du chantier */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Étapes clés du chantier</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {projectData.keyStages.map((stage) => (
-                      <div key={stage.id} className="flex items-center gap-3">
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center text-primary-foreground
-                          ${stage.status === 'completed' ? 'bg-green-500' : 
-                           stage.status === 'in-progress' ? 'bg-primary' : 'bg-muted'}`}>
-                          {stage.status === 'completed' ? '✓' : 
-                           stage.status === 'in-progress' ? '→' : '○'}
+              {/* Mettre côte à côte les étapes clés et le calendrier */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Étapes clés du chantier */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Étapes clés du chantier</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {projectData.keyStages.map((stage) => (
+                        <div key={stage.id} className="flex items-center gap-3">
+                          <div className={`h-8 w-8 rounded-full flex items-center justify-center text-primary-foreground
+                            ${stage.status === 'completed' ? 'bg-green-500' : 
+                            stage.status === 'in-progress' ? 'bg-primary' : 'bg-muted'}`}>
+                            {stage.status === 'completed' ? '✓' : 
+                            stage.status === 'in-progress' ? '→' : '○'}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-medium">{stage.name}</h3>
+                            <p className="text-sm text-muted-foreground">{stage.date}</p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="font-medium">{stage.name}</h3>
-                          <p className="text-sm text-muted-foreground">{stage.date}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <ProjectTimeline />
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Calendrier du projet */}
+                <ProjectTimeline />
+              </div>
             </TabsContent>
 
             <TabsContent value="documents" className="space-y-6">
@@ -282,28 +287,6 @@ export default function ConstructionTenderSpecifications() {
                       <p className="text-sm text-muted-foreground">Février 2025</p>
                     </div>
                   </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="lots" className="space-y-6">
-              <ProjectLots projectId={projectData.id} lots={projectData.lots} />
-              
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 shadow-sm mt-6">
-                <h3 className="text-lg font-semibold mb-4">Outils de Chiffrage</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button variant="outline" className="w-full h-auto py-3 px-4 flex flex-col items-center justify-center">
-                    <FileText className="h-8 w-8 mb-2" />
-                    <span>Télécharger DPGF</span>
-                  </Button>
-                  <Button variant="outline" className="w-full h-auto py-3 px-4 flex flex-col items-center justify-center">
-                    <FileText className="h-8 w-8 mb-2" />
-                    <span>Télécharger Plans</span>
-                  </Button>
-                  <Button variant="outline" className="w-full h-auto py-3 px-4 flex flex-col items-center justify-center">
-                    <FileText className="h-8 w-8 mb-2" />
-                    <span>Bordereau de Prix</span>
-                  </Button>
                 </div>
               </div>
             </TabsContent>
