@@ -11,7 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProjectMap from '@/components/ProjectMap';
 import ProjectInfo from '@/components/ProjectInfo';
-import { ArrowLeft, MapPin, Building, Calendar, MessageSquare, ClipboardList } from 'lucide-react';
+import { ArrowLeft, MapPin, Building, Calendar, MessageSquare, ClipboardList, User, Briefcase, DraftingCompass, HardHat } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -260,6 +260,50 @@ export default function ConstructionSiteDetail() {
 
   const isServicesProfile = activeProfile === 'entreprise-services';
 
+  const ContactSection = ({ title, contacts, icon }: { title: string; contacts: any[]; icon: React.ReactNode }) => {
+    return (
+      <Card className="mt-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2">
+            {icon}
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {contacts.map((contact, index) => (
+              <div 
+                key={index} 
+                className="border rounded-md p-3 hover:bg-accent/50 transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback>{contact.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{contact.name}</p>
+                      <p className="text-sm text-muted-foreground">{contact.role}</p>
+                      <p className="text-sm text-muted-foreground">{contact.company}</p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={handleContactClick}
+                  >
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Contacter
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-8 px-4">
@@ -326,23 +370,7 @@ export default function ConstructionSiteDetail() {
                   startDate: site.startDate,
                   endDate: site.endDate,
                   milestones: site.milestones,
-                  technicalTeam: isServicesProfile ? [
-                    ...site.bet.map(bet => ({ 
-                      role: bet.role, 
-                      name: bet.contact, 
-                      company: bet.name
-                    })),
-                    { 
-                      role: 'Architecte', 
-                      name: site.moe.contact, 
-                      company: site.moe.name
-                    },
-                    ...site.contractors.map(contractor => ({ 
-                      role: contractor.lot, 
-                      name: contractor.contact, 
-                      company: contractor.name
-                    }))
-                  ] : undefined
+                  technicalTeam: !isServicesProfile ? undefined : []
                 }}
                 onContactClick={handleContactClick}
               />
@@ -382,6 +410,47 @@ export default function ConstructionSiteDetail() {
                 </Card>
               )}
             </div>
+            
+            {isServicesProfile && (
+              <>
+                <ContactSection 
+                  title="Promoteur" 
+                  contacts={[{
+                    name: site.promoter.contact,
+                    role: "Maître d'ouvrage",
+                    company: site.promoter.name
+                  }]}
+                  icon={<Briefcase className="w-5 h-5" />}
+                />
+                
+                <ContactSection 
+                  title="Bureaux d'Études Impliqués" 
+                  contacts={[
+                    {
+                      name: site.moe.contact,
+                      role: "Architecte",
+                      company: site.moe.name
+                    },
+                    ...site.bet.map(bet => ({
+                      name: bet.contact,
+                      role: bet.role,
+                      company: bet.name
+                    }))
+                  ]}
+                  icon={<DraftingCompass className="w-5 h-5" />}
+                />
+                
+                <ContactSection 
+                  title="Entreprises titulaires" 
+                  contacts={site.contractors.map(contractor => ({
+                    name: contractor.contact,
+                    role: contractor.lot,
+                    company: contractor.name
+                  }))}
+                  icon={<HardHat className="w-5 h-5" />}
+                />
+              </>
+            )}
           </TabsContent>
           
           {!isServicesProfile && (
