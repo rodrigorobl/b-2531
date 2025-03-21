@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useParams, Link } from 'react-router-dom';
@@ -255,12 +254,10 @@ export default function ConstructionSiteDetail() {
     uploadDate: doc.date
   }));
 
-  // Handler to switch to the communications tab
   const handleContactClick = () => {
     setActiveTab('communications');
   };
 
-  // Determine if we should show the team tab based on the profile
   const isServicesProfile = activeProfile === 'entreprise-services';
 
   return (
@@ -320,7 +317,6 @@ export default function ConstructionSiteDetail() {
           
           <TabsContent value="info" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Project Info Component */}
               <ProjectInfo 
                 info={{
                   description: site.description,
@@ -329,12 +325,28 @@ export default function ConstructionSiteDetail() {
                   lots: site.lots,
                   startDate: site.startDate,
                   endDate: site.endDate,
-                  milestones: site.milestones
+                  milestones: site.milestones,
+                  technicalTeam: isServicesProfile ? [
+                    ...site.bet.map(bet => ({ 
+                      role: bet.role, 
+                      name: bet.contact, 
+                      company: bet.name
+                    })),
+                    { 
+                      role: 'Architecte', 
+                      name: site.moe.contact, 
+                      company: site.moe.name
+                    },
+                    ...site.contractors.map(contractor => ({ 
+                      role: contractor.lot, 
+                      name: contractor.contact, 
+                      company: contractor.name
+                    }))
+                  ] : undefined
                 }}
-                onContactClick={isServicesProfile ? handleContactClick : undefined}
+                onContactClick={handleContactClick}
               />
               
-              {/* Map or Documents based on profile */}
               {isServicesProfile ? (
                 <div className="h-[500px] border rounded-lg overflow-hidden">
                   <ProjectMap location={site.location} />
