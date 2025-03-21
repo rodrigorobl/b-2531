@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useParams, Link } from 'react-router-dom';
@@ -17,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Communication from '@/components/Communication';
 import { useToast } from '@/hooks/use-toast';
+import { useProfile } from '@/contexts/ProfileContext';
 
 const getSiteData = (id: string) => ({
   id,
@@ -165,6 +167,7 @@ export default function ConstructionSiteDetail() {
   const [activeTab, setActiveTab] = useState('info');
   const [messages, setMessages] = useState(mockMessages);
   const { toast } = useToast();
+  const { activeProfile } = useProfile();
   
   const promoterContacts = [
     { name: site.promoter.contact, role: 'Promoteur', company: site.promoter.name, email: site.promoter.email, phone: site.promoter.phone }
@@ -252,6 +255,14 @@ export default function ConstructionSiteDetail() {
     uploadDate: doc.date
   }));
 
+  // Handler to switch to the communications tab
+  const handleContactClick = () => {
+    setActiveTab('communications');
+  };
+
+  // Determine if we should show the team tab based on the profile
+  const isServicesProfile = activeProfile === 'entreprise-services';
+
   return (
     <Layout>
       <div className="container mx-auto py-8 px-4">
@@ -284,27 +295,32 @@ export default function ConstructionSiteDetail() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid grid-cols-4 w-full max-w-md">
+          <TabsList className={`grid w-full ${isServicesProfile ? 'grid-cols-2' : 'grid-cols-4'} max-w-md`}>
             <TabsTrigger value="info">
               <Building className="mr-2 h-4 w-4" />
               Informations
             </TabsTrigger>
-            <TabsTrigger value="team">
-              <ClipboardList className="mr-2 h-4 w-4" />
-              Intervenants
-            </TabsTrigger>
+            {!isServicesProfile && (
+              <TabsTrigger value="team">
+                <ClipboardList className="mr-2 h-4 w-4" />
+                Intervenants
+              </TabsTrigger>
+            )}
             <TabsTrigger value="communications">
               <MessageSquare className="mr-2 h-4 w-4" />
               Communications
             </TabsTrigger>
-            <TabsTrigger value="map">
-              <MapPin className="mr-2 h-4 w-4" />
-              Carte
-            </TabsTrigger>
+            {!isServicesProfile && (
+              <TabsTrigger value="map">
+                <MapPin className="mr-2 h-4 w-4" />
+                Carte
+              </TabsTrigger>
+            )}
           </TabsList>
           
           <TabsContent value="info" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Project Info Component */}
               <ProjectInfo 
                 info={{
                   description: site.description,
@@ -315,107 +331,65 @@ export default function ConstructionSiteDetail() {
                   endDate: site.endDate,
                   milestones: site.milestones
                 }}
+                onContactClick={isServicesProfile ? handleContactClick : undefined}
               />
               
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2">
-                    <Building size={16} />
-                    Documents du projet
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {site.documents.map(doc => (
-                      <div key={doc.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
-                        <div className="flex items-center">
-                          <div className="bg-primary/10 text-primary w-8 h-8 rounded-md flex items-center justify-center mr-3">
-                            {doc.type}
+              {/* Map or Documents based on profile */}
+              {isServicesProfile ? (
+                <div className="h-[500px] border rounded-lg overflow-hidden">
+                  <ProjectMap location={site.location} />
+                </div>
+              ) : (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2">
+                      <Building size={16} />
+                      Documents du projet
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {site.documents.map(doc => (
+                        <div key={doc.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
+                          <div className="flex items-center">
+                            <div className="bg-primary/10 text-primary w-8 h-8 rounded-md flex items-center justify-center mr-3">
+                              {doc.type}
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">{doc.name}</p>
+                              <p className="text-xs text-muted-foreground">{doc.date}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-sm">{doc.name}</p>
-                            <p className="text-xs text-muted-foreground">{doc.date}</p>
-                          </div>
+                          <Button variant="ghost" size="sm">
+                            Voir
+                          </Button>
                         </div>
-                        <Button variant="ghost" size="sm">
-                          Voir
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </TabsContent>
           
-          <TabsContent value="team" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Promoteur</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback>{site.promoter.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{site.promoter.name}</p>
-                      <p className="text-sm text-muted-foreground">{site.promoter.contact}</p>
-                      <div className="flex flex-col gap-1 mt-2 text-sm">
-                        <p>{site.promoter.email}</p>
-                        <p>{site.promoter.phone}</p>
-                      </div>
-                      <Button size="sm" variant="outline" className="mt-3">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Contacter
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Maître d'œuvre</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback>{site.moe.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{site.moe.name}</p>
-                      <p className="text-sm text-muted-foreground">{site.moe.contact}</p>
-                      <div className="flex flex-col gap-1 mt-2 text-sm">
-                        <p>{site.moe.email}</p>
-                        <p>{site.moe.phone}</p>
-                      </div>
-                      <Button size="sm" variant="outline" className="mt-3">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Contacter
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {site.bet.map((bet, index) => (
-                <Card key={index}>
+          {!isServicesProfile && (
+            <TabsContent value="team" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">BET {bet.role}</CardTitle>
+                    <CardTitle className="text-lg">Promoteur</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-start gap-3">
                       <Avatar className="h-10 w-10">
-                        <AvatarFallback>{bet.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback>{site.promoter.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">{bet.name}</p>
-                        <p className="text-sm text-muted-foreground">{bet.contact}</p>
+                        <p className="font-medium">{site.promoter.name}</p>
+                        <p className="text-sm text-muted-foreground">{site.promoter.contact}</p>
                         <div className="flex flex-col gap-1 mt-2 text-sm">
-                          <p>{bet.email}</p>
-                          <p>{bet.phone}</p>
+                          <p>{site.promoter.email}</p>
+                          <p>{site.promoter.phone}</p>
                         </div>
                         <Button size="sm" variant="outline" className="mt-3">
                           <MessageSquare className="mr-2 h-4 w-4" />
@@ -425,27 +399,22 @@ export default function ConstructionSiteDetail() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-            
-            <h2 className="text-xl font-semibold mt-8 mb-4">Entreprises titulaires</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {site.contractors.map((contractor, index) => (
-                <Card key={index}>
+                
+                <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">{contractor.lot}</CardTitle>
+                    <CardTitle className="text-lg">Maître d'œuvre</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-start gap-3">
                       <Avatar className="h-10 w-10">
-                        <AvatarFallback>{contractor.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback>{site.moe.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">{contractor.name}</p>
-                        <p className="text-sm text-muted-foreground">{contractor.contact}</p>
+                        <p className="font-medium">{site.moe.name}</p>
+                        <p className="text-sm text-muted-foreground">{site.moe.contact}</p>
                         <div className="flex flex-col gap-1 mt-2 text-sm">
-                          <p>{contractor.email}</p>
-                          <p>{contractor.phone}</p>
+                          <p>{site.moe.email}</p>
+                          <p>{site.moe.phone}</p>
                         </div>
                         <Button size="sm" variant="outline" className="mt-3">
                           <MessageSquare className="mr-2 h-4 w-4" />
@@ -455,9 +424,66 @@ export default function ConstructionSiteDetail() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-          </TabsContent>
+                
+                {site.bet.map((bet, index) => (
+                  <Card key={index}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg">BET {bet.role}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-start gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback>{bet.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{bet.name}</p>
+                          <p className="text-sm text-muted-foreground">{bet.contact}</p>
+                          <div className="flex flex-col gap-1 mt-2 text-sm">
+                            <p>{bet.email}</p>
+                            <p>{bet.phone}</p>
+                          </div>
+                          <Button size="sm" variant="outline" className="mt-3">
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Contacter
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              
+              <h2 className="text-xl font-semibold mt-8 mb-4">Entreprises titulaires</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {site.contractors.map((contractor, index) => (
+                  <Card key={index}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg">{contractor.lot}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-start gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback>{contractor.contact.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{contractor.name}</p>
+                          <p className="text-sm text-muted-foreground">{contractor.contact}</p>
+                          <div className="flex flex-col gap-1 mt-2 text-sm">
+                            <p>{contractor.email}</p>
+                            <p>{contractor.phone}</p>
+                          </div>
+                          <Button size="sm" variant="outline" className="mt-3">
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Contacter
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          )}
           
           <TabsContent value="communications">
             <div className="max-w-4xl mx-auto">
@@ -471,11 +497,13 @@ export default function ConstructionSiteDetail() {
             </div>
           </TabsContent>
           
-          <TabsContent value="map">
-            <div className="h-[600px] border rounded-lg overflow-hidden">
-              <ProjectMap location={site.location} />
-            </div>
-          </TabsContent>
+          {!isServicesProfile && (
+            <TabsContent value="map">
+              <div className="h-[600px] border rounded-lg overflow-hidden">
+                <ProjectMap location={site.location} />
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </Layout>
