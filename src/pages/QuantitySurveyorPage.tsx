@@ -14,6 +14,7 @@ import ProjectTimeline from '@/components/project-specifications/ProjectTimeline
 import ProjectMessages from '@/components/project-specifications/ProjectMessages';
 import ProjectMap from '@/components/ProjectMap';
 import SurveyorProjectLots from '@/components/project-specifications/SurveyorProjectLots';
+import SurveyorMessages from '@/components/project-specifications/SurveyorMessages';
 
 export default function QuantitySurveyorPage() {
   const [searchParams] = useSearchParams();
