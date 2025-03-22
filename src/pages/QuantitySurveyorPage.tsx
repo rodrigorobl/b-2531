@@ -1,21 +1,19 @@
-
 import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { FileText, Wrench, Pencil, CalendarClock, Download, Ruler, MapPin } from 'lucide-react';
+import { FileText, Ruler, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-// Import the same components as ProjectSpecifications
+// Import components
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
 import ProjectHeader from '@/components/project-specifications/ProjectHeader';
 import ProjectOverview from '@/components/project-specifications/ProjectOverview';
 import ProjectTimeline from '@/components/project-specifications/ProjectTimeline';
-import ProjectDocuments from '@/components/project-specifications/ProjectDocuments';
-import ProjectLots from '@/components/project-specifications/ProjectLots';
 import ProjectMessages from '@/components/project-specifications/ProjectMessages';
 import ProjectMap from '@/components/ProjectMap';
+import SurveyorProjectLots from '@/components/project-specifications/SurveyorProjectLots';
 
 export default function QuantitySurveyorPage() {
   const [searchParams] = useSearchParams();
@@ -43,6 +41,11 @@ export default function QuantitySurveyorPage() {
       '/photo-1498050108023-c5249f4df085',
       '/photo-1483058712412-4245e9b90334',
       '/photo-1449157291145-7efd050a4d0e'
+    ],
+    betFirms: [
+      { id: 'bet-1', name: 'Structure Plus', role: 'BET Structure', contact: 'Marc Dubois' },
+      { id: 'bet-2', name: 'Thermitech', role: 'BET Thermique', contact: 'Louise Martin' },
+      { id: 'bet-3', name: 'Acousti Conseil', role: 'BET Acoustique', contact: 'Pierre Lefort' }
     ],
     lots: [
       { id: 'lot-1', name: 'Gros œuvre', budget: '850,000 €', deadline: '30/08/2023', minSurveyPrice: 1900, minSurveyDelivery: '5 jours' },
@@ -74,27 +77,10 @@ export default function QuantitySurveyorPage() {
               <ProjectGallery images={projectData.perspectiveImages} />
             </div>
             
-            {/* Project Title & Info */}
+            {/* Project Title & Info - Remove deposit offer and download buttons */}
             <div className="md:w-2/3">
-              <ProjectHeader projectData={projectData} />
+              <ProjectHeaderSurveyor projectData={projectData} />
             </div>
-          </div>
-
-          {/* Actions principales - Boutons en évidence */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Button className="h-auto py-3 bg-primary text-primary-foreground hover:bg-primary/90 flex flex-col items-center">
-              <Download className="h-8 w-8 mb-2" />
-              <span>Télécharger le DCE</span>
-            </Button>
-            <Button variant="outline" className="h-auto py-3 flex flex-col items-center">
-              <FileText className="h-8 w-8 mb-2" />
-              <span>Extraire les métrés</span>
-            </Button>
-            <Button variant="outline" className="h-auto py-3 flex flex-col items-center">
-              <Ruler className="h-8 w-8 mb-2" />
-              <span>Réaliser les métrés</span>
-              <span className="text-xs mt-1">Service de métreurs experts</span>
-            </Button>
           </div>
 
           {/* Localisation du projet */}
@@ -109,7 +95,7 @@ export default function QuantitySurveyorPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="col-span-1">
                   <p className="font-medium">{projectData.address}</p>
-                  <p className="text-muted-foreground mt-2">{projectData.location}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{projectData.location}</p>
                 </div>
                 <div className="col-span-1 md:col-span-2 h-64">
                   <ProjectMap 
@@ -125,128 +111,41 @@ export default function QuantitySurveyorPage() {
           </Card>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-              <TabsTrigger value="technical">Technique</TabsTrigger>
-              <TabsTrigger value="lots">Lots</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="timeline">Calendrier</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
+              {/* Project Overview Section */}
               <ProjectOverview projectData={projectData} />
-            </TabsContent>
-
-            <TabsContent value="technical" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="border rounded-lg p-4 shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Spécifications Techniques</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-sm">Normes et Réglementations</h4>
-                      <p className="text-sm text-muted-foreground">RT2020, NF C15-100, DTU 13.3</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Contraintes du Site</h4>
-                      <p className="text-sm text-muted-foreground">Zone sismique 1, Sol argileux, Nappe phréatique à -5m</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Exigences Particulières</h4>
-                      <p className="text-sm text-muted-foreground">Béton architectonique pour façades, Triple vitrage, Isolation thermique renforcée</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border rounded-lg p-4 shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Wrench className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Méthodes de Construction</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-sm">Fondations</h4>
-                      <p className="text-sm text-muted-foreground">Semelles filantes et ponctuelles sur pieux, Radier général pour parking</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Structure</h4>
-                      <p className="text-sm text-muted-foreground">Poteaux/poutres béton, Planchers précontraints, Voiles béton pour circulation verticale</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Équipements</h4>
-                      <p className="text-sm text-muted-foreground">4 ascenseurs, 2 monte-charges, Groupes électrogènes de secours</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border rounded-lg p-4 shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Pencil className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Matériaux Spécifiés</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-sm">Béton</h4>
-                      <p className="text-sm text-muted-foreground">C25/30 XC1 pour structure courante, C30/37 XF1 pour éléments extérieurs</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Menuiseries</h4>
-                      <p className="text-sm text-muted-foreground">Aluminium à rupture de pont thermique, Vitrages 4/16/4/16/4</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Revêtements</h4>
-                      <p className="text-sm text-muted-foreground">Pierre naturelle pour halls, Carrelage grès cérame pour surfaces commerciales</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border rounded-lg p-4 shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <CalendarClock className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Planning et Phasage</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-sm">Phase 1 - Terrassement</h4>
-                      <p className="text-sm text-muted-foreground">3 mois - Sept 2023 à Nov 2023</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Phase 2 - Gros Œuvre</h4>
-                      <p className="text-sm text-muted-foreground">8 mois - Dec 2023 à Juillet 2024</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Phase 3 - Second Œuvre</h4>
-                      <p className="text-sm text-muted-foreground">6 mois - Août 2024 à Jan 2025</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Livraison</h4>
-                      <p className="text-sm text-muted-foreground">Février 2025</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="lots" className="space-y-6">
-              {/* Fix: Pass projectId and lots separately instead of projectData */}
-              <ProjectLots projectId={projectData.id} lots={projectData.lots} />
-            </TabsContent>
-
-            <TabsContent value="documents" className="space-y-6">
-              <ProjectDocuments />
-            </TabsContent>
-
-            <TabsContent value="timeline" className="space-y-6">
+              
+              {/* Timeline Section - Moved below project description */}
               <ProjectTimeline />
+              
+              {/* Lots Section - Moved below timeline */}
+              <SurveyorProjectLots lots={projectData.lots} />
             </TabsContent>
 
             <TabsContent value="messages" className="space-y-6">
-              <ProjectMessages />
+              <SurveyorMessages />
             </TabsContent>
           </Tabs>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// New simplified header component without the buttons
+function ProjectHeaderSurveyor({ projectData }: { projectData: any }) {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold">{projectData.name}</h1>
+      <div className="flex items-center gap-2 mt-1">
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <MapPin size={14} />
+          <span>{projectData.location}</span>
         </div>
       </div>
     </div>

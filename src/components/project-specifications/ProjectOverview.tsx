@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { MessageSquare } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 interface ProjectData {
   description: string;
@@ -13,6 +13,7 @@ interface ProjectData {
   budget: string;
   deadline: string;
   clientName: string;
+  betFirms?: Array<{id: string; name: string; role: string; contact: string}>;
   [key: string]: any;
 }
 
@@ -80,10 +81,26 @@ export default function ProjectOverview({ projectData }: ProjectOverviewProps) {
           </div>
           <div className="mt-4">
             <Button variant="outline" size="sm" className="w-full">
-              <MessageSquare size={14} className="mr-2" />
+              <MessageCircle size={14} className="mr-2" />
               Contacter
             </Button>
           </div>
+          
+          {/* Added BET firms section */}
+          {projectData.betFirms && projectData.betFirms.length > 0 && (
+            <>
+              <Separator className="my-4" />
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Bureaux d'Études Impliqués</h3>
+                {projectData.betFirms.map((firm) => (
+                  <div key={firm.id} className="space-y-1">
+                    <p className="text-sm font-medium">{firm.name}</p>
+                    <p className="text-xs text-muted-foreground">{firm.role} - {firm.contact}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
