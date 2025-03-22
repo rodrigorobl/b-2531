@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { FileText, Ruler, MapPin } from 'lucide-react';
+import { FileText, Ruler, MapPin, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from 'sonner';
 
 // Import components
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
@@ -67,6 +69,10 @@ export default function QuantitySurveyorPage() {
     ]
   };
 
+  const handleDownloadDCE = () => {
+    toast.success("Téléchargement du DCE en cours...");
+  };
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -82,6 +88,14 @@ export default function QuantitySurveyorPage() {
             <div className="md:w-2/3">
               <ProjectHeaderSurveyor projectData={projectData} />
             </div>
+          </div>
+
+          {/* Télécharger le DCE button */}
+          <div className="flex justify-end">
+            <Button onClick={handleDownloadDCE}>
+              <Download size={16} className="mr-2" />
+              Télécharger le DCE
+            </Button>
           </div>
 
           {/* Localisation du projet */}
@@ -121,6 +135,9 @@ export default function QuantitySurveyorPage() {
               {/* Project Overview Section */}
               <ProjectOverview projectData={projectData} />
               
+              {/* Bureaux d'Études Impliqués */}
+              <ProjectEngineers betFirms={projectData.betFirms} />
+              
               {/* Timeline Section - Moved below project description */}
               <ProjectTimeline />
               
@@ -150,5 +167,27 @@ function ProjectHeaderSurveyor({ projectData }: { projectData: any }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// New component for the BET Firms section
+function ProjectEngineers({ betFirms }: { betFirms: any[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Bureaux d'Études Impliqués</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {betFirms.map((firm) => (
+            <div key={firm.id} className="border rounded-lg p-4 hover:bg-accent/20 transition-colors">
+              <h3 className="font-medium">{firm.name}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{firm.role}</p>
+              <p className="text-sm mt-2">Contact: {firm.contact}</p>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
