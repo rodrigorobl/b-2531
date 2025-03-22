@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, DraftingCompass, ClipboardCheck } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, DraftingCompass, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -109,12 +109,7 @@ export default function DashboardBET() {
         <header className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-3xl font-bold">Bonjour, Marie</h1>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/calendar">
-                <Calendar className="mr-2 h-4 w-4" />
-                Planning hebdomadaire
-              </Link>
-            </Button>
+            {/* Calendar button removed as requested */}
           </div>
           <p className="text-muted-foreground">
             Voici un aperçu des projets sur lesquels vous travaillez en tant que maître d'œuvre.

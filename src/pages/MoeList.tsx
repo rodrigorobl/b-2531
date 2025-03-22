@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { 
@@ -23,7 +22,6 @@ import {
   Archive, 
   Filter, 
   Users,
-  Plus,
   ArrowUpDown
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -119,7 +117,6 @@ export default function MoeList() {
       clientName: "Mairie de Nantes",
       projectType: "realisation"
     },
-    // Additional tender offers
     {
       id: "tender-007",
       projectName: "Hôpital Universitaire",
@@ -337,12 +334,6 @@ export default function MoeList() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button asChild>
-              <Link to="/create-tender">
-                <Plus size={16} className="mr-1" />
-                Nouvel appel d'offres
-              </Link>
-            </Button>
           </div>
           
           <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
