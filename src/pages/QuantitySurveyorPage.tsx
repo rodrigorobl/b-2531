@@ -231,7 +231,8 @@ export default function QuantitySurveyorPage() {
             </TabsContent>
 
             <TabsContent value="lots" className="space-y-6">
-              <ProjectLots projectData={projectData} />
+              {/* Fix: Pass projectId and lots separately instead of projectData */}
+              <ProjectLots projectId={projectData.id} lots={projectData.lots} />
             </TabsContent>
 
             <TabsContent value="documents" className="space-y-6">
