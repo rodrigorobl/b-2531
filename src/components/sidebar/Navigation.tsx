@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet, BookMarked, FolderSearch, Clipboard, Plus } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet, BookMarked, FolderSearch, Clipboard, Plus, Ruler } from 'lucide-react';
 import { ProfileType, getProfileName } from './ProfileSelector';
 
 interface NavigationProps {
@@ -185,5 +185,27 @@ export const Navigation: React.FC<NavigationProps> = ({
           </Link>
         </li>
       </ul>
+
+      {/* Module métreurs section for "Maître d'Œuvre/BET" profile */}
+      {activeProfile === 'maitre-oeuvre' && (
+        <>
+          <div className="mt-8 mb-2 text-xs font-semibold uppercase text-sidebar-foreground/70 px-3">
+            Modules spécialisés
+          </div>
+          <ul className="space-y-2">
+            <li>
+              <Link 
+                to="/quantity-surveyor-page" 
+                className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${
+                  location.pathname === '/quantity-surveyor-page' ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
+                }`}
+              >
+                <Ruler size={18} />
+                <span>Module métreurs</span>
+              </Link>
+            </li>
+          </ul>
+        </>
+      )}
     </nav>;
 };

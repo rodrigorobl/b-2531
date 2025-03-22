@@ -64,6 +64,7 @@ import ServicesDetailTender from "./pages/ServicesDetailTender";
 import ConstructionQuoteDetails from "./pages/ConstructionQuoteDetails";
 import ProjectTenderAnalysis from "./pages/ProjectTenderAnalysis";
 import ProjectSurvey from "./pages/ProjectSurvey";
+import QuantitySurveyorPage from "./pages/QuantitySurveyorPage";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,7 @@ const App = () => (
             <Route path="/project-specifications" element={<ProjectSpecifications />} />
             <Route path="/construction-tender-specifications" element={<ConstructionTenderSpecifications />} />
             <Route path="/tender-specifications" element={<ProjectSpecifications />} />
+            <Route path="/quantity-surveyor-page" element={<QuantitySurveyorPage />} />
             <Route path="/tender-list" element={<TenderList />} />
             <Route path="/moe-list" element={<MoeList />} />
             <Route path="/create-tender" element={<CreateTender />} />
