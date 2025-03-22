@@ -4,7 +4,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { FileText, Ruler, MapPin, Download } from 'lucide-react';
+import { FileText, Ruler, MapPin, Download, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 
@@ -90,40 +90,72 @@ export default function QuantitySurveyorPage() {
             </div>
           </div>
 
-          {/* Télécharger le DCE button */}
+          {/* Télécharger le DCE button - Made larger and green */}
           <div className="flex justify-end">
-            <Button onClick={handleDownloadDCE}>
-              <Download size={16} className="mr-2" />
+            <Button onClick={handleDownloadDCE} className="py-6 px-8 text-lg bg-green-500 hover:bg-green-600">
+              <Download size={20} className="mr-2" />
               Télécharger le DCE
             </Button>
           </div>
 
-          {/* Localisation du projet */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                Localisation du projet
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="col-span-1">
-                  <p className="font-medium">{projectData.address}</p>
-                  <p className="text-sm text-muted-foreground mt-2">{projectData.location}</p>
+          {/* Description du projet and Localisation du projet side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Project Overview Section */}
+            <Card className="mb-0">
+              <CardHeader>
+                <CardTitle>Description du projet</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{projectData.description}</p>
+                
+                <div className="grid grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">Type de projet</h3>
+                    <p className="mt-1 font-medium">{projectData.projectType}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">Surface</h3>
+                    <p className="mt-1 font-medium">{projectData.surface}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">Budget estimé</h3>
+                    <p className="mt-1 font-medium">{projectData.budget}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">Date limite</h3>
+                    <p className="mt-1 font-medium">{projectData.deadline}</p>
+                  </div>
                 </div>
-                <div className="col-span-1 md:col-span-2 h-64">
-                  <ProjectMap 
-                    location={{
-                      address: projectData.address,
-                      lat: projectData.coordinates.lat,
-                      lng: projectData.coordinates.lng
-                    }}
-                  />
+              </CardContent>
+            </Card>
+            
+            {/* Localisation du projet */}
+            <Card className="mb-0">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Localisation du projet
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <p className="font-medium">{projectData.address}</p>
+                    <p className="text-sm text-muted-foreground mt-2">{projectData.location}</p>
+                  </div>
+                  <div className="h-48">
+                    <ProjectMap 
+                      location={{
+                        address: projectData.address,
+                        lat: projectData.coordinates.lat,
+                        lng: projectData.coordinates.lng
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -132,16 +164,74 @@ export default function QuantitySurveyorPage() {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
-              {/* Project Overview Section */}
-              <ProjectOverview projectData={projectData} />
+              {/* Maître d'ouvrage Card - Without BET firms section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Maître d'ouvrage</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-4">
+                    <div className="bg-muted h-16 w-16 rounded-lg flex items-center justify-center">
+                      <FileText size={24} className="text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{projectData.clientName}</h3>
+                      <p className="text-sm text-muted-foreground">Promoteur immobilier</p>
+                    </div>
+                  </div>
+                  <div className="border-t my-4"></div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium">Contact principal</h3>
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                        JD
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Jean Dupont</p>
+                        <p className="text-xs text-muted-foreground">Directeur de projets</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <Button variant="outline" size="sm" className="w-full">
+                      <MessageSquare size={14} className="mr-2" />
+                      Contacter
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
               
-              {/* Bureaux d'Études Impliqués */}
-              <ProjectEngineers betFirms={projectData.betFirms} />
+              {/* Bureaux d'Études Impliqués - Now with Contact button */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Bureaux d'Études Impliqués</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {projectData.betFirms.map((firm) => (
+                      <div key={firm.id} className="border rounded-lg p-4 hover:bg-accent/20 transition-colors">
+                        <h3 className="font-medium">{firm.name}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{firm.role}</p>
+                        <p className="text-sm mt-2">Contact: {firm.contact}</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full mt-3"
+                          onClick={() => setActiveTab('messages')}
+                        >
+                          <MessageSquare size={14} className="mr-2" />
+                          Contacter
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
               
-              {/* Timeline Section - Moved below project description */}
+              {/* Timeline Section */}
               <ProjectTimeline />
               
-              {/* Lots Section - Moved below timeline */}
+              {/* Lots Section */}
               <SurveyorProjectLots lots={projectData.lots} />
             </TabsContent>
 
@@ -167,27 +257,5 @@ function ProjectHeaderSurveyor({ projectData }: { projectData: any }) {
         </div>
       </div>
     </div>
-  );
-}
-
-// New component for the BET Firms section
-function ProjectEngineers({ betFirms }: { betFirms: any[] }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Bureaux d'Études Impliqués</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {betFirms.map((firm) => (
-            <div key={firm.id} className="border rounded-lg p-4 hover:bg-accent/20 transition-colors">
-              <h3 className="font-medium">{firm.name}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{firm.role}</p>
-              <p className="text-sm mt-2">Contact: {firm.contact}</p>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
   );
 }
