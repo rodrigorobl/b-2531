@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -66,87 +65,92 @@ import ProjectTenderAnalysis from "./pages/ProjectTenderAnalysis";
 import ProjectSurvey from "./pages/ProjectSurvey";
 import QuantitySurveyorPage from "./pages/QuantitySurveyorPage";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
+import SubscriptionEstimation from '@/pages/SubscriptionEstimation';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <ProfileProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard-promoteur" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard-promoteur" element={<DashboardPromoteur />} />
-            <Route path="/dashboard-bet" element={<DashboardBET />} />
-            <Route path="/dashboard-construction" element={<DashboardConstruction />} />
-            <Route path="/dashboard-services" element={<DashboardServices />} />
-            <Route path="/dashboard-industry" element={<DashboardIndustry />} />
-            <Route path="/messaging" element={<Messaging />} />
-            <Route path="/tenders" element={<TenderOffers />} />
-            <Route path="/tender-search" element={<TenderSearch />} />
-            <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
-            <Route path="/tender/:tenderId" element={<TenderDetail />} />
-            <Route path="/tender/:tenderId/lot/:lotId" element={<LotAnalysis />} />
-            <Route path="/tender/:tenderId/analysis" element={<ProjectTenderAnalysis />} />
-            <Route path="/tender/:tenderId/survey" element={<ProjectSurvey />} />
-            <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
-            <Route path="/project-survey" element={<ProjectSurvey />} />
-            <Route path="/project-specifications" element={<ProjectSpecifications />} />
-            <Route path="/construction-tender-specifications" element={<ConstructionTenderSpecifications />} />
-            <Route path="/tender-specifications" element={<ProjectSpecifications />} />
-            <Route path="/quantity-surveyor-page" element={<QuantitySurveyorPage />} />
-            <Route path="/tender-list" element={<TenderList />} />
-            <Route path="/moe-list" element={<MoeList />} />
-            <Route path="/create-tender" element={<CreateTender />} />
-            <Route path="/create-tender-conception" element={<CreateTenderConception />} />
-            <Route path="/create-tender-realisation" element={<CreateTenderRealisation />} />
-            <Route path="/create-tender-services" element={<CreateTenderServices />} />
-            <Route path="/projects" element={<ProjectsList />} />
-            <Route path="/projects-search" element={<ProjectsSearch />} />
-            <Route path="/company" element={<Company />} />
-            <Route path="/view-company" element={<ViewCompany />} />
-            <Route path="/view-company-services" element={<ViewCompanyServices />} />
-            <Route path="/company/edit" element={<EditCompany />} />
-            <Route path="/company-services" element={<CompanyServices />} />
-            <Route path="/company-services/edit" element={<CompanyServicesEdit />} />
-            <Route path="/services-details/:companyId" element={<ServicesDetails />} />
-            <Route path="/profile" element={<UserProfileSettings />} />
-            <Route path="/profile/user/:userId" element={<UserProfile />} />
-            <Route path="/directory" element={<CompanyDirectory />} />
-            <Route path="/quoted-directory" element={<QuotedDirectory />} />
-            <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
-            <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing={true} />} />
-            <Route path="/product-reference" element={<ProductReferenceTracking />} />
-            <Route path="/product-prescription" element={<ProductPrescriptionTracking />} />
-            <Route path="/product-reference/:referenceId" element={<ProductReferenceDetail />} />
-            <Route path="/product-prescription/:referenceId" element={<ProductReferenceDetail />} />
-            <Route path="/quantity-survey-request" element={<QuantitySurveyRequest />} />
-            <Route path="/tender-alerte" element={<TenderAlert />} />
-            <Route path="/alerte-management" element={<AlertManagement />} />
-            <Route path="/construction-sites-map" element={<ConstructionSitesMap />} />
-            <Route path="/construction-site/:siteId" element={<ConstructionSiteDetail />} />
-            <Route path="/submit-quote" element={<SubmitQuote />} />
-            <Route path="/submit-quote/:tenderId" element={<SubmitQuote />} />
-            <Route path="/submit-quote/:tenderId/:lotId" element={<SubmitQuote />} />
-            <Route path="/services-quote-management" element={<ServicesQuoteManagement />} />
-            <Route path="/services-quote-tracking/:quoteId" element={<ServicesQuoteTracking />} />
-            <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
-            <Route path="/quote-analysis/:quoteId" element={<QuoteAnalysis />} />
-            <Route path="/company-details-tender/:quoteId" element={<ConstructionQuoteDetails />} />
-            <Route path="/services-detail-tender/:quoteId" element={<ServicesDetailTender />} />
-            <Route path="/services-tender-search" element={<ServicesTenderSearch />} />
-            <Route path="/services-tender-details/:tenderId" element={<ServicesTenderDetails />} />
-            <Route path="/submit-services-quote/:tenderId" element={<SubmitServicesQuote />} />
-            <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </ProfileProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <ProfileProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard-promoteur" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard-promoteur" element={<DashboardPromoteur />} />
+              <Route path="/dashboard-bet" element={<DashboardBET />} />
+              <Route path="/dashboard-construction" element={<DashboardConstruction />} />
+              <Route path="/dashboard-services" element={<DashboardServices />} />
+              <Route path="/dashboard-industry" element={<DashboardIndustry />} />
+              <Route path="/messaging" element={<Messaging />} />
+              <Route path="/tenders" element={<TenderOffers />} />
+              <Route path="/tender-search" element={<TenderSearch />} />
+              <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
+              <Route path="/tender/:tenderId" element={<TenderDetail />} />
+              <Route path="/tender/:tenderId/lot/:lotId" element={<LotAnalysis />} />
+              <Route path="/tender/:tenderId/analysis" element={<ProjectTenderAnalysis />} />
+              <Route path="/tender/:tenderId/survey" element={<ProjectSurvey />} />
+              <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
+              <Route path="/project-survey" element={<ProjectSurvey />} />
+              <Route path="/project-specifications" element={<ProjectSpecifications />} />
+              <Route path="/construction-tender-specifications" element={<ConstructionTenderSpecifications />} />
+              <Route path="/tender-specifications" element={<ProjectSpecifications />} />
+              <Route path="/quantity-surveyor-page" element={<QuantitySurveyorPage />} />
+              <Route path="/tender-list" element={<TenderList />} />
+              <Route path="/moe-list" element={<MoeList />} />
+              <Route path="/create-tender" element={<CreateTender />} />
+              <Route path="/create-tender-conception" element={<CreateTenderConception />} />
+              <Route path="/create-tender-realisation" element={<CreateTenderRealisation />} />
+              <Route path="/create-tender-services" element={<CreateTenderServices />} />
+              <Route path="/projects" element={<ProjectsList />} />
+              <Route path="/projects-search" element={<ProjectsSearch />} />
+              <Route path="/company" element={<Company />} />
+              <Route path="/view-company" element={<ViewCompany />} />
+              <Route path="/view-company-services" element={<ViewCompanyServices />} />
+              <Route path="/company/edit" element={<EditCompany />} />
+              <Route path="/company-services" element={<CompanyServices />} />
+              <Route path="/company-services/edit" element={<CompanyServicesEdit />} />
+              <Route path="/services-details/:companyId" element={<ServicesDetails />} />
+              <Route path="/profile" element={<UserProfileSettings />} />
+              <Route path="/profile/user/:userId" element={<UserProfile />} />
+              <Route path="/directory" element={<CompanyDirectory />} />
+              <Route path="/quoted-directory" element={<QuotedDirectory />} />
+              <Route path="/company-detail/:companyId" element={<CompanyDetail />} />
+              <Route path="/edit-tender/:tenderId" element={<CreateTender isEditing={true} />} />
+              <Route path="/product-reference" element={<ProductReferenceTracking />} />
+              <Route path="/product-prescription" element={<ProductPrescriptionTracking />} />
+              <Route path="/product-reference/:referenceId" element={<ProductReferenceDetail />} />
+              <Route path="/product-prescription/:referenceId" element={<ProductReferenceDetail />} />
+              <Route path="/quantity-survey-request" element={<QuantitySurveyRequest />} />
+              <Route path="/tender-alerte" element={<TenderAlert />} />
+              <Route path="/alerte-management" element={<AlertManagement />} />
+              <Route path="/construction-sites-map" element={<ConstructionSitesMap />} />
+              <Route path="/construction-site/:siteId" element={<ConstructionSiteDetail />} />
+              <Route path="/submit-quote" element={<SubmitQuote />} />
+              <Route path="/submit-quote/:tenderId" element={<SubmitQuote />} />
+              <Route path="/submit-quote/:tenderId/:lotId" element={<SubmitQuote />} />
+              <Route path="/services-quote-management" element={<ServicesQuoteManagement />} />
+              <Route path="/services-quote-tracking/:quoteId" element={<ServicesQuoteTracking />} />
+              <Route path="/quotes-to-analyze" element={<QuotesToAnalyze />} />
+              <Route path="/quote-analysis/:quoteId" element={<QuoteAnalysis />} />
+              <Route path="/company-details-tender/:quoteId" element={<ConstructionQuoteDetails />} />
+              <Route path="/services-detail-tender/:quoteId" element={<ServicesDetailTender />} />
+              <Route path="/services-tender-search" element={<ServicesTenderSearch />} />
+              <Route path="/services-tender-details/:tenderId" element={<ServicesTenderDetails />} />
+              <Route path="/submit-services-quote/:tenderId" element={<SubmitServicesQuote />} />
+              <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
+              <Route path="/subscription-estimation" element={<SubscriptionEstimation />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ProfileProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
-export default App;
+export
+
