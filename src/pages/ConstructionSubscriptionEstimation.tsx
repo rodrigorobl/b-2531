@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -476,22 +477,52 @@ const ConstructionSubscriptionEstimation = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span>Départements ({selectedDepartments.length})</span>
-                  {shouldShowPrices ? (
-                    <span>{priceDetails.departmentsPrice.toFixed(0)}€ HT</span>
-                  ) : (
-                    <span>-</span>
-                  )}
-                </div>
-                <div className="flex justify-between">
-                  <span>Activités ({selectedActivities.length})</span>
-                  {shouldShowPrices ? (
-                    <span>{priceDetails.activitiesPrice.toFixed(0)}€ HT</span>
-                  ) : (
-                    <span>-</span>
-                  )}
-                </div>
+                {/* Display selected departments with individual prices */}
+                {selectedDepartments.length > 0 && shouldShowPrices && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between font-medium">
+                      <span>Départements sélectionnés</span>
+                      <span>{priceDetails.departmentsPrice.toFixed(0)}€ HT</span>
+                    </div>
+                    <div className="pl-4 text-sm space-y-1 border-l-2 border-gray-100">
+                      {selectedDepartments.map(deptCode => {
+                        const dept = departments.find(d => d.code === deptCode);
+                        if (!dept) return null;
+                        const deptPrice = getDepartmentPriceImpact(dept);
+                        return (
+                          <div key={dept.id} className="flex justify-between">
+                            <span>{dept.name} ({dept.code})</span>
+                            <span>{deptPrice.toFixed(0)}€ HT</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Display selected activities with individual prices */}
+                {selectedActivities.length > 0 && shouldShowPrices && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between font-medium">
+                      <span>Activités sélectionnées</span>
+                      <span>{priceDetails.activitiesPrice.toFixed(0)}€ HT</span>
+                    </div>
+                    <div className="pl-4 text-sm space-y-1 border-l-2 border-gray-100">
+                      {selectedActivities.map(actId => {
+                        const activity = activities.find(a => a.id === actId);
+                        if (!activity) return null;
+                        const activityPrice = getActivityPriceImpact(activity);
+                        return (
+                          <div key={activity.id} className="flex justify-between">
+                            <span>{activity.name}</span>
+                            <span>{activityPrice.toFixed(0)}€ HT</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {priceDetails.discount > 0 && shouldShowPrices && (
                   <div className="flex justify-between text-green-600">
                     <span>Remise régionale</span>
