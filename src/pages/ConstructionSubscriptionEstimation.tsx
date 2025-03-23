@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,8 +62,8 @@ const ConstructionSubscriptionEstimation = () => {
   const [subscriptionTerm, setSubscriptionTerm] = useState<'monthly' | 'annual'>('monthly');
   const [showSummary, setShowSummary] = useState(false);
 
-  // Determine if prices should be visible
-  const shouldShowPrices = selectedDepartments.length > 0 && selectedActivities.length > 0;
+  // Determine if prices should be visible - UPDATED to show when at least one activity is checked
+  const shouldShowPrices = selectedActivities.length > 0;
 
   // Function to check if all departments in a region are selected
   const isRegionComplete = (region: Region) => {
