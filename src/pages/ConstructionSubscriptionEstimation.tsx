@@ -30,7 +30,7 @@ interface Region {
   departments: string[]; // department codes
 }
 
-const SubscriptionEstimation = () => {
+const ConstructionSubscriptionEstimation = () => {
   // Define departments data
   const departments: Department[] = [
     { id: 'dept-91', name: 'Essonne', code: '91', basePrice: 950, region: 'ile-de-france' },
@@ -63,6 +63,9 @@ const SubscriptionEstimation = () => {
   const [subscriptionTerm, setSubscriptionTerm] = useState<'monthly' | 'annual'>('monthly');
   const [showSummary, setShowSummary] = useState(false);
 
+  // Determine if prices should be visible
+  const shouldShowPrices = selectedDepartments.length > 0 && selectedActivities.length > 0;
+
   // Function to check if all departments in a region are selected
   const isRegionComplete = (region: Region) => {
     return region.departments.every(deptCode => 
@@ -70,12 +73,46 @@ const SubscriptionEstimation = () => {
     );
   };
 
+  // Function to handle region selection
+  const toggleRegion = (region: Region) => {
+    // Check if all departments in the region are already selected
+    const allSelected = isRegionComplete(region);
+    
+    if (allSelected) {
+      // If all are selected, deselect all departments in this region
+      setSelectedDepartments(prev => 
+        prev.filter(deptCode => !region.departments.includes(deptCode))
+      );
+    } else {
+      // If not all selected, select all departments in this region
+      const newDepts = [...selectedDepartments];
+      region.departments.forEach(deptCode => {
+        if (!newDepts.includes(deptCode)) {
+          newDepts.push(deptCode);
+        }
+      });
+      setSelectedDepartments(newDepts);
+    }
+  };
+
   // Calculate total price based on selections
   const calculateTotalPrice = () => {
+    if (!shouldShowPrices) {
+      return {
+        departmentsPrice: 0,
+        activitiesPrice: 0,
+        discount: 0,
+        subscriptionDiscount: 0,
+        total: 0
+      };
+    }
+
     // Base calculation from departments
     const deptTotal = selectedDepartments.reduce((sum, deptCode) => {
       const dept = departments.find(d => d.code === deptCode);
-      return sum + (dept ? dept.basePrice : 0);
+      // Department price is scaled by number of activities
+      const activityMultiplier = Math.max(selectedActivities.length, 1);
+      return sum + (dept ? dept.basePrice * activityMultiplier * 0.2 + dept.basePrice : 0);
     }, 0);
 
     // Activity price calculation (multiplied by selected departments count)
@@ -148,6 +185,22 @@ const SubscriptionEstimation = () => {
     setShowSummary(true);
   };
 
+  // Calculate department price impact with selected activities
+  const getDepartmentPriceImpact = (dept: Department) => {
+    if (!shouldShowPrices) return 0;
+    
+    const activityMultiplier = Math.max(selectedActivities.length, 1);
+    return dept.basePrice * activityMultiplier * 0.2 + dept.basePrice;
+  };
+
+  // Calculate activity price impact with selected departments
+  const getActivityPriceImpact = (activity: Activity) => {
+    if (!shouldShowPrices) return 0;
+    
+    const deptMultiplier = Math.max(selectedDepartments.length, 1);
+    return activity.basePrice * deptMultiplier;
+  };
+
   return (
     <div className="container max-w-6xl py-8">
       <div className="flex items-center gap-4 mb-6">
@@ -164,7 +217,25 @@ const SubscriptionEstimation = () => {
         <div className="lg:col-span-2 space-y-8">
           {!showSummary ? (
             <>
-              {/* Departments Selection */}
+              {/* Subscription Term - MOVED TO TOP */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Durée d'abonnement</CardTitle>
+                  <CardDescription>
+                    Choisissez entre un abonnement mensuel ou annuel
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="monthly" value={subscriptionTerm} onValueChange={handleTermChange}>
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="monthly">Mensuel</TabsTrigger>
+                      <TabsTrigger value="annual">Annuel (-15%)</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </CardContent>
+              </Card>
+
+              {/* Departments Selection with Region selection at the top */}
               <Card>
                 <CardHeader>
                   <CardTitle>Départements</CardTitle>
@@ -173,9 +244,41 @@ const SubscriptionEstimation = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {/* Region Selection */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-medium mb-2">Sélection par région</h3>
+                    <div className="space-y-2">
+                      {regions.map(region => (
+                        <div 
+                          key={region.id} 
+                          className="flex items-center space-x-3 p-3 rounded-md border hover:bg-accent/20 transition-colors"
+                        >
+                          <Checkbox 
+                            id={`region-${region.id}`} 
+                            checked={isRegionComplete(region)}
+                            onCheckedChange={() => toggleRegion(region)}
+                          />
+                          <div className="flex-1">
+                            <label htmlFor={`region-${region.id}`} className="font-medium cursor-pointer">
+                              {region.name}
+                            </label>
+                            {isRegionComplete(region) && shouldShowPrices && (
+                              <Badge variant="destructive" className="ml-2">
+                                Remise -15%
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Departments List */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {departments.map((dept) => {
                       const isSelected = selectedDepartments.includes(dept.code);
+                      const priceImpact = getDepartmentPriceImpact(dept);
+                      
                       return (
                         <div key={dept.id} className="flex items-start space-x-3 p-3 rounded-md border hover:bg-accent/20 transition-colors">
                           <Checkbox 
@@ -187,37 +290,19 @@ const SubscriptionEstimation = () => {
                             <label htmlFor={dept.id} className="font-medium cursor-pointer">
                               {dept.name} ({dept.code})
                             </label>
-                            {isSelected ? (
+                            {shouldShowPrices && (isSelected ? (
                               <Badge variant="destructive" className="ml-2">
-                                -{dept.basePrice}€ HT
+                                -{priceImpact.toFixed(0)}€ HT
                               </Badge>
                             ) : (
                               <Badge variant="secondary" className="ml-2 bg-green-500 text-white">
-                                +{dept.basePrice}€ HT
+                                +{priceImpact.toFixed(0)}€ HT
                               </Badge>
-                            )}
+                            ))}
                           </div>
                         </div>
                       );
                     })}
-                  </div>
-
-                  {/* Regional Discount Note */}
-                  <div className="mt-4 p-3 bg-accent/10 rounded-md">
-                    <p className="text-sm">
-                      <strong>Remise régionale :</strong> -15% si tous les départements d'une région sont sélectionnés
-                    </p>
-                    {regions.map(region => (
-                      <div key={region.id} className="flex items-center mt-2">
-                        <div className="w-3 h-3 rounded-full mr-2 bg-primary"></div>
-                        <span>{region.name}: </span>
-                        {isRegionComplete(region) ? (
-                          <Badge variant="default" className="ml-2 bg-green-500">Remise activée</Badge>
-                        ) : (
-                          <Badge variant="outline" className="ml-2">Remise non activée</Badge>
-                        )}
-                      </div>
-                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -234,8 +319,7 @@ const SubscriptionEstimation = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {activities.map((activity) => {
                       const isSelected = selectedActivities.includes(activity.id);
-                      // Calculate price impact per activity based on selected departments
-                      const impactPrice = activity.basePrice * Math.max(selectedDepartments.length, 1);
+                      const priceImpact = getActivityPriceImpact(activity);
                       
                       return (
                         <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-md border hover:bg-accent/20 transition-colors">
@@ -248,38 +332,20 @@ const SubscriptionEstimation = () => {
                             <label htmlFor={activity.id} className="font-medium cursor-pointer">
                               {activity.name}
                             </label>
-                            {isSelected ? (
+                            {shouldShowPrices && (isSelected ? (
                               <Badge variant="destructive" className="ml-2">
-                                -{impactPrice}€ HT
+                                -{priceImpact.toFixed(0)}€ HT
                               </Badge>
                             ) : (
                               <Badge variant="secondary" className="ml-2 bg-green-500 text-white">
-                                +{impactPrice}€ HT
+                                +{priceImpact.toFixed(0)}€ HT
                               </Badge>
-                            )}
+                            ))}
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Subscription Term */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Durée d'abonnement</CardTitle>
-                  <CardDescription>
-                    Choisissez entre un abonnement mensuel ou annuel
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="monthly" value={subscriptionTerm} onValueChange={handleTermChange}>
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="monthly">Mensuel</TabsTrigger>
-                      <TabsTrigger value="annual">Annuel (-15%)</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
                 </CardContent>
               </Card>
             </>
@@ -351,22 +417,22 @@ const SubscriptionEstimation = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Prix des départements:</span>
-                      <span>{priceDetails.departmentsPrice}€ HT</span>
+                      <span>{priceDetails.departmentsPrice.toFixed(0)}€ HT</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Prix des activités:</span>
-                      <span>{priceDetails.activitiesPrice}€ HT</span>
+                      <span>{priceDetails.activitiesPrice.toFixed(0)}€ HT</span>
                     </div>
                     {priceDetails.discount > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>Remise régionale:</span>
-                        <span>-{priceDetails.discount.toFixed(2)}€ HT</span>
+                        <span>-{priceDetails.discount.toFixed(0)}€ HT</span>
                       </div>
                     )}
                     {priceDetails.subscriptionDiscount > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>Remise abonnement annuel:</span>
-                        <span>-{priceDetails.subscriptionDiscount.toFixed(2)}€ HT</span>
+                        <span>-{priceDetails.subscriptionDiscount.toFixed(0)}€ HT</span>
                       </div>
                     )}
                   </div>
@@ -381,7 +447,7 @@ const SubscriptionEstimation = () => {
                     </p>
                   </div>
                   <p className="text-2xl font-bold">
-                    {priceDetails.total.toFixed(2)}€ HT
+                    {priceDetails.total.toFixed(0)}€ HT
                     <span className="text-sm font-normal text-muted-foreground ml-1">
                       {subscriptionTerm === 'monthly' ? '/mois' : '/an'}
                     </span>
@@ -413,33 +479,47 @@ const SubscriptionEstimation = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span>Départements ({selectedDepartments.length})</span>
-                  <span>{priceDetails.departmentsPrice}€ HT</span>
+                  {shouldShowPrices ? (
+                    <span>{priceDetails.departmentsPrice.toFixed(0)}€ HT</span>
+                  ) : (
+                    <span>-</span>
+                  )}
                 </div>
                 <div className="flex justify-between">
                   <span>Activités ({selectedActivities.length})</span>
-                  <span>{priceDetails.activitiesPrice}€ HT</span>
+                  {shouldShowPrices ? (
+                    <span>{priceDetails.activitiesPrice.toFixed(0)}€ HT</span>
+                  ) : (
+                    <span>-</span>
+                  )}
                 </div>
-                {priceDetails.discount > 0 && (
+                {priceDetails.discount > 0 && shouldShowPrices && (
                   <div className="flex justify-between text-green-600">
                     <span>Remise régionale</span>
-                    <span>-{priceDetails.discount.toFixed(2)}€ HT</span>
+                    <span>-{priceDetails.discount.toFixed(0)}€ HT</span>
                   </div>
                 )}
-                {priceDetails.subscriptionDiscount > 0 && (
+                {priceDetails.subscriptionDiscount > 0 && shouldShowPrices && (
                   <div className="flex justify-between text-green-600">
                     <span>Remise annuelle</span>
-                    <span>-{priceDetails.subscriptionDiscount.toFixed(2)}€ HT</span>
+                    <span>-{priceDetails.subscriptionDiscount.toFixed(0)}€ HT</span>
                   </div>
                 )}
                 <div className="pt-4 border-t">
                   <div className="flex justify-between items-center">
                     <span className="font-bold">Total</span>
-                    <span className="text-xl font-bold">
-                      {priceDetails.total.toFixed(2)}€ HT
-                      <span className="text-xs font-normal ml-1">
-                        {subscriptionTerm === 'monthly' ? '/mois' : '/an'}
+                    {shouldShowPrices ? (
+                      <span className="text-xl font-bold">
+                        {priceDetails.total.toFixed(0)}€ HT
+                        <span className="text-xs font-normal ml-1">
+                          {subscriptionTerm === 'monthly' ? '/mois' : '/an'}
+                        </span>
                       </span>
-                    </span>
+                    ) : (
+                      <span className="text-sm italic text-muted-foreground">
+                        Sélectionnez au moins un département et une activité
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -461,4 +541,4 @@ const SubscriptionEstimation = () => {
   );
 };
 
-export default SubscriptionEstimation;
+export default ConstructionSubscriptionEstimation;

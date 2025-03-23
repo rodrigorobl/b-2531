@@ -66,7 +66,7 @@ import ProjectTenderAnalysis from "./pages/ProjectTenderAnalysis";
 import ProjectSurvey from "./pages/ProjectSurvey";
 import QuantitySurveyorPage from "./pages/QuantitySurveyorPage";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
-import SubscriptionEstimation from '@/pages/SubscriptionEstimation';
+import ConstructionSubscriptionEstimation from './pages/ConstructionSubscriptionEstimation';
 
 const queryClient = new QueryClient();
 
@@ -143,7 +143,7 @@ function App() {
               <Route path="/services-tender-details/:tenderId" element={<ServicesTenderDetails />} />
               <Route path="/submit-services-quote/:tenderId" element={<SubmitServicesQuote />} />
               <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
-              <Route path="/subscription-estimation" element={<SubscriptionEstimation />} />
+              <Route path="/construction-subscription-estimation" element={<ConstructionSubscriptionEstimation />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
