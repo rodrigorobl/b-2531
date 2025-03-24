@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown, FileText, ExternalLink } from 'lucide-react';
 import { Tender, ParticipationStatus } from '@/pages/TenderOffers';
 import { Link } from 'react-router-dom';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderTableProps {
   tenders: Tender[];
@@ -21,6 +22,8 @@ interface TenderTableProps {
 }
 
 export default function TenderTable({ tenders, onSelectTender, selectedTenderId }: TenderTableProps) {
+  const { activeProfile } = useProfile();
+  
   const getParticipationStatusBadge = (status: ParticipationStatus) => {
     switch (status) {
       case 'to-submit':
@@ -34,6 +37,13 @@ export default function TenderTable({ tenders, onSelectTender, selectedTenderId 
       default:
         return <Badge>Inconnu</Badge>;
     }
+  };
+  
+  const getTenderUrl = (tenderId: string) => {
+    if (activeProfile === 'entreprise-construction') {
+      return `/construction-tender-specifications?project=${tenderId}`;
+    }
+    return `/tender-specifications?project=${tenderId}`;
   };
 
   return (
@@ -79,7 +89,7 @@ export default function TenderTable({ tenders, onSelectTender, selectedTenderId 
                 <TableCell>{tender.deadline}</TableCell>
                 <TableCell>
                   <Button size="sm" variant="outline" className="gap-1" asChild>
-                    <Link to={`/tender-specifications?project=${tender.id}`}>
+                    <Link to={getTenderUrl(tender.id)}>
                       <ExternalLink size={14} />
                       <span>Accéder à l'Appel d'Offres</span>
                     </Link>
