@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -7,9 +6,9 @@ import TenderSearchResults from '@/components/tenders/TenderSearchResults';
 import TenderSearchDetails from '@/components/tenders/TenderSearchDetails';
 import TenderMap from '@/components/tenders/TenderMap';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, BellPlus } from 'lucide-react';
+import { BellRing } from 'lucide-react';
+
 export type TenderStatus = 'open' | 'closed' | 'assigned';
 export interface TenderSearchResult {
   id: string;
@@ -29,11 +28,13 @@ export interface TenderSearchResult {
   createdAt: string;
   description: string;
 }
+
 export default function TenderSearch() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [selectedTender, setSelectedTender] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
+
   const tenders: TenderSearchResult[] = [{
     id: "search-001",
     projectName: "Centre Commercial Riviera",
@@ -120,6 +121,7 @@ export default function TenderSearch() {
     createdAt: "10/07/2023",
     description: "Rénovation complète d'un hôtel de luxe en front de mer."
   }];
+
   const filteredTenders = tenders.filter(tender => {
     if (selectedTab !== 'all' && tender.status !== selectedTab) return false;
     if (searchQuery && !tender.projectName.toLowerCase().includes(searchQuery.toLowerCase()) && !tender.projectType.toLowerCase().includes(searchQuery.toLowerCase()) && !tender.location.toLowerCase().includes(searchQuery.toLowerCase()) && !tender.lots.some(lot => lot.toLowerCase().includes(searchQuery.toLowerCase()))) {
@@ -127,34 +129,27 @@ export default function TenderSearch() {
     }
     return true;
   });
+
   const handleTenderSelect = (tenderId: string) => {
     setSelectedTender(tenderId);
   };
+
   return <div className="flex h-screen bg-background">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Rechercher un Appel d'Offres</h1>
           
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
-              <Input type="search" placeholder="Rechercher par mot-clé, référence, localisation..." className="pl-10 pr-4 py-6 text-base" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-              <Button className="absolute right-1 top-1.5 h-9">
-                Rechercher
-              </Button>
-            </div>
-            <Link to="/tender-alerte">
+          <div className="mb-6 flex items-center justify-end">
+            <Link to="/alerte-management">
               <Button variant="outline" className="flex items-center gap-2">
-                <BellPlus size={18} />
-                <span>Créer une alerte</span>
+                <BellRing size={18} />
+                <span>Gérer mes alertes</span>
               </Button>
             </Link>
           </div>
           
           <Tabs defaultValue="all" className="w-full" onValueChange={setSelectedTab}>
-            
-            
             <div className="flex h-[calc(100vh-230px)]">
               <TenderSearchFilters />
               

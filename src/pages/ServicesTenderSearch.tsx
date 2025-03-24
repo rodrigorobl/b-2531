@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, BellPlus } from 'lucide-react';
+import { BellRing } from 'lucide-react';
 
 import ServicesTenderFilters from '@/components/services-tender/ServicesTenderFilters';
 import ServicesTenderResults from '@/components/services-tender/ServicesTenderResults';
@@ -40,7 +38,6 @@ export default function ServicesTenderSearch() {
   const [selectedTender, setSelectedTender] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
-  // Mock data for services tenders
   const tenders: ServiceTenderSearchResult[] = [
     {
       id: "service-001",
@@ -199,24 +196,11 @@ export default function ServicesTenderSearch() {
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Rechercher un Appel d'Offres Services</h1>
           
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
-              <Input 
-                type="search" 
-                placeholder="Rechercher par mot-clé, service, localisation..." 
-                className="pl-10 pr-4 py-6 text-base" 
-                value={searchQuery} 
-                onChange={e => setSearchQuery(e.target.value)} 
-              />
-              <Button className="absolute right-1 top-1.5 h-9">
-                Rechercher
-              </Button>
-            </div>
-            <Link to="/tender-alert">
+          <div className="mb-6 flex items-center justify-end">
+            <Link to="/alerte-management">
               <Button variant="outline" className="flex items-center gap-2">
-                <BellPlus size={18} />
-                <span>Créer une alerte</span>
+                <BellRing size={18} />
+                <span>Gérer mes alertes</span>
               </Button>
             </Link>
           </div>
