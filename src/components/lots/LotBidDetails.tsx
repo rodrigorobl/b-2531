@@ -140,15 +140,11 @@ export function LotBidDetails({ bid }: LotBidDetailsProps) {
           </Button>
           <Button variant="outline" className="w-full justify-start">
             <FileText className="mr-2 h-4 w-4" />
-            <span>Documents techniques</span>
+            <span>Dossier administratif</span>
           </Button>
           <Button variant="outline" className="w-full justify-start">
             <Building className="mr-2 h-4 w-4" />
             <span>Profil entreprise</span>
-          </Button>
-          <Button variant="outline" className="w-full justify-start">
-            <Calendar className="mr-2 h-4 w-4" />
-            <span>Planning proposé</span>
           </Button>
         </div>
       </div>
