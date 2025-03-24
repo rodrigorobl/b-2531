@@ -67,6 +67,7 @@ import ProjectSurvey from "./pages/ProjectSurvey";
 import QuantitySurveyorPage from "./pages/QuantitySurveyorPage";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import ConstructionSubscriptionEstimation from './pages/ConstructionSubscriptionEstimation';
+import ServicesSubscriptionEstimation from './pages/ServicesSubscriptionEstimation';
 
 const queryClient = new QueryClient();
 
@@ -144,6 +145,7 @@ function App() {
               <Route path="/submit-services-quote/:tenderId" element={<SubmitServicesQuote />} />
               <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
               <Route path="/construction-subscription-estimation" element={<ConstructionSubscriptionEstimation />} />
+              <Route path="/services-subscription-estimation" element={<ServicesSubscriptionEstimation />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
