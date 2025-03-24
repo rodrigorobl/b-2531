@@ -9,6 +9,7 @@ import { DateRangeFilter } from './filters/DateRangeFilter';
 import { ClientSearchFilter } from './filters/ClientSearchFilter';
 import { FavoritesFilter } from './filters/FavoritesFilter';
 import { FilterActions } from './filters/FilterActions';
+import { DceKeywordsFilter } from './filters/DceKeywordsFilter';
 
 export default function TenderSearchFilters() {
   const [showFavorites, setShowFavorites] = useState(false);
@@ -25,6 +26,7 @@ export default function TenderSearchFilters() {
         <BudgetFilter budgetRange={budgetRange} setBudgetRange={setBudgetRange} />
         <SurfaceFilter surfaceRange={surfaceRange} setSurfaceRange={setSurfaceRange} />
         <BatchFilter />
+        <DceKeywordsFilter />
         <DateRangeFilter />
         <ClientSearchFilter />
         <FavoritesFilter showFavorites={showFavorites} setShowFavorites={setShowFavorites} />
