@@ -19,6 +19,7 @@ import DashboardConstruction from './pages/DashboardConstruction';
 import DashboardBET from './pages/DashboardBET';
 import DashboardIndustry from './pages/DashboardIndustry';
 import Dashboard from './pages/Dashboard';
+import DashboardServices from './pages/DashboardServices';
 
 function App() {
   return (

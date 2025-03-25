@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink, CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -8,7 +9,7 @@ interface Activity {
   title: string;
   description: string;
   timestamp: string;
-  type: 'tender' | 'message' | 'status' | 'document' | 'quote' | 'update' | 'order' | 'delivery';
+  type: 'tender' | 'message' | 'status' | 'document' | 'quote' | 'update' | 'order' | 'delivery' | 'planning';
   link?: string;
 }
 
@@ -75,6 +76,12 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
         return (
           <div className="w-8 h-8 rounded-full bg-status-completed/10 flex items-center justify-center text-status-completed">
             <Package size={16} />
+          </div>
+        );
+      case 'planning':
+        return (
+          <div className="w-8 h-8 rounded-full bg-status-assigned/10 flex items-center justify-center text-status-assigned">
+            <Calendar size={16} />
           </div>
         );
       default:
