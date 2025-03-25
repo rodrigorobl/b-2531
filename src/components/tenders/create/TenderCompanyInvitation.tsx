@@ -6,12 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Search, UserPlus, Check, X, Info, Percent } from 'lucide-react';
+import { Search, UserPlus, Check, X, Info, Percent, SendHorizontal } from 'lucide-react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CompanyInvitationManager } from "./CompanyInvitationManager";
 
 interface TenderCompanyInvitationProps {
   form: UseFormReturn<TenderFormValues>;
@@ -415,8 +416,31 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
 
   const lots = lotsForType();
 
+  // Gérer les invitations ajoutées par le gestionnaire d'invitations
+  const handleInvitationsComplete = (contacts: any[]) => {
+    // Convertir les contacts en format d'entreprise et les ajouter aux entreprises sélectionnées
+    const newCompanies = contacts.map(contact => ({
+      id: contact.id,
+      name: contact.company,
+      lotId: '', // À définir ultérieurement si nécessaire
+      selected: true
+    }));
+    
+    setSelectedCompanies(prev => [...prev, ...newCompanies]);
+    
+    const formattedCompanies = [...selectedCompanies, ...newCompanies]
+      .filter(c => c.selected)
+      .map(({ id, name, lotId }) => ({ id, name, lotId, selected: true }));
+      
+    form.setValue("invitedCompanies", formattedCompanies);
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-end mb-6">
+        <CompanyInvitationManager onInvitationsComplete={handleInvitationsComplete} />
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {lots.map(lot => (
           <Card key={lot.id} className="overflow-hidden">
