@@ -14,12 +14,84 @@ export interface TenderFormValues {
     id: string;
     name: string;
   }>;
+  design?: {
+    designType?: string;
+    projectNature?: string;
+    area?: string;
+    location?: {
+      address?: string;
+      lat?: number;
+      lng?: number;
+    };
+    lots?: Array<{
+      name: string;
+      description?: string;
+      selected: boolean;
+    }>;
+    projectTeam?: Array<{
+      name: string;
+      role: string;
+    }>;
+  };
+  construction?: {
+    constructionType?: 'neuf' | 'réhabilitation' | 'extension' | 'renovation' | 'demolition' | 'amenagement';
+    area?: string;
+    location?: {
+      address?: string;
+      lat?: number;
+      lng?: number;
+    };
+    buildings?: Array<{
+      id: string;
+      levels: number;
+    }>;
+    projectTeam?: Array<{
+      name: string;
+      role: string;
+    }>;
+    lots?: Array<{
+      name: string;
+      description?: string;
+      selected: boolean;
+    }>;
+    dpgfMethod?: 'ai' | 'upload';
+    keyDates?: Array<{
+      id: string;
+      name: string;
+      date?: Date;
+    }>;
+    lotClosureDates?: Array<{
+      lotName: string;
+      closureDate?: Date;
+    }>;
+    usages?: Array<{
+      name: string;
+      description?: string;
+    }>;
+  };
+  service?: {
+    serviceType?: string;
+    serviceScope?: string;
+    serviceDuration?: string;
+    frequency?: string;
+    location?: {
+      address?: string;
+      lat?: number;
+      lng?: number;
+    };
+    lots?: Array<{
+      name: string;
+      description?: string;
+      selected: boolean;
+    }>;
+  };
 }
 
 export interface DesignTenderFormValues extends TenderFormValues {
   type: 'design';
   design: {
-    designType: string;
+    designType?: string;
+    projectNature?: string;
     area: string;
     location?: {
       address?: string;
@@ -81,8 +153,10 @@ export interface ConstructionTenderFormValues extends TenderFormValues {
 export interface ServiceTenderFormValues extends TenderFormValues {
   type: 'service';
   service: {
-    serviceType: string;
-    frequency: string;
+    serviceType?: string;
+    serviceScope?: string;
+    serviceDuration?: string;
+    frequency?: string;
     location?: {
       address?: string;
       lat?: number;
