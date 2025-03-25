@@ -1,6 +1,6 @@
 import React from 'react';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Wrench, MapPin } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { LayoutDashboard, Briefcase, FileText, MessageSquare, Bell, CheckCircle2, Calendar, Wrench, MapPin, Clock, Building, Truck, LampFloor, Droplet, Scale, Trash2, Flame, Wind } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import DashboardKPI from '@/components/DashboardKPI';
@@ -9,125 +9,123 @@ import TenderOffersList from '@/components/TenderOffersList';
 import ActivityFeed from '@/components/ActivityFeed';
 import PriorityActions from '@/components/PriorityActions';
 import Sidebar from '@/components/Sidebar';
+import { Badge } from '@/components/ui/badge';
+import { QuoteStatusBadge } from '@/components/quotes/QuoteStatusBadge';
 
 export default function DashboardServices() {
   // Sample data for KPI cards specific to Services
   const kpiData = {
-    activeServices: 12,
-    pendingQuotes: 8,
-    scheduledInterventions: 15,
-    completedServices: 24
+    activeContracts: 9,
+    openTenders: 11,
+    pendingQuotes: 6,
+    unreadMessages: 4
   };
 
-  // Sample projects data for Services
+  // Projets en cours liés aux services spécifiés
   const projects = [
     {
       id: 'project-001',
-      name: 'Maintenance CVC - Tour Horizon',
-      client: 'VINCI Facilities',
-      type: 'Maintenance',
+      name: 'Tour Eiffel - Location de grues mobiles',
+      client: 'VINCI',
+      type: 'Tertiaire',
       status: 'in-progress' as const,
-      progress: 35,
-      deadline: '30/06/2024'
+      progress: 40,
+      deadline: '30/07/2024'
     },
     {
       id: 'project-002',
-      name: 'Nettoyage chantier - Résidence Bellevue',
-      client: 'NEXITY',
-      type: 'Nettoyage',
+      name: 'Siège Social Michelin - Éclairage temporaire',
+      client: 'BOUYGUES',
+      type: 'Tertiaire',
       status: 'assigned' as const,
-      progress: 0,
-      deadline: '15/05/2024'
+      progress: 15,
+      deadline: '15/08/2024'
     },
     {
       id: 'project-003',
-      name: 'Entretien espaces verts - Campus Tech',
-      client: 'TechCampus SAS',
-      type: 'Espaces verts',
+      name: 'Hôpital Saint-Louis - Équipements premiers secours',
+      client: 'Mairie de Paris',
+      type: 'Public',
       status: 'in-progress' as const,
-      progress: 70,
-      deadline: 'Contrat annuel'
+      progress: 60,
+      deadline: '05/06/2024'
     }
   ];
 
-  // Sample tender offers data for Services
+  // Appels d'offres liés aux services spécifiés
   const tenderOffers = [
     {
       id: 'tender-001',
-      title: 'Maintenance ascenseurs',
-      project: 'Immeuble Le Cristal',
+      title: 'Location de réservoirs d\'eau temporaire',
+      project: 'Éco-quartier Confluence',
       status: 'open' as const,
-      deadline: '20/05/2024',
-      estimatedValue: '18 000 €/an'
+      deadline: '15/05/2024',
+      estimatedValue: '75 000 €'
     },
     {
       id: 'tender-002',
-      title: 'Nettoyage fin de chantier',
-      project: 'Centre commercial Grand Place',
+      title: 'Service de déménagement bureaux temporaires',
+      project: 'Tour Alto La Défense',
       status: 'open' as const,
-      deadline: '01/06/2024',
-      estimatedValue: '12 500 €'
+      deadline: '20/05/2024',
+      estimatedValue: '45 000 €'
     },
     {
       id: 'tender-003',
-      title: 'Entretien CVC',
-      project: 'Hôtel Mercure Centre',
+      title: 'Location d\'équipements contrôle qualité air',
+      project: 'Métro Grand Paris Express',
       status: 'open' as const,
-      deadline: '15/05/2024',
-      estimatedValue: '24 000 €/an'
+      deadline: '25/05/2024',
+      estimatedValue: '110 000 €'
     }
   ];
 
-  // Sample priority actions for Services
+  // Actions prioritaires liées aux services spécifiés
   const priorityActions = [
     {
       id: 'action-001',
-      title: 'Soumettre devis maintenance',
-      project: 'Immeuble Le Cristal',
-      deadline: '18/05/2024',
+      title: 'Soumettre devis Grues Mobiles',
+      project: 'Stade de France',
+      deadline: '15/05/2024',
       type: 'quote' as const
     },
     {
       id: 'action-002',
-      title: 'Planifier intervention',
-      project: 'Tour Horizon',
+      title: 'Commander matériel soudage',
+      project: 'Centrale Nucléaire',
       deadline: '12/05/2024',
-      type: 'planning' as const
+      type: 'purchase' as const
     },
     {
       id: 'action-003',
-      title: 'Rapport d\'intervention',
-      project: 'Campus Tech',
+      title: 'Intervention nettoyage urbain',
+      project: 'Quartier La Part-Dieu',
       deadline: '10/05/2024',
-      type: 'document' as const
+      type: 'service' as const
     }
   ];
 
-  // Sample activity feed data for Services
-  const activities = [
+  // Devis en attente liés aux services spécifiés
+  const pendingQuotes = [
     {
-      id: 'activity-001',
-      title: 'Nouvelle demande de devis',
-      description: 'Maintenance CVC pour Hôtel Mercure Centre',
-      timestamp: 'Il y a 3 heures',
-      type: 'quote' as const,
-      link: '/services-quote/quote-001'
+      id: 'quote-001',
+      projectName: 'Consultation juridique - Chantier Médipôle',
+      lot: 'Services juridiques',
+      amount: '12 800 €',
+      status: 'in-progress' as const,
+      urgency: 'high' as const,
+      date: '05/05/2024',
+      dueDate: '15/05/2024'
     },
     {
-      id: 'activity-002',
-      title: 'Intervention planifiée',
-      description: 'Maintenance ascenseurs Tour Horizon le 15/05',
-      timestamp: 'Hier, 16:30',
-      type: 'planning' as const,
-      link: '/interventions/int-002'
-    },
-    {
-      id: 'activity-003',
-      title: 'Rapport validé',
-      description: 'Rapport d\'entretien Campus Tech accepté',
-      timestamp: 'Hier, 11:45',
-      type: 'document' as const,
-      link: '/reports/rep-003'
+      id: 'quote-002',
+      projectName: 'Location grues mobiles - Tour Trinity',
+      lot: 'Équipements lourds',
+      amount: '85 500 €',
+      status: 'to-analyze' as const,
+      urgency: 'medium' as const,
+      date: '08/05/2024',
+      dueDate: '20/05/2024'
     }
   ];
 
@@ -140,50 +138,95 @@ export default function DashboardServices() {
         <header className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-3xl font-bold">Bonjour, Sophie</h1>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/construction-sites-map">
-                <MapPin className="mr-2 h-4 w-4" />
-                Carte des chantiers
-              </Link>
-            </Button>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/tender-search">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Rechercher des AO
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/construction-sites-map">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Carte des Chantiers
+                </Link>
+              </Button>
+            </div>
           </div>
           <p className="text-muted-foreground">
-            Voici un aperçu de vos services en cours et des opportunités disponibles.
+            Voici un aperçu de vos contrats de services en cours et des appels d'offres disponibles.
           </p>
           
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            <DashboardKPI title="Services actifs" value={kpiData.activeServices} icon={<Wrench />} color="bg-primary/10 text-primary" linkTo="/services" />
-            <DashboardKPI title="Devis en attente" value={kpiData.pendingQuotes} icon={<FileText />} color="bg-status-pending/10 text-status-pending" linkTo="/services-quote-management" />
-            <DashboardKPI title="Interventions planifiées" value={kpiData.scheduledInterventions} icon={<Calendar />} color="bg-status-assigned/10 text-status-assigned" linkTo="/interventions" />
-            <DashboardKPI title="Services complétés" value={kpiData.completedServices} icon={<CheckCircle2 />} color="bg-status-in-progress/10 text-status-in-progress" linkTo="/services?filter=completed" />
+            <DashboardKPI title="Contrats actifs" value={kpiData.activeContracts} icon={<Briefcase />} color="bg-primary/10 text-primary" linkTo="/projects" />
+            <DashboardKPI title="Appels d'offres" value={kpiData.openTenders} icon={<FileText />} color="bg-status-pending/10 text-status-pending" linkTo="/tender-search" />
+            <DashboardKPI title="Devis en attente" value={kpiData.pendingQuotes} icon={<CheckCircle2 />} color="bg-status-assigned/10 text-status-assigned" linkTo="/quotes-to-analyze" />
+            <DashboardKPI title="Messages non lus" value={kpiData.unreadMessages} icon={<MessageSquare />} color="bg-status-in-progress/10 text-status-in-progress" linkTo="/messaging?filter=unread" />
           </div>
         </header>
         
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column - Projects */}
+          {/* Left Column - Projects and Quotes */}
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
               <div className="p-4 border-b flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Mes Services</h2>
+                <h2 className="text-lg font-semibold">Mes contrats</h2>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/services">Voir tous</Link>
+                  <Link to="/projects">Voir tous</Link>
                 </Button>
               </div>
               <div className="p-4">
                 <ProjectsList projects={projects} />
               </div>
             </div>
+            
+            <div className="bg-card rounded-lg border shadow-sm">
+              <div className="p-4 border-b flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Devis en attente</h2>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/quotes-to-analyze">Voir tous</Link>
+                </Button>
+              </div>
+              <div className="p-4">
+                <div className="space-y-4">
+                  {pendingQuotes.map((quote) => (
+                    <div key={quote.id} className="p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-medium line-clamp-1">{quote.projectName}</h3>
+                          <p className="text-sm text-muted-foreground">Lot: {quote.lot}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <QuoteStatusBadge status={quote.status} />
+                          <span className="text-sm font-medium">{quote.amount}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-between items-center mt-3">
+                        <div className="flex items-center">
+                          <Clock size={14} className="mr-1 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">Échéance: {quote.dueDate}</span>
+                        </div>
+                        <Link to={`/quote-detail/${quote.id}`} className="text-primary text-sm flex items-center hover:underline">
+                          <span>Détails</span>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
           
-          {/* Middle Column - Tenders */}
+          {/* Middle Column - Tenders and Priority Actions */}
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
               <div className="p-4 border-b flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Opportunités de services</h2>
+                <h2 className="text-lg font-semibold">Appels d'offres récents</h2>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/services-tender-search">Voir toutes</Link>
+                  <Link to="/tender-search">Voir tous</Link>
                 </Button>
               </div>
               <div className="p-4">
@@ -201,14 +244,70 @@ export default function DashboardServices() {
             </div>
           </div>
           
-          {/* Right Column - Activity Feed */}
+          {/* Right Column - Activity Feed and Quick Actions */}
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-card rounded-lg border shadow-sm">
               <div className="p-4 border-b">
                 <h2 className="text-lg font-semibold">Activité récente</h2>
               </div>
               <div className="p-4">
-                <ActivityFeed activities={activities} />
+                <ActivityFeed activities={[
+                  {
+                    id: 'activity-001',
+                    title: 'Nouvel appel d\'offres',
+                    description: 'Location d\'équipements contrôle qualité air',
+                    timestamp: 'Il y a 2 heures',
+                    type: 'tender' as const
+                  },
+                  {
+                    id: 'activity-002',
+                    title: 'Nouveau message',
+                    description: 'Question technique sur fourniture d\'éclairage',
+                    timestamp: 'Il y a 5 heures',
+                    type: 'message' as const
+                  },
+                  {
+                    id: 'activity-003',
+                    title: 'Contrat signé',
+                    description: 'Service juridique pour Consortium BTP',
+                    timestamp: 'Hier, 14:30',
+                    type: 'document' as const
+                  }
+                ]} />
+              </div>
+            </div>
+            
+            <div className="bg-card rounded-lg border shadow-sm">
+              <div className="p-4 border-b">
+                <h2 className="text-lg font-semibold">Accès rapide</h2>
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-1 gap-3">
+                  <Button className="justify-start" asChild>
+                    <Link to="/submit-quote">
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      Répondre aux appels d'offres
+                    </Link>
+                  </Button>
+                  <Button className="justify-start" asChild>
+                    <Link to="/projects">
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      Voir les projets en cours
+                    </Link>
+                  </Button>
+                  <Button className="justify-start" asChild>
+                    <Link to="/quotes-to-analyze">
+                      <FileText className="mr-2 h-4 w-4" />
+                      Consulter les devis en attente
+                    </Link>
+                  </Button>
+                  <Button className="justify-start" asChild>
+                    <Link to="/construction-sites-map">
+                      <MapPin className="mr-2 h-4 w-4" />
+                      Carte des chantiers
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
