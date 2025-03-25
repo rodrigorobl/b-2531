@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FileText, MessageSquare, Bell, Clock, Package, ShoppingCart, Calendar, AlertTriangle, Flag, ExternalLink, CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';

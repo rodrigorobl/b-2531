@@ -50,6 +50,24 @@ function App() {
           <Route path="/product-prescription" element={<ProductPrescriptionTracking />} />
           <Route path="/product-reference" element={<ProductReferenceTracking />} />
           <Route path="/projects-search" element={<ProjectsSearch />} />
+          
+          {/* Additional routes from Navigation.tsx */}
+          <Route path="/projects" element={<div>Projects Page</div>} />
+          <Route path="/moe-list" element={<div>MOE List Page</div>} />
+          <Route path="/quotes-to-analyze" element={<div>Quotes to Analyze Page</div>} />
+          <Route path="/opportunities-search" element={<div>Opportunities Search Page</div>} />
+          <Route path="/tenders" element={<div>Tenders Page</div>} />
+          <Route path="/tender-search" element={<div>Tender Search Page</div>} />
+          <Route path="/construction-sites-map" element={<div>Construction Sites Map Page</div>} />
+          <Route path="/services-quote-management" element={<div>Services Quote Management Page</div>} />
+          <Route path="/services-tender-search" element={<div>Services Tender Search Page</div>} />
+          <Route path="/company" element={<div>Company Page</div>} />
+          <Route path="/company-services" element={<div>Company Services Page</div>} />
+          <Route path="/messaging" element={<div>Messaging Page</div>} />
+          <Route path="/quantity-surveyor-page" element={<div>Quantity Surveyor Page</div>} />
+          <Route path="/services" element={<div>Services Page</div>} />
+          <Route path="/interventions" element={<div>Interventions Page</div>} />
+          <Route path="/documents" element={<div>Documents Page</div>} />
         </Routes>
       </ProfileProvider>
     </BrowserRouter>
