@@ -53,6 +53,13 @@ export function FeaturedDocuments() {
     return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
   };
 
+  // Handle download
+  const handleDownload = (doc: FeaturedDocument) => {
+    // In a real implementation, this would trigger a file download
+    console.log(`Downloading ${doc.name}`);
+    alert(`Téléchargement de ${doc.name} (Fonctionnalité simulée)`);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {featuredDocs.map(doc => (
@@ -77,7 +84,10 @@ export function FeaturedDocuments() {
                 <span className="text-muted-foreground">Taille:</span>
                 <span>{formatSize(doc.size)}</span>
               </div>
-              <Button className="w-full mt-4 gap-2">
+              <Button 
+                className="w-full mt-4 gap-2" 
+                onClick={() => handleDownload(doc)}
+              >
                 <Download className="h-4 w-4" />
                 <span>Télécharger</span>
               </Button>
