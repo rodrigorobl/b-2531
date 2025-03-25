@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +24,7 @@ import ProjectMap from '@/components/ProjectMap';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { ConstructionTenderFormValues } from '@/types/tender-forms';
+import { UserPlus } from 'lucide-react';
 
 const constructionTenderSchema = z.object({
   constructionType: z.enum(['neuf', 'réhabilitation', 'extension', 'renovation', 'demolition', 'amenagement']),
@@ -95,6 +95,7 @@ export default function CreateTenderRealisation() {
   const [currentStep, setCurrentStep] = useState(1);
   const [location, setLocation] = useState<{address: string; lat: number; lng: number} | null>(null);
   const [address, setAddress] = useState('');
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
   const form = useForm<ConstructionTenderFormValues>({
     resolver: zodResolver(formSchema),
@@ -322,7 +323,23 @@ export default function CreateTenderRealisation() {
               )}
 
               {currentStep === 8 && (
-                <TenderCompanyInvitation form={form as any} />
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold">Invitations</h2>
+                    <Button 
+                      type="button" 
+                      onClick={() => setIsInviteDialogOpen(true)}
+                    >
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Inviter des entreprises
+                    </Button>
+                  </div>
+                  <TenderCompanyInvitation 
+                    form={form as any}
+                    isOpen={isInviteDialogOpen}
+                    onOpenChange={setIsInviteDialogOpen}
+                  />
+                </div>
               )}
 
               {currentStep === 9 && (
