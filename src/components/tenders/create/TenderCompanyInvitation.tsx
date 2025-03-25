@@ -18,9 +18,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface TenderCompanyInvitationProps {
   form: UseFormReturn<TenderFormValues>;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-// Added interface for extracted contacts
 interface ExtractedContact {
   id: string;
   firstName: string;
@@ -31,302 +32,23 @@ interface ExtractedContact {
   address: string;
 }
 
-// Données fictives d'entreprises pour la démonstration
 const dummyCompanies = [
-  {
-    id: "company1",
-    name: "Architect & Partners",
-    specialty: ["architecte", "economiste"],
-    recommendation: 95,
-    info: {
-      address: "15 rue de la République, Paris",
-      employees: 45,
-      founded: 2005,
-      projects: 132,
-      description: "Cabinet d'architectes spécialisé dans les projets résidentiels haut de gamme et tertiaires."
-    }
-  },
-  {
-    id: "company2",
-    name: "Structures Modernes",
-    specialty: ["bet-structure"],
-    recommendation: 92,
-    info: {
-      address: "8 avenue des Ingénieurs, Lyon",
-      employees: 28,
-      founded: 2010,
-      projects: 87,
-      description: "Bureau d'études techniques spécialisé dans les structures complexes et les bâtiments de grande hauteur."
-    }
-  },
-  {
-    id: "company3",
-    name: "Fluid Systems",
-    specialty: ["bet-fluides", "bet-hqe"],
-    recommendation: 88,
-    info: {
-      address: "22 rue de l'Innovation, Bordeaux",
-      employees: 35,
-      founded: 2008,
-      projects: 115,
-      description: "Expert en ingénierie des fluides et solutions environnementales pour bâtiments performants."
-    }
-  },
-  {
-    id: "company4",
-    name: "Acoustic Design",
-    specialty: ["acousticien"],
-    recommendation: 96,
-    info: {
-      address: "11 rue du Son, Nantes",
-      employees: 12,
-      founded: 2014,
-      projects: 64,
-      description: "Spécialiste en solutions acoustiques pour tous types de bâtiments, de l'auditorium à l'habitation."
-    }
-  },
-  {
-    id: "company5",
-    name: "Budget Construction",
-    specialty: ["economiste"],
-    recommendation: 89,
-    info: {
-      address: "4 rue des Finances, Marseille",
-      employees: 18,
-      founded: 2011,
-      projects: 93,
-      description: "Cabinet d'économistes de la construction offrant des services de chiffrage précis et d'optimisation budgétaire."
-    }
-  },
-  {
-    id: "company6",
-    name: "Eco Building Solutions",
-    specialty: ["bet-hqe", "architecte"],
-    recommendation: 91,
-    info: {
-      address: "30 rue Verte, Toulouse",
-      employees: 22,
-      founded: 2012,
-      projects: 76,
-      description: "Experts en conception de bâtiments écologiques et certifications environnementales."
-    }
-  },
-  {
-    id: "company7", 
-    name: "Construction Générale SA",
-    specialty: ["gros-oeuvre", "demolition"],
-    recommendation: 94,
-    info: {
-      address: "52 rue du Bâtiment, Lille",
-      employees: 120,
-      founded: 1998,
-      projects: 215,
-      description: "Entreprise de construction générale spécialisée dans les ouvrages complexes et les grandes infrastructures."
-    }
-  },
-  {
-    id: "company8",
-    name: "Façades & Design",
-    specialty: ["facades", "isolation"],
-    recommendation: 87,
-    info: {
-      address: "17 avenue de l'Architecture, Nice",
-      employees: 45,
-      founded: 2007,
-      projects: 128,
-      description: "Spécialiste des façades innovantes et solutions d'isolation thermique performantes."
-    }
-  },
-  {
-    id: "company9",
-    name: "Electricité Pro",
-    specialty: ["electricite"],
-    recommendation: 93,
-    info: {
-      address: "9 rue de l'Énergie, Strasbourg",
-      employees: 65,
-      founded: 2001,
-      projects: 176,
-      description: "Entreprise d'électricité générale pour projets tertiaires, industriels et résidentiels de grande envergure."
-    }
-  },
-  {
-    id: "company10",
-    name: "Plomberie & Fluides",
-    specialty: ["plomberie", "cvc"],
-    recommendation: 90,
-    info: {
-      address: "14 rue des Canalisations, Rennes",
-      employees: 38,
-      founded: 2009,
-      projects: 104,
-      description: "Expert en installations de plomberie et systèmes de fluides pour tous types de constructions."
-    }
-  },
-  {
-    id: "company11",
-    name: "Peinture Décoration Plus",
-    specialty: ["peinture"],
-    recommendation: 91,
-    info: {
-      address: "6 rue des Couleurs, Montpellier",
-      employees: 29,
-      founded: 2013,
-      projects: 83,
-      description: "Entreprise de peinture et décoration pour projets haut de gamme et espaces professionnels."
-    }
-  },
-  {
-    id: "company12",
-    name: "Bois & Menuiserie",
-    specialty: ["menuiserie", "charpente"],
-    recommendation: 95,
-    info: {
-      address: "25 rue du Bois, Grenoble",
-      employees: 42,
-      founded: 2004,
-      projects: 137,
-      description: "Artisans spécialisés dans les ouvrages en bois, la menuiserie sur mesure et les charpentes complexes."
-    }
-  },
-  {
-    id: "company13",
-    name: "Climatisation Expertise",
-    specialty: ["cvc"],
-    recommendation: 88,
-    info: {
-      address: "31 rue du Confort, Dijon",
-      employees: 26,
-      founded: 2011,
-      projects: 92,
-      description: "Spécialiste des systèmes CVC innovants et solutions de confort thermique pour tous bâtiments."
-    }
-  },
-  {
-    id: "company14",
-    name: "Rénovation Bâtiment",
-    specialty: ["gros-oeuvre", "renovation"],
-    recommendation: 86,
-    info: {
-      address: "12 rue de la Réhabilitation, Tours",
-      employees: 35,
-      founded: 2008,
-      projects: 98,
-      description: "Entreprise spécialisée dans la rénovation de bâtiments anciens et la réhabilitation d'espaces."
-    }
-  },
-  {
-    id: "company15",
-    name: "Élévateurs Modernes",
-    specialty: ["ascenseurs"],
-    recommendation: 92,
-    info: {
-      address: "8 rue de la Mobilité, Angers",
-      employees: 19,
-      founded: 2012,
-      projects: 64,
-      description: "Installation et maintenance d'ascenseurs et systèmes d'élévation pour tous types de bâtiments."
-    }
-  },
-  {
-    id: "company16",
-    name: "VRD Solutions",
-    specialty: ["vrd"],
-    recommendation: 89,
-    info: {
-      address: "43 route des Réseaux, Clermont-Ferrand",
-      employees: 48,
-      founded: 2005,
-      projects: 121,
-      description: "Spécialiste des travaux de voirie, réseaux divers et aménagements extérieurs."
-    }
-  },
-  {
-    id: "company17",
-    name: "Service Entretien Pro",
-    specialty: ["maintenance", "entretien"],
-    recommendation: 93,
-    info: {
-      address: "16 rue de la Maintenance, Paris",
-      employees: 75,
-      founded: 2002,
-      projects: 240,
-      description: "Entreprise spécialisée dans les services de maintenance et d'entretien régulier de bâtiments."
-    }
-  },
-  {
-    id: "company18",
-    name: "Sécurité Bâtiment",
-    specialty: ["securite"],
-    recommendation: 94,
-    info: {
-      address: "28 rue de la Protection, Lyon",
-      employees: 52,
-      founded: 2007,
-      projects: 186,
-      description: "Expert en installation de systèmes de sécurité et surveillance pour bâtiments professionnels."
-    }
-  },
-  {
-    id: "company19",
-    name: "Propreté & Services",
-    specialty: ["nettoyage"],
-    recommendation: 90,
-    info: {
-      address: "9 avenue de la Propreté, Marseille",
-      employees: 128,
-      founded: 1999,
-      projects: 312,
-      description: "Société de nettoyage professionnel pour bureaux, commerces et espaces industriels."
-    }
-  },
-  {
-    id: "company20",
-    name: "Espaces Verts Concept",
-    specialty: ["entretien"],
-    recommendation: 91,
-    info: {
-      address: "17 rue des Jardins, Bordeaux",
-      employees: 34,
-      founded: 2010,
-      projects: 109,
-      description: "Conception, aménagement et entretien d'espaces verts pour projets résidentiels et tertiaires."
-    }
-  }
+  // ... keep existing dummy companies data
 ];
 
-// Lots pour les différents types d'appels d'offres
 const designLots = [
-  { id: "architecte", name: "Architecte" },
-  { id: "bet-structure", name: "BET Structure" },
-  { id: "bet-fluides", name: "BET Fluides" },
-  { id: "acousticien", name: "Acousticien" },
-  { id: "economiste", name: "Économiste" },
-  { id: "bet-hqe", name: "BET HQE" }
+  // ... keep existing designLots data
 ];
 
 const constructionLots = [
-  { id: "gros-oeuvre", name: "Gros Œuvre" },
-  { id: "peinture", name: "Peinture" },
-  { id: "plomberie", name: "Plomberie" },
-  { id: "electricite", name: "Électricité" },
-  { id: "menuiserie", name: "Menuiserie" },
-  { id: "cvc", name: "CVC" },
-  { id: "facades", name: "Façades" },
-  { id: "charpente", name: "Charpente" },
-  { id: "vrd", name: "VRD" },
-  { id: "isolation", name: "Isolation" },
-  { id: "ascenseurs", name: "Ascenseurs" }
+  // ... keep existing constructionLots data
 ];
 
 const serviceLots = [
-  { id: "maintenance", name: "Maintenance" },
-  { id: "securite", name: "Sécurité" },
-  { id: "nettoyage", name: "Nettoyage" },
-  { id: "entretien", name: "Entretien espaces verts" }
+  // ... keep existing serviceLots data
 ];
 
-const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form }) => {
+const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form, isOpen, onOpenChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('design');
   const [showInviteDialog, setShowInviteDialog] = useState(false);
@@ -349,6 +71,15 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
     );
     return matchesSearch && matchesSpecialty;
   });
+
+  const dialogOpen = isOpen !== undefined ? isOpen : showInviteDialog;
+  const setDialogOpen = (open: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(open);
+    } else {
+      setShowInviteDialog(open);
+    }
+  };
 
   const handleInviteCompany = (company) => {
     const currentInvitedCompanies = form.getValues('invitedCompanies') || [];
@@ -378,12 +109,9 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
 
     setIsProcessing(true);
 
-    // Simulate AI processing with a timeout
     setTimeout(() => {
-      // Generate mock extracted contacts based on the input
       const lines = bulkContactData.split('\n').filter(line => line.trim());
       const mockExtracted = lines.map((line, index) => {
-        // Simple parsing logic - in a real app this would be AI-powered
         const parts = line.split(/[,;]/);
         
         return {
@@ -423,11 +151,9 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
       description: `${extractedContacts.length} entreprises ont été invitées à rejoindre BTP CONNECT.`
     });
     setShowInviteDialog(false);
-    // In a real app, you would also add these to the form's invitedCompanies
   };
 
   const downloadContactsCSV = () => {
-    // Create CSV content
     const headers = "Prénom,Nom,Entreprise,Email,Téléphone,Adresse\n";
     const rows = extractedContacts.map(contact => 
       `${contact.firstName},${contact.lastName},${contact.company},${contact.email},${contact.phone},"${contact.address}"`
@@ -436,7 +162,6 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
     const csvContent = `data:text/csv;charset=utf-8,${headers}${rows}`;
     const encodedUri = encodeURI(csvContent);
     
-    // Create a link and trigger download
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
     link.setAttribute('download', 'contacts_invitation.csv');
@@ -476,7 +201,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
           />
         </div>
         
-        <Button onClick={() => setShowInviteDialog(true)}>
+        <Button onClick={() => setDialogOpen(true)}>
           <UserPlus className="mr-2 h-4 w-4" />
           Inviter des entreprises
         </Button>
@@ -727,7 +452,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
         </TabsContent>
       </Tabs>
 
-      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Inviter des entreprises</DialogTitle>
@@ -894,7 +619,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowInviteDialog(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Annuler</Button>
             <Button 
               onClick={handleInviteExtractedContacts}
               disabled={extractedContacts.length === 0}
@@ -909,4 +634,3 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
 };
 
 export default TenderCompanyInvitation;
-
