@@ -20,6 +20,9 @@ import DashboardBET from './pages/DashboardBET';
 import DashboardIndustry from './pages/DashboardIndustry';
 import Dashboard from './pages/Dashboard';
 import DashboardServices from './pages/DashboardServices';
+import ProductPrescriptionTracking from './pages/ProductPrescriptionTracking';
+import ProductReferenceTracking from './pages/ProductReferenceTracking';
+import ProjectsSearch from './pages/ProjectsSearch';
 
 function App() {
   return (
@@ -44,6 +47,9 @@ function App() {
           <Route path="/dashboard-industry" element={<DashboardIndustry />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard-services" element={<DashboardServices />} />
+          <Route path="/product-prescription" element={<ProductPrescriptionTracking />} />
+          <Route path="/product-reference" element={<ProductReferenceTracking />} />
+          <Route path="/projects-search" element={<ProjectsSearch />} />
         </Routes>
       </ProfileProvider>
     </BrowserRouter>
