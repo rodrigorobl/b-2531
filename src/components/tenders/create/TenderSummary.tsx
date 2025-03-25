@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MapPin, Calendar, Building, Users, Package, FileText, ClipboardList, Layout } from 'lucide-react';
-import { TenderFormValues, DesignTenderFormValues, ConstructionTenderFormValues, ServiceTenderFormValues } from '@/types/tender-forms';
+import { TenderFormValues } from '@/types/tender-forms';
 
 interface TenderSummaryProps {
   form: UseFormReturn<any>;

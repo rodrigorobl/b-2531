@@ -179,10 +179,6 @@ export default function Index() {
   const handleSubmitQuote = () => {
     navigate('/submit-quote/PRJ-2023-042'); // Using the project ID from projectData
   };
-  
-  const handleDCEDownload = () => {
-    navigate('/dce-download?project=PRJ-2023-042');
-  };
 
   // Mock minimum price for survey
   const minSurveyPrice = 1500;
@@ -228,12 +224,7 @@ export default function Index() {
         
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="space-y-4">
-            <Button 
-              size="lg" 
-              variant="default" 
-              className="w-full py-6"
-              onClick={handleDCEDownload}
-            >
+            <Button size="lg" variant="default" className="w-full py-6">
               <Download className="mr-2 h-5 w-5" />
               Télécharger le DCE
             </Button>

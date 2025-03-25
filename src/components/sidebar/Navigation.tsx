@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, FileText, MessageSquare, User, Building, Search, Package, BookOpen, List, ClipboardCheck, MapPin, HardHat, Wrench, FileSpreadsheet, BookMarked, FolderSearch, Clipboard, Plus, Ruler } from 'lucide-react';
@@ -51,12 +52,6 @@ export const Navigation: React.FC<NavigationProps> = ({
         {getProfileName(activeProfile)}
       </div>
       <ul className="space-y-2">
-        <li>
-          <Link to="/" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
-            <FileText size={18} />
-            <span>Page d'accueil</span>
-          </Link>
-        </li>
         <li>
           <Link to={getDashboardRoute()} className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors ${isActiveDashboard() ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''}`}>
             <LayoutDashboard size={18} />
