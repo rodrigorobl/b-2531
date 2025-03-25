@@ -81,7 +81,7 @@ function App() {
         <ProfileProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/dashboard-promoteur" replace />} />
+              <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard-promoteur" element={<DashboardPromoteur />} />
               <Route path="/dashboard-bet" element={<DashboardBET />} />
