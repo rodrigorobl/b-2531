@@ -15,6 +15,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import InviteCompanies from './pages/InviteCompanies';
 import DashboardPromoteur from './pages/DashboardPromoteur';
+import DashboardConstruction from './pages/DashboardConstruction';
+import DashboardBET from './pages/DashboardBET';
+import DashboardIndustry from './pages/DashboardIndustry';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -34,6 +38,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/invite-companies" element={<InviteCompanies />} />
           <Route path="/dashboard-promoteur" element={<DashboardPromoteur />} />
+          <Route path="/dashboard-construction" element={<DashboardConstruction />} />
+          <Route path="/dashboard-bet" element={<DashboardBET />} />
+          <Route path="/dashboard-industry" element={<DashboardIndustry />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard-services" element={<DashboardServices />} />
         </Routes>
       </ProfileProvider>
     </BrowserRouter>
