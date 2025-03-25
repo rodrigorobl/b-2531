@@ -11,6 +11,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TenderCompanyInvitationProps {
   form: UseFormReturn<TenderFormValues>;
@@ -435,52 +436,74 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
                 </div>
                 
                 <div className="divide-y max-h-64 overflow-y-auto border rounded-md">
-                  {getFilteredCompanies(lot.id).length > 0 ? getFilteredCompanies(lot.id).map(company => (
-                    <div key={`${company.id}-${lot.id}`} className="flex items-center justify-between p-3 hover:bg-muted/50">
-                      <div className="flex items-center">
-                        <Checkbox 
-                          id={`company-${company.id}-${lot.id}`} 
-                          checked={isCompanySelected(company.id, lot.id)}
-                          onCheckedChange={() => handleCompanySelection(company, lot.id)} 
-                        />
-                        <Label htmlFor={`company-${company.id}-${lot.id}`} className="ml-2 cursor-pointer">
-                          {company.name}
-                        </Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 ml-1">
-                              <Info className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-80">
-                            <div className="space-y-3">
-                              <h4 className="font-semibold">{company.name}</h4>
-                              <div className="text-sm text-muted-foreground">
-                                <p><strong>Adresse:</strong> {company.info.address}</p>
-                                <p><strong>Employés:</strong> {company.info.employees}</p>
-                                <p><strong>Fondée en:</strong> {company.info.founded}</p>
-                                <p><strong>Projets réalisés:</strong> {company.info.projects}</p>
-                                <p className="mt-1">{company.info.description}</p>
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center text-green-600 font-medium">
-                          <Percent className="h-4 w-4 mr-1" />
-                          {company.recommendation}%
+                  {getFilteredCompanies(lot.id).length > 0 ? (
+                    <>
+                      <div className="flex items-center justify-between p-2 bg-muted/50 text-sm font-medium">
+                        <div className="ml-7">Entreprises suggérées</div>
+                        <div className="flex items-center mr-10">
+                          <span>Scoring BTP CONNECT</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 ml-1">
+                                  <Info className="h-4 w-4 text-muted-foreground" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs">
+                                <p>Le Scoring BTP CONNECT évalue la pertinence d'une entreprise pour un projet en fonction de sa taille, de sa proximité et de sa capacité financière.</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => handleCompanySelection(company, lot.id)}>
-                          {isCompanySelected(company.id, lot.id) ? (
-                            <X className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <UserPlus className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </Button>
                       </div>
-                    </div>
-                  )) : (
+                      {getFilteredCompanies(lot.id).map(company => (
+                        <div key={`${company.id}-${lot.id}`} className="flex items-center justify-between p-3 hover:bg-muted/50">
+                          <div className="flex items-center">
+                            <Checkbox 
+                              id={`company-${company.id}-${lot.id}`} 
+                              checked={isCompanySelected(company.id, lot.id)}
+                              onCheckedChange={() => handleCompanySelection(company, lot.id)} 
+                            />
+                            <Label htmlFor={`company-${company.id}-${lot.id}`} className="ml-2 cursor-pointer">
+                              {company.name}
+                            </Label>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 ml-1">
+                                  <Info className="h-4 w-4 text-muted-foreground" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80">
+                                <div className="space-y-3">
+                                  <h4 className="font-semibold">{company.name}</h4>
+                                  <div className="text-sm text-muted-foreground">
+                                    <p><strong>Adresse:</strong> {company.info.address}</p>
+                                    <p><strong>Employés:</strong> {company.info.employees}</p>
+                                    <p><strong>Fondée en:</strong> {company.info.founded}</p>
+                                    <p><strong>Projets réalisés:</strong> {company.info.projects}</p>
+                                    <p className="mt-1">{company.info.description}</p>
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center text-green-600 font-medium">
+                              <Percent className="h-4 w-4 mr-1" />
+                              {company.recommendation}%
+                            </div>
+                            <Button variant="ghost" size="sm" onClick={() => handleCompanySelection(company, lot.id)}>
+                              {isCompanySelected(company.id, lot.id) ? (
+                                <X className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <UserPlus className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
                     <div className="p-4 text-center text-muted-foreground">
                       Aucune entreprise trouvée
                     </div>
