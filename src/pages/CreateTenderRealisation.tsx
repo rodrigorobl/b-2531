@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +10,7 @@ import { Layout } from "@/components/Layout";
 import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
+import BulkCompanyInvitation from '@/components/tenders/create/BulkCompanyInvitation';
 import ConstructionTenderForm from '@/components/tenders/create/ConstructionTenderForm';
 import TenderProjectTeam from '@/components/tenders/create/TenderProjectTeam';
 import TenderLots from '@/components/tenders/create/TenderLots';
@@ -161,6 +161,22 @@ export default function CreateTenderRealisation() {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
+  };
+
+  const handleInviteCompanies = (contacts: any[]) => {
+    const invitedCompanies = contacts.map(contact => ({
+      id: `company-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: contact.company || `${contact.firstName} ${contact.lastName}`,
+      selected: true
+    }));
+    
+    const currentInvitedCompanies = form.getValues("invitedCompanies") || [];
+    form.setValue("invitedCompanies", [...currentInvitedCompanies, ...invitedCompanies]);
+    
+    toast({
+      title: "Entreprises invitées",
+      description: `${invitedCompanies.length} entreprise(s) ont été ajoutées à votre liste d'invitations.`,
+    });
   };
 
   const steps = [
@@ -322,7 +338,13 @@ export default function CreateTenderRealisation() {
               )}
 
               {currentStep === 8 && (
-                <TenderCompanyInvitation form={form as any} />
+                <div>
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold mb-4">Inviter des entreprises</h2>
+                    <BulkCompanyInvitation onInviteCompanies={handleInviteCompanies} />
+                  </div>
+                  <TenderCompanyInvitation form={form as any} />
+                </div>
               )}
 
               {currentStep === 9 && (

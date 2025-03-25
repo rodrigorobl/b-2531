@@ -1,29 +1,46 @@
 
-// Common types for all tender forms
-export type TenderFormValues = {
+export interface TenderFormValues {
   type: 'design' | 'construction' | 'service';
   privacy: 'open' | 'restricted' | 'closed';
   projectName: string;
   description: string;
-  invitedCompanies: {
+  invitedCompanies: Array<{
     id: string;
     name: string;
     lotId?: string;
     selected: boolean;
-  }[];
-  adminDocuments?: {
+  }>;
+  adminDocuments?: Array<{
     id: string;
     name: string;
-  }[];
-  
-  // Design-specific fields
-  design?: {
-    projectNature: 'logement' | 'tertiaire' | 'industriel' | 'commercial' | 'hospitalier' | 'scolaire' | 'autres';
+  }>;
+}
+
+export interface DesignTenderFormValues extends TenderFormValues {
+  type: 'design';
+  design: {
+    designType: string;
     area: string;
+    location?: {
+      address?: string;
+      lat?: number;
+      lng?: number;
+    };
+    lots?: Array<{
+      name: string;
+      description?: string;
+      selected: boolean;
+    }>;
+    projectTeam?: Array<{
+      name: string;
+      role: string;
+    }>;
   };
-  
-  // Construction-specific fields
-  construction?: {
+}
+
+export interface ConstructionTenderFormValues extends TenderFormValues {
+  type: 'construction';
+  construction: {
     constructionType: 'neuf' | 'réhabilitation' | 'extension' | 'renovation' | 'demolition' | 'amenagement';
     area: string;
     location?: {
@@ -31,56 +48,61 @@ export type TenderFormValues = {
       lat?: number;
       lng?: number;
     };
-    buildings?: {
+    buildings?: Array<{
       id: string;
       levels: number;
-    }[];
-    projectTeam?: {
+    }>;
+    projectTeam?: Array<{
       name: string;
       role: string;
-    }[];
-    lots?: {
+    }>;
+    lots?: Array<{
       name: string;
       description?: string;
       selected: boolean;
-    }[];
+    }>;
     dpgfMethod?: 'ai' | 'upload';
-    keyDates?: {
+    keyDates?: Array<{
       id: string;
       name: string;
       date?: Date;
-    }[];
-    lotClosureDates?: {
+    }>;
+    lotClosureDates?: Array<{
       lotName: string;
       closureDate?: Date;
-    }[];
-    usages?: {
+    }>;
+    usages?: Array<{
       name: string;
       description?: string;
-    }[];
+    }>;
   };
-  
-  // Service-specific fields
-  service?: {
-    serviceScope: 'local' | 'départemental' | 'régional' | 'national' | 'international';
-    serviceDuration: 'ponctuel' | '3mois' | '6mois' | '1an' | '2ans' | '3ans';
-  };
-};
+}
 
-// Type for design tender
-export type DesignTenderFormValues = TenderFormValues & {
-  type: 'design';
-  design: NonNullable<TenderFormValues['design']>;
-};
-
-// Type for construction tender
-export type ConstructionTenderFormValues = TenderFormValues & {
-  type: 'construction';
-  construction: NonNullable<TenderFormValues['construction']>;
-};
-
-// Type for service tender
-export type ServiceTenderFormValues = TenderFormValues & {
+export interface ServiceTenderFormValues extends TenderFormValues {
   type: 'service';
-  service: NonNullable<TenderFormValues['service']>;
-};
+  service: {
+    serviceType: string;
+    frequency: string;
+    location?: {
+      address?: string;
+      lat?: number;
+      lng?: number;
+    };
+    lots?: Array<{
+      name: string;
+      description?: string;
+      selected: boolean;
+    }>;
+  };
+}
+
+export interface BulkInvitationContact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  email: string;
+  phone: string;
+  address: string;
+  selected: boolean;
+}
