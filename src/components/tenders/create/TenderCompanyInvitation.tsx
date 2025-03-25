@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TenderFormValues } from '@/pages/CreateTender';
@@ -11,6 +10,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TenderCompanyInvitationProps {
   form: UseFormReturn<TenderFormValues>;
@@ -435,6 +435,26 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({
                 </div>
                 
                 <div className="divide-y max-h-64 overflow-y-auto border rounded-md">
+                  <div className="flex items-center justify-between p-3 bg-muted/30">
+                    <div className="flex items-center font-medium text-sm text-muted-foreground">
+                      Entreprises suggérées
+                    </div>
+                    <div className="flex items-center gap-1 font-medium text-sm text-muted-foreground">
+                      Scoring BTP CONNECT
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-5 w-5 ml-1">
+                              <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[250px]">
+                            <p>Le Scoring BTP CONNECT évalue la pertinence d'une entreprise pour un projet en fonction de sa taille, de sa proximité et de sa capacité financière.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </div>
                   {getFilteredCompanies(lot.id).length > 0 ? getFilteredCompanies(lot.id).map(company => (
                     <div key={`${company.id}-${lot.id}`} className="flex items-center justify-between p-3 hover:bg-muted/50">
                       <div className="flex items-center">
