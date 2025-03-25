@@ -34,7 +34,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Search, Download, X, Plus, Edit, Trash2, SendHorizontal, Brain, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Types pour les contacts
 interface Contact {
@@ -73,7 +73,7 @@ export const CompanyInvitationManager: React.FC<CompanyInvitationManagerProps> =
   const [editContact, setEditContact] = useState<Contact | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   const form = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
@@ -197,7 +197,15 @@ export const CompanyInvitationManager: React.FC<CompanyInvitationManagerProps> =
     
     setContacts(contacts.map(contact => 
       contact.id === editContact.id 
-        ? { ...contact, ...values } 
+        ? { 
+            ...contact, 
+            firstName: values.firstName,
+            lastName: values.lastName,
+            company: values.company,
+            email: values.email,
+            phone: values.phone || "",
+            address: values.address || ""
+          } 
         : contact
     ));
     
@@ -214,7 +222,12 @@ export const CompanyInvitationManager: React.FC<CompanyInvitationManagerProps> =
   const handleAddContact = (values: z.infer<typeof contactSchema>) => {
     const newContact: Contact = {
       id: `contact-${Date.now()}`,
-      ...values
+      firstName: values.firstName,
+      lastName: values.lastName,
+      company: values.company,
+      email: values.email,
+      phone: values.phone || "",
+      address: values.address || ""
     };
     
     setContacts([...contacts, newContact]);

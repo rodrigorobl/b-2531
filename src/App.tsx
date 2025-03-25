@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ToastProvider } from './hooks/use-toast';
+import { Toaster } from "./components/ui/toaster";
 import { ProfileProvider } from './contexts/ProfileContext';
 import Home from './pages/Home';
 import TenderList from './pages/TenderList';
@@ -17,25 +18,22 @@ import InviteCompanies from './pages/InviteCompanies';
 function App() {
   return (
     <BrowserRouter>
-      <ToastProvider>
-        <ProfileProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/tender-list" element={<TenderList />} />
-            <Route path="/tender-details/:id" element={<TenderDetails />} />
-            <Route path="/create-tender" element={<CreateTender />} />
-            <Route path="/create-tender-conception" element={<CreateTenderConception />} />
-            <Route path="/create-tender-realisation" element={<CreateTenderRealisation />} />
-            <Route path="/create-tender-services" element={<CreateTenderServices />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            <Route path="/invite-companies" element={<InviteCompanies />} />
-            
-          </Routes>
-        </ProfileProvider>
-      </ToastProvider>
+      <Toaster />
+      <ProfileProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/tender-list" element={<TenderList />} />
+          <Route path="/tender-details/:id" element={<TenderDetails />} />
+          <Route path="/create-tender" element={<CreateTender />} />
+          <Route path="/create-tender-conception" element={<CreateTenderConception />} />
+          <Route path="/create-tender-realisation" element={<CreateTenderRealisation />} />
+          <Route path="/create-tender-services" element={<CreateTenderServices />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/invite-companies" element={<InviteCompanies />} />
+        </Routes>
+      </ProfileProvider>
     </BrowserRouter>
   );
 }
