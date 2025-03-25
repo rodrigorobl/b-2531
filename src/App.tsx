@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import InviteCompanies from './pages/InviteCompanies';
+import DashboardPromoteur from './pages/DashboardPromoteur';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/invite-companies" element={<InviteCompanies />} />
+          <Route path="/dashboard-promoteur" element={<DashboardPromoteur />} />
         </Routes>
       </ProfileProvider>
     </BrowserRouter>
