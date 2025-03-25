@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TenderFormValues } from '@/pages/CreateTender';
+import { TenderFormValues } from '@/types/tender-forms';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,6 +18,17 @@ import { useToast } from "@/hooks/use-toast";
 
 interface TenderCompanyInvitationProps {
   form: UseFormReturn<TenderFormValues>;
+}
+
+// Added interface for extracted contacts
+interface ExtractedContact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 // Données fictives d'entreprises pour la démonstration
@@ -316,17 +326,6 @@ const serviceLots = [
   { id: "entretien", name: "Entretien espaces verts" }
 ];
 
-// Added interface for extracted contacts
-interface ExtractedContact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  company: string;
-  email: string;
-  phone: string;
-  address: string;
-}
-
 const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('design');
@@ -556,7 +555,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
                           const currentInvited = form.getValues('invitedCompanies');
                           form.setValue('invitedCompanies', 
                             currentInvited.map(c => 
-                              c.id === company.id ? { ...c, selected: checked } : c
+                              c.id === company.id ? { ...c, selected: !!checked } : c
                             )
                           );
                         }}
@@ -635,7 +634,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
                           const currentInvited = form.getValues('invitedCompanies');
                           form.setValue('invitedCompanies', 
                             currentInvited.map(c => 
-                              c.id === company.id ? { ...c, selected: checked } : c
+                              c.id === company.id ? { ...c, selected: !!checked } : c
                             )
                           );
                         }}
@@ -714,7 +713,7 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
                           const currentInvited = form.getValues('invitedCompanies');
                           form.setValue('invitedCompanies', 
                             currentInvited.map(c => 
-                              c.id === company.id ? { ...c, selected: checked } : c
+                              c.id === company.id ? { ...c, selected: !!checked } : c
                             )
                           );
                         }}
@@ -910,3 +909,4 @@ const TenderCompanyInvitation: React.FC<TenderCompanyInvitationProps> = ({ form 
 };
 
 export default TenderCompanyInvitation;
+
