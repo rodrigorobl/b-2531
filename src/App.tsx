@@ -68,6 +68,7 @@ import QuantitySurveyorPage from "./pages/QuantitySurveyorPage";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import ConstructionSubscriptionEstimation from './pages/ConstructionSubscriptionEstimation';
 import ServicesSubscriptionEstimation from './pages/ServicesSubscriptionEstimation';
+import DCEDownload from './pages/DCEDownload';
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,7 @@ function App() {
               <Route path="/construction-tender-specifications" element={<ConstructionTenderSpecifications />} />
               <Route path="/tender-specifications" element={<ProjectSpecifications />} />
               <Route path="/quantity-surveyor-page" element={<QuantitySurveyorPage />} />
+              <Route path="/dce-download" element={<DCEDownload />} />
               <Route path="/tender-list" element={<TenderList />} />
               <Route path="/moe-list" element={<MoeList />} />
               <Route path="/create-tender" element={<CreateTender />} />
