@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, FileText } from 'lucide-react';
+import { Download, Eye } from 'lucide-react';
 
 interface FeaturedDocument {
   id: string;
@@ -53,6 +53,11 @@ export function FeaturedDocuments() {
     return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
   };
 
+  const handleView = (doc: FeaturedDocument) => {
+    // TODO: Implement document viewing logic
+    console.log(`Viewing document: ${doc.name}`);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {featuredDocs.map(doc => (
@@ -77,10 +82,20 @@ export function FeaturedDocuments() {
                 <span className="text-muted-foreground">Taille:</span>
                 <span>{formatSize(doc.size)}</span>
               </div>
-              <Button className="w-full mt-4 gap-2">
-                <Download className="h-4 w-4" />
-                <span>Télécharger</span>
-              </Button>
+              <div className="flex space-x-2">
+                <Button className="flex-1 gap-2">
+                  <Download className="h-4 w-4" />
+                  <span>Télécharger</span>
+                </Button>
+                <Button 
+                  variant="secondary" 
+                  className="flex-1 gap-2"
+                  onClick={() => handleView(doc)}
+                >
+                  <Eye className="h-4 w-4" />
+                  <span>Voir</span>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
