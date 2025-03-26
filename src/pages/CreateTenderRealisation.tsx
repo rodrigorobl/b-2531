@@ -10,6 +10,7 @@ import { Layout } from "@/components/Layout";
 import TenderFormNav from '@/components/tenders/create/TenderFormNav';
 import TenderPrivacySelector from '@/components/tenders/create/TenderPrivacySelector';
 import TenderCompanyInvitation from '@/components/tenders/create/TenderCompanyInvitation';
+import BulkCompanyInvitation from '@/components/tenders/create/BulkCompanyInvitation';
 import ConstructionTenderForm from '@/components/tenders/create/ConstructionTenderForm';
 import TenderProjectTeam from '@/components/tenders/create/TenderProjectTeam';
 import TenderLots from '@/components/tenders/create/TenderLots';
@@ -24,7 +25,6 @@ import ProjectMap from '@/components/ProjectMap';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { ConstructionTenderFormValues } from '@/types/tender-forms';
-import { UserPlus } from 'lucide-react';
 
 const constructionTenderSchema = z.object({
   constructionType: z.enum(['neuf', 'réhabilitation', 'extension', 'renovation', 'demolition', 'amenagement']),
@@ -95,7 +95,6 @@ export default function CreateTenderRealisation() {
   const [currentStep, setCurrentStep] = useState(1);
   const [location, setLocation] = useState<{address: string; lat: number; lng: number} | null>(null);
   const [address, setAddress] = useState('');
-  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
   const form = useForm<ConstructionTenderFormValues>({
     resolver: zodResolver(formSchema),
@@ -162,6 +161,22 @@ export default function CreateTenderRealisation() {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
+  };
+
+  const handleInviteCompanies = (contacts: any[]) => {
+    const invitedCompanies = contacts.map(contact => ({
+      id: `company-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: contact.company || `${contact.firstName} ${contact.lastName}`,
+      selected: true
+    }));
+    
+    const currentInvitedCompanies = form.getValues("invitedCompanies") || [];
+    form.setValue("invitedCompanies", [...currentInvitedCompanies, ...invitedCompanies]);
+    
+    toast({
+      title: "Entreprises invitées",
+      description: `${invitedCompanies.length} entreprise(s) ont été ajoutées à votre liste d'invitations.`,
+    });
   };
 
   const steps = [
@@ -323,22 +338,12 @@ export default function CreateTenderRealisation() {
               )}
 
               {currentStep === 8 && (
-                <div className="space-y-4">
+                <div>
                   <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">Invitations</h2>
-                    <Button 
-                      type="button" 
-                      onClick={() => setIsInviteDialogOpen(true)}
-                    >
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Inviter des entreprises
-                    </Button>
+                    <h2 className="text-xl font-semibold mb-4">Inviter des entreprises</h2>
+                    <BulkCompanyInvitation onInviteCompanies={handleInviteCompanies} />
                   </div>
-                  <TenderCompanyInvitation 
-                    form={form as any}
-                    isOpen={isInviteDialogOpen}
-                    onOpenChange={setIsInviteDialogOpen}
-                  />
+                  <TenderCompanyInvitation form={form as any} />
                 </div>
               )}
 
