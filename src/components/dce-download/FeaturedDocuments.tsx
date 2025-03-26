@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Eye } from 'lucide-react';
+import { Download, Eye, FileText } from 'lucide-react';
 
 interface FeaturedDocument {
   id: string;
@@ -46,7 +45,6 @@ export function FeaturedDocuments() {
     },
   ];
 
-  // Format file size
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -54,7 +52,6 @@ export function FeaturedDocuments() {
   };
 
   const handleView = (doc: FeaturedDocument) => {
-    // TODO: Implement document viewing logic
     console.log(`Viewing document: ${doc.name}`);
   };
 

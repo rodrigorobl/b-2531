@@ -37,6 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProjectDocuments from '@/components/product-reference/ProjectDocuments';
 import ReferenceTimeline, { TimelineEvent } from '@/components/product-reference/ReferenceTimeline';
 import CommunicationHistory from '@/components/product-reference/CommunicationHistory';
+import QuoteTracking from '@/components/product-reference/QuoteTracking';
 import { useProfile } from '@/contexts/ProfileContext';
 
 const ProjectDetailHeader = ({ project }: { project: any }) => {
@@ -295,7 +296,7 @@ export default function ProductReferenceDetail() {
         <ProjectDetailHeader project={projectData} />
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="information">
               <Building className="w-4 h-4 mr-2" />
               Informations
@@ -312,9 +313,13 @@ export default function ProductReferenceDetail() {
               <FileText className="w-4 h-4 mr-2" />
               Documents
             </TabsTrigger>
+            <TabsTrigger value="quotes">
+              <FileText className="w-4 h-4 mr-2" />
+              Devis
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="information" className="space-y-6">
+          <TabsContent value="information">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -474,7 +479,15 @@ export default function ProductReferenceDetail() {
           <TabsContent value="documents">
             <ProjectDocuments documents={projectData.documents} />
           </TabsContent>
+          
+          <TabsContent value="quotes">
+            <QuoteTracking />
+          </TabsContent>
         </Tabs>
+        
+        <div className="mt-8">
+          <QuoteTracking />
+        </div>
       </div>
     </Layout>
   );
