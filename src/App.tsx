@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -69,6 +68,7 @@ import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import ConstructionSubscriptionEstimation from './pages/ConstructionSubscriptionEstimation';
 import ServicesSubscriptionEstimation from './pages/ServicesSubscriptionEstimation';
 import DCEDownload from './pages/DCEDownload';
+import IndustryPartners from "./pages/IndustryPartners";
 
 const queryClient = new QueryClient();
 
@@ -148,6 +148,7 @@ function App() {
               <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
               <Route path="/construction-subscription-estimation" element={<ConstructionSubscriptionEstimation />} />
               <Route path="/services-subscription-estimation" element={<ServicesSubscriptionEstimation />} />
+              <Route path="/industry-partners" element={<IndustryPartners />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
