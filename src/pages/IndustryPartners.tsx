@@ -12,7 +12,10 @@ import {
   ExternalLink, 
   MapPin, 
   Calendar, 
-  Filter
+  Filter,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -131,6 +134,10 @@ const mockProjects: Project[] = [
   },
 ];
 
+// Définir un type pour les options de tri
+type SortField = 'awardedDate' | 'department' | 'type' | null;
+type SortDirection = 'asc' | 'desc';
+
 const IndustryPartners = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
@@ -140,12 +147,28 @@ const IndustryPartners = () => {
   const [selectedPromoter, setSelectedPromoter] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
+  
+  // État pour le tri
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   // Get promoters from mock data
   const promoters = mockPartners.filter(partner => partner.type === 'promoteur');
 
+  // Fonction pour changer le tri
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Si on clique sur le même champ, on inverse la direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Sinon, on change le champ et on met la direction à 'asc'
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
   // Filter projects based on search term and filters
-  const filteredProjects = mockProjects.filter(project => {
+  let filteredProjects = mockProjects.filter(project => {
     // Search term filter across project name and partners
     const matchesSearch = searchTerm === '' || 
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -177,6 +200,29 @@ const IndustryPartners = () => {
     
     return matchesSearch && matchesType && matchesRegion && matchesPeriod && matchesPartnerType && matchesPromoter;
   });
+
+  // Tri des projets filtrés
+  if (sortField) {
+    filteredProjects = [...filteredProjects].sort((a, b) => {
+      let comparison = 0;
+      
+      if (sortField === 'awardedDate') {
+        // Convertit MM/YYYY en format comparable (YYYYMM)
+        const dateA = a.awardedDate.split('/').reverse().join('');
+        const dateB = b.awardedDate.split('/').reverse().join('');
+        comparison = dateA.localeCompare(dateB);
+      } 
+      else if (sortField === 'department') {
+        comparison = a.location.department.localeCompare(b.location.department);
+      } 
+      else if (sortField === 'type') {
+        comparison = a.type.localeCompare(b.type);
+      }
+      
+      // Inverse la comparaison si la direction est descendante
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
 
   // Get unique project types for filter
   const projectTypes = Array.from(new Set(mockProjects.map(project => project.type)));
@@ -221,6 +267,21 @@ const IndustryPartners = () => {
       case 'bet': return 'Bureau d\'études';
       default: return type;
     }
+  };
+
+  // Composant pour afficher l'icône de tri
+  const SortIcon = ({ field, currentSortField, currentSortDirection }: { 
+    field: SortField, 
+    currentSortField: SortField, 
+    currentSortDirection: SortDirection 
+  }) => {
+    if (field !== currentSortField) {
+      return <ArrowUpDown size={14} />;
+    }
+    
+    return currentSortDirection === 'asc' 
+      ? <ChevronUp size={14} /> 
+      : <ChevronDown size={14} />;
   };
 
   return (
@@ -437,23 +498,53 @@ const IndustryPartners = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nom du projet</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Localisation</TableHead>
-                    <TableHead>Attribution</TableHead>
                     <TableHead>Partenaires</TableHead>
+                    <TableHead>Nom du projet</TableHead>
+                    <TableHead>
+                      <div 
+                        className="flex items-center gap-1 cursor-pointer" 
+                        onClick={() => handleSort('type')}
+                      >
+                        Type
+                        <SortIcon 
+                          field="type" 
+                          currentSortField={sortField} 
+                          currentSortDirection={sortDirection} 
+                        />
+                      </div>
+                    </TableHead>
+                    <TableHead>
+                      <div 
+                        className="flex items-center gap-1 cursor-pointer"
+                        onClick={() => handleSort('department')}
+                      >
+                        Localisation
+                        <SortIcon 
+                          field="department" 
+                          currentSortField={sortField} 
+                          currentSortDirection={sortDirection} 
+                        />
+                      </div>
+                    </TableHead>
+                    <TableHead>
+                      <div 
+                        className="flex items-center gap-1 cursor-pointer"
+                        onClick={() => handleSort('awardedDate')}
+                      >
+                        Attribution
+                        <SortIcon 
+                          field="awardedDate" 
+                          currentSortField={sortField} 
+                          currentSortDirection={sortDirection} 
+                        />
+                      </div>
+                    </TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredProjects.map(project => (
                     <TableRow key={project.id}>
-                      <TableCell className="font-medium">{project.name}</TableCell>
-                      <TableCell>
-                        <Badge>{project.type}</Badge>
-                      </TableCell>
-                      <TableCell>{project.location.city} ({project.location.department})</TableCell>
-                      <TableCell>{project.awardedDate}</TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
                           {project.partners.map(partner => (
@@ -464,6 +555,12 @@ const IndustryPartners = () => {
                           ))}
                         </div>
                       </TableCell>
+                      <TableCell className="font-medium">{project.name}</TableCell>
+                      <TableCell>
+                        <Badge>{project.type}</Badge>
+                      </TableCell>
+                      <TableCell>{project.location.city} ({project.location.department})</TableCell>
+                      <TableCell>{project.awardedDate}</TableCell>
                       <TableCell>
                         <Link to={`/project-specifications?projectId=${project.id}`}>
                           <Button variant="outline" size="sm" className="flex items-center gap-2">
