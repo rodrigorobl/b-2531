@@ -35,6 +35,7 @@ interface Tender {
 interface Category {
   id: string;
   name: string;
+  budget?: number;
   quotes: Quote[];
 }
 
@@ -83,6 +84,7 @@ const mockTender: Tender = {
   categories: [{
     id: 'cat-001',
     name: 'Gros Œuvre',
+    budget: 850000,
     quotes: [{
       id: 'quote-001',
       companyName: 'BTP Construction',
@@ -119,6 +121,7 @@ const mockTender: Tender = {
   }, {
     id: 'cat-002',
     name: 'Charpente',
+    budget: 320000,
     quotes: [{
       id: 'quote-005',
       companyName: 'Charpentes Bernard',
@@ -139,10 +142,12 @@ const mockTender: Tender = {
   }, {
     id: 'cat-003',
     name: 'Électricité',
+    budget: 275000,
     quotes: []
   }, {
     id: 'cat-004',
     name: 'Plomberie',
+    budget: 280000,
     quotes: [{
       id: 'quote-007',
       companyName: 'Plomberie Générale',
@@ -155,6 +160,7 @@ const mockTender: Tender = {
   }, {
     id: 'cat-005',
     name: 'Menuiseries',
+    budget: 420000,
     quotes: [{
       id: 'quote-008',
       companyName: 'Menuiseries Durables',

@@ -223,7 +223,8 @@ export function TenderOverviewTab({
                 <TableHead>Lot</TableHead>
                 <TableHead>Devis reçus</TableHead>
                 <TableHead>Meilleur prix</TableHead>
-                <TableHead>Évaluation</TableHead>
+                <TableHead>Budgets</TableHead>
+                <TableHead>Attribution</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -233,6 +234,11 @@ export function TenderOverviewTab({
                 const evaluation = getCategoryEvaluation(quotesCount);
                 const lowestQuote = category.quotes.length > 0 ? Math.min(...category.quotes.filter(q => q.isCompliant).map(q => q.price)) : null;
                 const approvedQuote = category.quotes.find(q => q.status === 'approved');
+                
+                // For the budget column, we'll show a default value for now
+                // In a real app, this would come from the category data
+                const budget = category.budget || "-";
+                
                 return (
                   <TableRow key={category.id}>
                     <TableCell className="font-medium">{category.name}</TableCell>
@@ -240,7 +246,9 @@ export function TenderOverviewTab({
                     <TableCell>
                       {lowestQuote ? `${lowestQuote.toLocaleString()} €` : '-'}
                     </TableCell>
-                    
+                    <TableCell>
+                      {typeof budget === 'number' ? `${budget.toLocaleString()} €` : budget}
+                    </TableCell>
                     <TableCell>
                       {approvedQuote ? 
                         <Badge className="bg-green-600">Attribué</Badge> : 
