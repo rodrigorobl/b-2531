@@ -30,6 +30,14 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Types for partner relationships
 interface Partner {
@@ -130,7 +138,12 @@ const IndustryPartners = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
   const [selectedPartnerType, setSelectedPartnerType] = useState<'promoteur' | 'architecte' | 'bet' | ''>('');
+  const [selectedPromoter, setSelectedPromoter] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+
+  // Get promoters from mock data
+  const promoters = mockPartners.filter(partner => partner.type === 'promoteur');
 
   // Filter projects based on search term and filters
   const filteredProjects = mockProjects.filter(project => {
@@ -157,7 +170,13 @@ const IndustryPartners = () => {
     const matchesPartnerType = selectedPartnerType === '' || 
       project.partners.some(partner => partner.type === selectedPartnerType);
     
-    return matchesSearch && matchesType && matchesRegion && matchesPeriod && matchesPartnerType;
+    // Promoter filter
+    const matchesPromoter = selectedPromoter === '' ||
+      project.partners.some(partner => 
+        partner.type === 'promoteur' && partner.id === selectedPromoter
+      );
+    
+    return matchesSearch && matchesType && matchesRegion && matchesPeriod && matchesPartnerType && matchesPromoter;
   });
 
   // Get unique project types for filter
@@ -184,6 +203,7 @@ const IndustryPartners = () => {
     setSelectedRegion('');
     setSelectedPeriod('');
     setSelectedPartnerType('');
+    setSelectedPromoter('');
   };
 
   const getPartnerTypeIcon = (type: string) => {
@@ -212,101 +232,131 @@ const IndustryPartners = () => {
           Analysez les relations entre Promoteurs, Architectes et Bureaux d'études techniques et découvrez leur historique de collaboration.
         </p>
 
-        {/* Search and filters */}
-        <div className="flex flex-col md:flex-row gap-4 items-start">
-          <div className="flex-1 relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Rechercher un promoteur, architecte ou BET..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        {/* Search, filters and promoter selector */}
+        <div className="space-y-4">
+          <div className="flex flex-col md:flex-row gap-4 items-start">
+            <div className="flex-1 relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Rechercher un promoteur, architecte ou BET..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Tabs value={selectedPartnerType || 'all'} onValueChange={(value) => setSelectedPartnerType(value === 'all' ? '' : value as any)}>
+                <TabsList>
+                  <TabsTrigger value="all">Tous</TabsTrigger>
+                  <TabsTrigger value="promoteur">Promoteurs</TabsTrigger>
+                  <TabsTrigger value="architecte">Architectes</TabsTrigger>
+                  <TabsTrigger value="bet">BET</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              
+              <Popover open={showFilters} onOpenChange={setShowFilters}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Filter className="h-4 w-4" />
+                    Filtres
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="space-y-4">
+                    <h3 className="font-medium">Filtres</h3>
+                    
+                    {/* Project type filter */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Type de projet</label>
+                      <Select value={selectedType} onValueChange={setSelectedType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tous les types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Tous les types</SelectItem>
+                          {projectTypes.map(type => (
+                            <SelectItem key={type} value={type}>
+                              {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {/* Region filter */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Zone géographique</label>
+                      <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Toutes les régions" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Toutes les régions</SelectItem>
+                          {regions.map(region => (
+                            <SelectItem key={region} value={region.split(' ')[0]}>
+                              {region}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {/* Period filter */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Période</label>
+                      <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Toutes les périodes" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Toutes les périodes</SelectItem>
+                          {periods.map(period => (
+                            <SelectItem key={period} value={period}>
+                              {period}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <Button variant="outline" size="sm" onClick={clearFilters}>
+                        Réinitialiser
+                      </Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
-          
-          <div className="flex gap-2">
-            <Tabs value={selectedPartnerType || 'all'} onValueChange={(value) => setSelectedPartnerType(value === 'all' ? '' : value as any)}>
+
+          {/* Promoter selector */}
+          <div className="w-full md:w-80">
+            <label className="text-sm font-medium block mb-2">Sélectionner un promoteur</label>
+            <Select value={selectedPromoter} onValueChange={setSelectedPromoter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Tous les promoteurs" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Tous les promoteurs</SelectItem>
+                {promoters.map(promoter => (
+                  <SelectItem key={promoter.id} value={promoter.id}>
+                    {promoter.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Toggle view mode */}
+          <div className="flex justify-end">
+            <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as 'cards' | 'table')}>
               <TabsList>
-                <TabsTrigger value="all">Tous</TabsTrigger>
-                <TabsTrigger value="promoteur">Promoteurs</TabsTrigger>
-                <TabsTrigger value="architecte">Architectes</TabsTrigger>
-                <TabsTrigger value="bet">BET</TabsTrigger>
+                <TabsTrigger value="cards">Cartes</TabsTrigger>
+                <TabsTrigger value="table">Tableau</TabsTrigger>
               </TabsList>
             </Tabs>
-            
-            <Popover open={showFilters} onOpenChange={setShowFilters}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filtres
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="space-y-4">
-                  <h3 className="font-medium">Filtres</h3>
-                  
-                  {/* Project type filter */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Type de projet</label>
-                    <Select value={selectedType} onValueChange={setSelectedType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Tous les types" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Tous les types</SelectItem>
-                        {projectTypes.map(type => (
-                          <SelectItem key={type} value={type}>
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {/* Region filter */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Zone géographique</label>
-                    <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Toutes les régions" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Toutes les régions</SelectItem>
-                        {regions.map(region => (
-                          <SelectItem key={region} value={region.split(' ')[0]}>
-                            {region}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {/* Period filter */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Période</label>
-                    <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Toutes les périodes" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Toutes les périodes</SelectItem>
-                        {periods.map(period => (
-                          <SelectItem key={period} value={period}>
-                            {period}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex justify-end">
-                    <Button variant="outline" size="sm" onClick={clearFilters}>
-                      Réinitialiser
-                    </Button>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
           </div>
         </div>
 
@@ -325,7 +375,7 @@ const IndustryPartners = () => {
                 <Button variant="link" onClick={clearFilters}>Réinitialiser les filtres</Button>
               </CardContent>
             </Card>
-          ) : (
+          ) : viewMode === 'cards' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredProjects.map(project => (
                 <Card key={project.id} className="overflow-hidden">
@@ -382,6 +432,52 @@ const IndustryPartners = () => {
                 </Card>
               ))}
             </div>
+          ) : (
+            // Table view
+            <Card>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nom du projet</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Localisation</TableHead>
+                    <TableHead>Attribution</TableHead>
+                    <TableHead>Partenaires</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProjects.map(project => (
+                    <TableRow key={project.id}>
+                      <TableCell className="font-medium">{project.name}</TableCell>
+                      <TableCell>
+                        <Badge>{project.type}</Badge>
+                      </TableCell>
+                      <TableCell>{project.location.city} ({project.location.department})</TableCell>
+                      <TableCell>{project.awardedDate}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          {project.partners.map(partner => (
+                            <div key={partner.id} className="flex items-center gap-1 text-xs">
+                              {getPartnerTypeIcon(partner.type)}
+                              <span>{partner.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/project-specifications?projectId=${project.id}`}>
+                          <Button variant="outline" size="sm" className="flex items-center gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Détails
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
           )}
         </div>
       </div>
