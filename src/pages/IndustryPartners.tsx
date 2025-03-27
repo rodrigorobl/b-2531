@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Input } from '@/components/ui/input';
@@ -140,7 +139,7 @@ const IndustryPartners = () => {
   const [selectedPartnerType, setSelectedPartnerType] = useState<'promoteur' | 'architecte' | 'bet' | ''>('');
   const [selectedPromoter, setSelectedPromoter] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   // Get promoters from mock data
   const promoters = mockPartners.filter(partner => partner.type === 'promoteur');
