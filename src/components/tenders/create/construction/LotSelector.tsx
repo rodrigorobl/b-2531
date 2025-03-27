@@ -1,14 +1,14 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash, ChevronsUpDown } from "lucide-react";
+import { Plus, Trash, ChevronsUpDown, EuroIcon } from "lucide-react";
 import { TenderFormProps } from '../TenderFormProps';
 import { Badge } from "@/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Lot {
   name: string;
@@ -45,7 +45,6 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   
-  // Ensure lots is always an array, even if the form value is undefined
   const lotsValue = form.getValues('construction.lots' as any);
   const lots = Array.isArray(lotsValue) ? lotsValue : [];
   
@@ -90,12 +89,42 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
     form.setValue('construction.lots' as any, updatedLots);
   };
 
-  // Make sure filteredLots is always an array
   const filteredLots = inputValue === ''
     ? [...commonLots]
     : commonLots.filter((lot) =>
         lot.toLowerCase().includes(inputValue.toLowerCase())
       );
+  
+  const budgetSummary = useMemo(() => {
+    if (!lots.length) return null;
+    
+    const totalBudget = lots.reduce((sum, lot) => {
+      return sum + (lot.budget || 0);
+    }, 0);
+    
+    const area = parseFloat(form.getValues('construction.area' as any)) || 0;
+    
+    const perSqmSHAB = area > 0 ? totalBudget / area : 0;
+    
+    const shonArea = area * 1.15;
+    const perSqmSHON = shonArea > 0 ? totalBudget / shonArea : 0;
+    
+    const avgUnitSize = 80;
+    const estimatedUnits = area > 0 ? Math.round(area / avgUnitSize) : 0;
+    const perUnit = estimatedUnits > 0 ? totalBudget / estimatedUnits : 0;
+    
+    return {
+      totalBudget,
+      perSqmSHAB,
+      perSqmSHON,
+      perUnit,
+      estimatedUnits
+    };
+  }, [lots, form]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
+  };
   
   return (
     <div className="space-y-4">
@@ -193,6 +222,42 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
               </div>
             ))}
           </div>
+          
+          {budgetSummary && budgetSummary.totalBudget > 0 && (
+            <Card className="mt-4 bg-muted/50">
+              <CardContent className="pt-4">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <EuroIcon className="h-5 w-5 text-primary" />
+                      Budget Total
+                    </h3>
+                    <Badge variant="success" className="text-base px-3 py-1">
+                      {formatCurrency(budgetSummary.totalBudget)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+                    <div className="p-2 bg-background rounded-md">
+                      <p className="text-sm text-muted-foreground">Prix au m² SHAB</p>
+                      <p className="text-lg font-medium">{formatCurrency(budgetSummary.perSqmSHAB)}/m²</p>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <p className="text-sm text-muted-foreground">Prix au m² SHON</p>
+                      <p className="text-lg font-medium">{formatCurrency(budgetSummary.perSqmSHON)}/m²</p>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <p className="text-sm text-muted-foreground">Prix par logement (est.)</p>
+                      <p className="text-lg font-medium">{formatCurrency(budgetSummary.perUnit)}/logement</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground italic">
+                    Estimation basée sur environ {budgetSummary.estimatedUnits} logement(s) de 80m²
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       ) : (
         <div className="text-muted-foreground italic">
