@@ -45,6 +45,7 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   
+  // Ensure lots is always an array, even if the form value is undefined
   const lotsValue = form.getValues('construction.lots' as any);
   const lots = Array.isArray(lotsValue) ? lotsValue : [];
   
@@ -89,8 +90,9 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
     form.setValue('construction.lots' as any, updatedLots);
   };
 
+  // Make sure filteredLots is always an array
   const filteredLots = inputValue === ''
-    ? commonLots
+    ? [...commonLots]
     : commonLots.filter((lot) =>
         lot.toLowerCase().includes(inputValue.toLowerCase())
       );
@@ -107,6 +109,7 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
                 role="combobox"
                 aria-expanded={open}
                 className="w-full justify-between"
+                type="button"
               >
                 {newLotName || "Sélectionner ou saisir un lot"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -122,19 +125,22 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
                   }}
                 />
                 <CommandEmpty>Aucun lot trouvé. Vous pouvez créer "{inputValue}"</CommandEmpty>
-                <CommandGroup>
-                  {filteredLots.map((lot) => (
-                    <CommandItem
-                      key={lot}
-                      onSelect={() => {
-                        setNewLotName(lot);
-                        setOpen(false);
-                      }}
-                    >
-                      {lot}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+                {filteredLots.length > 0 && (
+                  <CommandGroup>
+                    {filteredLots.map((lot) => (
+                      <CommandItem
+                        key={lot}
+                        value={lot}
+                        onSelect={() => {
+                          setNewLotName(lot);
+                          setOpen(false);
+                        }}
+                      >
+                        {lot}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
               </Command>
             </PopoverContent>
           </Popover>
@@ -177,6 +183,7 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
                     size="sm" 
                     onClick={() => handleRemoveLot(index)}
                     className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                    type="button"
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
