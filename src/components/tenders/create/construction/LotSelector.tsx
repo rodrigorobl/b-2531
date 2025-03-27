@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Trash, ChevronsUpDown } from "lucide-react";
 import { TenderFormProps } from '../TenderFormProps';
 import { Badge } from "@/components/ui/badge";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface Lot {
@@ -124,23 +124,25 @@ const LotSelector: React.FC<TenderFormProps<any>> = ({ form }) => {
                     setNewLotName(value);
                   }}
                 />
-                <CommandEmpty>Aucun lot trouvé. Vous pouvez créer "{inputValue}"</CommandEmpty>
-                {filteredLots.length > 0 && (
-                  <CommandGroup>
-                    {filteredLots.map((lot) => (
-                      <CommandItem
-                        key={lot}
-                        value={lot}
-                        onSelect={() => {
-                          setNewLotName(lot);
-                          setOpen(false);
-                        }}
-                      >
-                        {lot}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                )}
+                <CommandList>
+                  <CommandEmpty>Aucun lot trouvé. Vous pouvez créer "{inputValue}"</CommandEmpty>
+                  {filteredLots.length > 0 && (
+                    <CommandGroup>
+                      {filteredLots.map((lot) => (
+                        <CommandItem
+                          key={lot}
+                          value={lot}
+                          onSelect={(currentValue) => {
+                            setNewLotName(currentValue);
+                            setOpen(false);
+                          }}
+                        >
+                          {lot}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
               </Command>
             </PopoverContent>
           </Popover>
