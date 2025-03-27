@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,7 @@ import { ArrowLeft, Filter, MapPin, Building } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { QuoteStatusBadge } from '@/components/quotes/QuoteStatusBadge';
 
-// Mock construction sites data
+// Expanded mock construction sites data
 const CONSTRUCTION_SITES = [
   {
     id: 'site-001',
@@ -69,6 +68,125 @@ const CONSTRUCTION_SITES = [
     contractors: ['Plomberie Scolaire', 'Construction Publique', 'Sécurité Bâtiment'],
     startDate: '10/01/2024',
     endDate: '20/08/2024'
+  },
+  {
+    id: 'site-004',
+    name: 'Hôpital Métropole',
+    type: 'Santé',
+    status: 'assigned' as const,
+    location: {
+      address: '100 Route de Narbonne, 31400 Toulouse',
+      lat: 43.5807,
+      lng: 1.4483
+    },
+    promoter: 'CHU de Toulouse',
+    moe: 'Atelier Architectes Santé',
+    bet: 'Ingérop Santé',
+    contractors: ['Génie Médical', 'Électricité Hospitalière', 'Constructions Spécialisées'],
+    startDate: '15/09/2024',
+    endDate: '30/06/2025'
+  },
+  {
+    id: 'site-005',
+    name: 'Complexe Sportif Olympique',
+    type: 'Sportif',
+    status: 'in-progress' as const,
+    location: {
+      address: '57 Boulevard de Strasbourg, 13003 Marseille',
+      lat: 43.3119,
+      lng: 5.4090
+    },
+    promoter: 'Ville de Marseille',
+    moe: 'Cabinet Architecture & Sport',
+    bet: 'Ingénierie Sportive',
+    contractors: ['Constructions Sportives', 'Sols Techniques', 'Électricité Événementielle'],
+    startDate: '01/02/2024',
+    endDate: '31/12/2024'
+  },
+  {
+    id: 'site-006',
+    name: 'Quartier d\'Affaires Horizon',
+    type: 'Bureaux',
+    status: 'assigned' as const,
+    location: {
+      address: '15 Parvis de la Défense, 92800 Puteaux',
+      lat: 48.8929,
+      lng: 2.2370
+    },
+    promoter: 'Bouygues Immobilier',
+    moe: 'Agence Architecturale Moderne',
+    bet: 'BET Énergie Durable',
+    contractors: ['Construction Tertiaire', 'Aménagement Intérieur', 'Installations Techniques'],
+    startDate: '20/07/2024',
+    endDate: '15/06/2025'
+  },
+  {
+    id: 'site-007',
+    name: 'Résidence Étudiante Campus',
+    type: 'Logements',
+    status: 'in-progress' as const,
+    location: {
+      address: '45 Rue Pérignon, 33000 Bordeaux',
+      lat: 44.8378,
+      lng: -0.5792
+    },
+    promoter: 'ICADE Promotion',
+    moe: 'Atelier d\'Architecture Urbaine',
+    bet: 'Fluides et Énergies',
+    contractors: ['Construction Modulaire', 'Équipements Techniques', 'Aménagement Paysager'],
+    startDate: '05/04/2024',
+    endDate: '30/10/2024'
+  },
+  {
+    id: 'site-008',
+    name: 'Centre de Recherche Innovation',
+    type: 'Industriel',
+    status: 'assigned' as const,
+    location: {
+      address: '2 Avenue de la Recherche, 44300 Nantes',
+      lat: 47.2184,
+      lng: -1.5534
+    },
+    promoter: 'Région Pays de la Loire',
+    moe: 'Architectes Technologiques',
+    bet: 'Bureau Ingénierie R&D',
+    contractors: ['Construction High-Tech', 'Installations Spécialisées', 'Aménagement Laboratoires'],
+    startDate: '10/05/2024',
+    endDate: '15/03/2025'
+  },
+  {
+    id: 'site-009',
+    name: 'Musée d\'Art Contemporain',
+    type: 'Culture',
+    status: 'in-progress' as const,
+    location: {
+      address: '81 Quai des Chartrons, 33000 Bordeaux',
+      lat: 44.8520,
+      lng: -0.5620
+    },
+    promoter: 'Ministère de la Culture',
+    moe: 'Agence Architecture Culturelle',
+    bet: 'Ingénierie Culturelle et Technique',
+    contractors: ['Construction Muséale', 'Équipements Techniques', 'Aménagements Scénographiques'],
+    startDate: '15/02/2024',
+    endDate: '30/11/2024'
+  },
+  {
+    id: 'site-010',
+    name: 'Parc Technologique',
+    type: 'Industriel',
+    status: 'assigned' as const,
+    location: {
+      address: '50 Route de Lyon, 69800 Saint-Priest',
+      lat: 45.7033,
+      lng: 4.9528
+    },
+    promoter: 'Métropole de Lyon',
+    moe: 'Cabinet d\'Architecture Industrielle',
+    bet: 'Ingérop Industrie',
+    contractors: ['Construction Industrielle', 'Infrastructure Technologique', 'Aménagement Tertiaire'],
+    startDate: '25/06/2024',
+    endDate: '20/04/2025'
   }
 ];
 
