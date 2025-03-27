@@ -1,14 +1,24 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Sidebar from '@/components/Sidebar';
 import MessageSidebar from '@/components/messaging/MessageSidebar';
 import ConversationView from '@/components/messaging/ConversationView';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { NewMessageDialog } from '@/components/messaging/NewMessageDialog';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from '@/components/ui/dropdown-menu';
 
 // Sample conversation data
 const conversationsData = [
@@ -149,7 +159,14 @@ export default function Messaging() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentFilter, setCurrentFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [projectFilter, setProjectFilter] = useState('all');
   const { toast } = useToast();
+
+  // Extract unique projects for the filter dropdown
+  const uniqueProjects = useMemo(() => {
+    const projects = conversations.map(conv => conv.project);
+    return ['all', ...new Set(projects)];
+  }, [conversations]);
 
   const filteredConversations = conversations.filter(conv => {
     // Filter by search term
@@ -157,13 +174,17 @@ export default function Messaging() {
                          conv.project.toLowerCase().includes(searchTerm.toLowerCase());
     
     // Filter by tab
+    let matchesTabFilter = true;
     if (currentFilter === 'unread') {
-      return matchesSearch && conv.unreadCount > 0;
+      matchesTabFilter = conv.unreadCount > 0;
     } else if (currentFilter === 'priority') {
-      return matchesSearch && conv.isPriority;
+      matchesTabFilter = conv.isPriority;
     }
     
-    return matchesSearch;
+    // Filter by project
+    const matchesProjectFilter = projectFilter === 'all' || conv.project === projectFilter;
+    
+    return matchesSearch && matchesTabFilter && matchesProjectFilter;
   });
 
   const handleSendMessage = (content: string, attachments: any[] = []) => {
@@ -277,6 +298,27 @@ export default function Messaging() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            
+            {/* Project filter dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  {projectFilter === 'all' ? 'Tous les projets' : projectFilter}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Filtrer par projet</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={projectFilter} onValueChange={setProjectFilter}>
+                  {uniqueProjects.map(project => (
+                    <DropdownMenuRadioItem key={project} value={project}>
+                      {project === 'all' ? 'Tous les projets' : project}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         

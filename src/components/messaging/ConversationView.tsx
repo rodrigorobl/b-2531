@@ -1,10 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
-import { SendHorizontal, Paperclip, MoreVertical, ArrowLeft, File, Download, User } from 'lucide-react';
+import { SendHorizontal, Paperclip, MoreVertical, ArrowLeft, File, Download, User, Briefcase } from 'lucide-react';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 interface Message {
   id: string;
@@ -65,7 +65,6 @@ export default function ConversationView({ conversation, messages, onSendMessage
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Scroll to bottom of messages
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -74,7 +73,6 @@ export default function ConversationView({ conversation, messages, onSendMessage
   
   const handleSendMessage = () => {
     if (messageText.trim() || attachments.length > 0) {
-      // Convert File objects to the expected format
       const attachmentData = attachments.map(file => ({
         name: file.name,
         size: `${Math.round(file.size / 1024)} Ko`,
@@ -103,7 +101,6 @@ export default function ConversationView({ conversation, messages, onSendMessage
   
   return (
     <>
-      {/* Conversation Header */}
       <div className="p-4 border-b flex items-center justify-between bg-background sticky top-0 z-10">
         <div className="flex items-center">
           <Button variant="ghost" size="icon" className="md:hidden mr-2">
@@ -126,7 +123,6 @@ export default function ConversationView({ conversation, messages, onSendMessage
               </Avatar>
             )}
             
-            {/* Online status indicator */}
             <div className={cn(
               "absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-background",
               conversation.contact.isOnline ? "bg-green-500" : "bg-gray-400"
@@ -139,11 +135,14 @@ export default function ConversationView({ conversation, messages, onSendMessage
               <span>{conversation.contact.role}</span>
               <span className="mx-1">•</span>
               <span>{conversation.contact.company}</span>
-              <span className="mx-1">•</span>
-              <span>{conversation.project}</span>
             </div>
           </div>
         </div>
+        
+        <Badge variant="outline" className="flex items-center gap-1 mr-2">
+          <Briefcase className="h-3 w-3" />
+          <span>{conversation.project}</span>
+        </Badge>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -161,7 +160,6 @@ export default function ConversationView({ conversation, messages, onSendMessage
         </DropdownMenu>
       </div>
       
-      {/* Messages List */}
       <div className="flex-1 p-4 overflow-y-auto bg-secondary/10">
         <div className="space-y-4">
           {messages.map((message) => (
@@ -175,9 +173,7 @@ export default function ConversationView({ conversation, messages, onSendMessage
         </div>
       </div>
       
-      {/* Message Input */}
       <div className="p-4 border-t bg-background">
-        {/* Attachment preview */}
         {attachments.length > 0 && (
           <div className="mb-2 p-2 bg-secondary/20 rounded-md">
             <div className="text-xs font-medium mb-1">Pièces jointes ({attachments.length})</div>

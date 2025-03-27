@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Star, Archive, Trash2 } from 'lucide-react';
+import { MessageCircle, Star, Archive, Trash2, Briefcase } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Conversation {
@@ -88,10 +88,16 @@ export default function MessageSidebar({
                 </div>
               </div>
               
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              {/* Project badge */}
+              <div className="flex items-center gap-1 text-xs mt-1">
+                <Briefcase className="h-3 w-3 text-primary" />
+                <span className="font-medium text-primary truncate">{conversation.project}</span>
+              </div>
+              
+              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                 <span>{conversation.contact.role}</span>
                 <span className="mx-1">•</span>
-                <span>{conversation.project}</span>
+                <span>{conversation.contact.company}</span>
               </div>
               
               <div className="flex items-start mt-1">
