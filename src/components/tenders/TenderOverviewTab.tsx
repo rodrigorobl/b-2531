@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, MapPin, Send } from 'lucide-react';
@@ -14,6 +13,7 @@ import { RelaunchCompaniesDialog } from './RelaunchCompaniesDialog';
 interface Category {
   id: string;
   name: string;
+  budget?: number;
   quotes: {
     id: string;
     companyName: string;
@@ -66,7 +66,6 @@ export function TenderOverviewTab({
 }: TenderOverviewTabProps) {
   const [relaunchDialogOpen, setRelaunchDialogOpen] = useState(false);
 
-  // Get evaluation based on number of quotes
   const getCategoryEvaluation = (quotesCount: number) => {
     if (quotesCount >= 4) return {
       label: 'Bon',
@@ -85,7 +84,6 @@ export function TenderOverviewTab({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Project Info */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Informations du projet</CardTitle>
@@ -111,7 +109,6 @@ export function TenderOverviewTab({
           </CardContent>
         </Card>
 
-        {/* Location */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
@@ -125,7 +122,6 @@ export function TenderOverviewTab({
           </CardContent>
         </Card>
 
-        {/* Budget status */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Statut du budget</CardTitle>
@@ -161,7 +157,6 @@ export function TenderOverviewTab({
           </CardContent>
         </Card>
 
-        {/* Project progress */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Avancement du projet</CardTitle>
@@ -202,7 +197,6 @@ export function TenderOverviewTab({
         </Card>
       </div>
 
-      {/* Categories overview */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">Vue d'ensemble des lots</CardTitle>
@@ -235,8 +229,6 @@ export function TenderOverviewTab({
                 const lowestQuote = category.quotes.length > 0 ? Math.min(...category.quotes.filter(q => q.isCompliant).map(q => q.price)) : null;
                 const approvedQuote = category.quotes.find(q => q.status === 'approved');
                 
-                // For the budget column, we'll show a default value for now
-                // In a real app, this would come from the category data
                 const budget = category.budget || "-";
                 
                 return (
