@@ -1,4 +1,3 @@
-
 export interface TenderFormValues {
   type: 'design' | 'construction' | 'service';
   privacy: 'open' | 'restricted' | 'closed';
@@ -27,6 +26,7 @@ export interface TenderFormValues {
       name: string;
       description?: string;
       selected: boolean;
+      budget?: number;
     }>;
     projectTeam?: Array<{
       name: string;
@@ -53,6 +53,7 @@ export interface TenderFormValues {
       name: string;
       description?: string;
       selected: boolean;
+      budget?: number;
     }>;
     dpgfMethod?: 'ai' | 'upload';
     keyDates?: Array<{
@@ -83,6 +84,7 @@ export interface TenderFormValues {
       name: string;
       description?: string;
       selected: boolean;
+      budget?: number;
     }>;
   };
 }
@@ -102,6 +104,7 @@ export interface DesignTenderFormValues extends TenderFormValues {
       name: string;
       description?: string;
       selected: boolean;
+      budget?: number;
     }>;
     projectTeam?: Array<{
       name: string;
@@ -132,6 +135,7 @@ export interface ConstructionTenderFormValues extends TenderFormValues {
       name: string;
       description?: string;
       selected: boolean;
+      budget?: number;
     }>;
     dpgfMethod?: 'ai' | 'upload';
     keyDates?: Array<{
@@ -166,6 +170,7 @@ export interface ServiceTenderFormValues extends TenderFormValues {
       name: string;
       description?: string;
       selected: boolean;
+      budget?: number;
     }>;
   };
 }
