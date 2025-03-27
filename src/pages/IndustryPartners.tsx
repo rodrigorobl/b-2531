@@ -134,11 +134,11 @@ const mockProjects: Project[] = [
 
 const IndustryPartners = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState<string>('');
-  const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('all');
   const [selectedPartnerType, setSelectedPartnerType] = useState<'promoteur' | 'architecte' | 'bet' | ''>('');
-  const [selectedPromoter, setSelectedPromoter] = useState<string>('');
+  const [selectedPromoter, setSelectedPromoter] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
@@ -155,15 +155,15 @@ const IndustryPartners = () => {
       );
     
     // Project type filter
-    const matchesType = selectedType === '' || project.type === selectedType;
+    const matchesType = selectedType === 'all' || project.type === selectedType;
     
     // Region filter
-    const matchesRegion = selectedRegion === '' || 
+    const matchesRegion = selectedRegion === 'all' || 
       project.location.department === selectedRegion ||
       project.location.city.toLowerCase() === selectedRegion.toLowerCase();
     
     // Period filter (year/month)
-    const matchesPeriod = selectedPeriod === '' || 
+    const matchesPeriod = selectedPeriod === 'all' || 
       project.awardedDate.includes(selectedPeriod);
     
     // Partner type filter
@@ -171,7 +171,7 @@ const IndustryPartners = () => {
       project.partners.some(partner => partner.type === selectedPartnerType);
     
     // Promoter filter
-    const matchesPromoter = selectedPromoter === '' ||
+    const matchesPromoter = selectedPromoter === 'all' ||
       project.partners.some(partner => 
         partner.type === 'promoteur' && partner.id === selectedPromoter
       );
@@ -199,11 +199,11 @@ const IndustryPartners = () => {
   });
 
   const clearFilters = () => {
-    setSelectedType('');
-    setSelectedRegion('');
-    setSelectedPeriod('');
+    setSelectedType('all');
+    setSelectedRegion('all');
+    setSelectedPeriod('all');
     setSelectedPartnerType('');
-    setSelectedPromoter('');
+    setSelectedPromoter('all');
   };
 
   const getPartnerTypeIcon = (type: string) => {
@@ -274,7 +274,7 @@ const IndustryPartners = () => {
                           <SelectValue placeholder="Tous les types" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Tous les types</SelectItem>
+                          <SelectItem value="all">Tous les types</SelectItem>
                           {projectTypes.map(type => (
                             <SelectItem key={type} value={type}>
                               {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -292,7 +292,7 @@ const IndustryPartners = () => {
                           <SelectValue placeholder="Toutes les régions" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Toutes les régions</SelectItem>
+                          <SelectItem value="all">Toutes les régions</SelectItem>
                           {regions.map(region => (
                             <SelectItem key={region} value={region.split(' ')[0]}>
                               {region}
@@ -310,7 +310,7 @@ const IndustryPartners = () => {
                           <SelectValue placeholder="Toutes les périodes" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Toutes les périodes</SelectItem>
+                          <SelectItem value="all">Toutes les périodes</SelectItem>
                           {periods.map(period => (
                             <SelectItem key={period} value={period}>
                               {period}
@@ -339,7 +339,7 @@ const IndustryPartners = () => {
                 <SelectValue placeholder="Tous les promoteurs" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous les promoteurs</SelectItem>
+                <SelectItem value="all">Tous les promoteurs</SelectItem>
                 {promoters.map(promoter => (
                   <SelectItem key={promoter.id} value={promoter.id}>
                     {promoter.name}
