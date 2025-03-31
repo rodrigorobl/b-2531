@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, MapPin, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, TableFooter } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -80,6 +81,18 @@ export function TenderOverviewTab({
       color: 'bg-red-500'
     };
   };
+
+  // Calculate total budget of all categories
+  const totalBudget = tender.categories.reduce((total, category) => {
+    return total + (category.budget || 0);
+  }, 0);
+
+  // Calculate total of lowest quotes
+  const totalLowestQuotes = tender.categories.reduce((total, category) => {
+    const lowestQuote = category.quotes.length > 0 ? 
+      Math.min(...category.quotes.filter(q => q.isCompliant).map(q => q.price)) : 0;
+    return total + lowestQuote;
+  }, 0);
 
   return (
     <div className="space-y-6">
@@ -216,8 +229,10 @@ export function TenderOverviewTab({
               <TableRow>
                 <TableHead>Lot</TableHead>
                 <TableHead>Devis reçus</TableHead>
-                <TableHead>Meilleur prix</TableHead>
                 <TableHead>Budgets</TableHead>
+                <TableHead>Offre pressentie</TableHead>
+                <TableHead>Nom de l'entreprise</TableHead>
+                <TableHead>Delta (%)</TableHead>
                 <TableHead>Attribution</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -226,20 +241,44 @@ export function TenderOverviewTab({
               {tender.categories.map(category => {
                 const quotesCount = category.quotes.length;
                 const evaluation = getCategoryEvaluation(quotesCount);
-                const lowestQuote = category.quotes.length > 0 ? Math.min(...category.quotes.filter(q => q.isCompliant).map(q => q.price)) : null;
-                const approvedQuote = category.quotes.find(q => q.status === 'approved');
                 
-                const budget = category.budget || "-";
+                const budget = category.budget || 0;
+                
+                // Find the lowest compliant quote and its company
+                const compliantQuotes = category.quotes.filter(q => q.isCompliant);
+                const lowestQuote = compliantQuotes.length > 0 
+                  ? compliantQuotes.reduce((prev, curr) => prev.price < curr.price ? prev : curr, compliantQuotes[0])
+                  : null;
+                
+                const lowestPrice = lowestQuote?.price || 0;
+                const companyName = lowestQuote?.companyName || '-';
+                
+                // Calculate difference percentage
+                const priceDelta = budget > 0 && lowestPrice > 0 
+                  ? Math.round((lowestPrice - budget) / budget * 100) 
+                  : null;
+                
+                const approvedQuote = category.quotes.find(q => q.status === 'approved');
                 
                 return (
                   <TableRow key={category.id}>
                     <TableCell className="font-medium">{category.name}</TableCell>
                     <TableCell>{quotesCount}</TableCell>
                     <TableCell>
-                      {lowestQuote ? `${lowestQuote.toLocaleString()} €` : '-'}
+                      {budget > 0 ? `${budget.toLocaleString()} €` : '-'}
                     </TableCell>
                     <TableCell>
-                      {typeof budget === 'number' ? `${budget.toLocaleString()} €` : budget}
+                      {lowestPrice > 0 ? `${lowestPrice.toLocaleString()} €` : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {companyName}
+                    </TableCell>
+                    <TableCell>
+                      {priceDelta !== null ? (
+                        <span className={priceDelta > 0 ? 'text-red-500' : 'text-green-600'}>
+                          {priceDelta > 0 ? '+' : ''}{priceDelta}%
+                        </span>
+                      ) : '-'}
                     </TableCell>
                     <TableCell>
                       {approvedQuote ? 
@@ -265,6 +304,14 @@ export function TenderOverviewTab({
                 );
               })}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={2} className="font-medium">Total</TableCell>
+                <TableCell className="font-medium">{totalBudget.toLocaleString()} €</TableCell>
+                <TableCell className="font-medium">{totalLowestQuotes.toLocaleString()} €</TableCell>
+                <TableCell colSpan={4}></TableCell>
+              </TableRow>
+            </TableFooter>
           </Table>
         </CardContent>
       </Card>
