@@ -245,8 +245,8 @@ export function TenderOverviewTab({
                       {approvedQuote ? 
                         <Badge className="bg-green-600">Attribué</Badge> : 
                         quotesCount > 0 ? 
-                          <Badge className="bg-amber-500">En attente</Badge> : 
-                          <Badge className="bg-red-500">Non démarré</Badge>
+                          <Badge className="bg-amber-500">En cours</Badge> : 
+                          <Badge className="bg-red-500">Aucune offre</Badge>
                       }
                     </TableCell>
                     
