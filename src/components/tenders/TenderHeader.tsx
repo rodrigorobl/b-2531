@@ -11,7 +11,7 @@ interface TenderHeaderProps {
     status: string;
     deadline: string;
     projectType: string;
-    id: string;  // Changed from number to string
+    id: string;
   };
 }
 
@@ -27,8 +27,8 @@ export function TenderHeader({ tender }: TenderHeaderProps) {
       </div>
 
       {/* Header with tender name and status */}
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-        <div>
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col">
           <h1 className="text-2xl font-bold">{tender.name}</h1>
           <div className="flex items-center gap-3 mt-2">
             <Badge className={
@@ -48,7 +48,7 @@ export function TenderHeader({ tender }: TenderHeaderProps) {
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex">
           <Button variant="outline" asChild>
             <Link to={`/edit-tender/${tender.id}`} className="gap-2">
               <Pen className="h-4 w-4" />
