@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Users, Mail, Send, Building, DraftingCompass, HardHat, Plus, Edit, Trash, UserPlus } from 'lucide-react';
+import { User, Users, Mail, Send, Building, DraftingCompass, HardHat, Plus, Edit, Trash, UserPlus, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Contact {
