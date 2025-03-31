@@ -12,6 +12,7 @@ import TenderOffersList from '@/components/TenderOffersList';
 import ActivityFeed from '@/components/ActivityFeed';
 import PriorityActions from '@/components/PriorityActions';
 import Sidebar from '@/components/Sidebar';
+
 export default function Dashboard() {
   // Sample data for KPI cards
   const kpiData = {
@@ -63,21 +64,25 @@ export default function Dashboard() {
     project: 'Résidence Les Ormes',
     status: 'open' as const,
     deadline: '15/05/2024',
-    estimatedValue: '120 000 €'
+    estimatedValue: '120 000 €',
+    tenderType: 'open' as const
   }, {
     id: 'tender-002',
     title: 'Lot 5 - Électricité',
     project: 'Centre commercial Grand Place',
     status: 'open' as const,
     deadline: '20/05/2024',
-    estimatedValue: '95 000 €'
+    estimatedValue: '95 000 €',
+    tenderType: 'open' as const
   }, {
     id: 'tender-003',
     title: 'Lot 2 - Gros œuvre',
     project: 'École Saint-Pierre',
     status: 'closed' as const,
     deadline: '01/03/2024',
-    estimatedValue: '250 000 €'
+    estimatedValue: '250 000 €',
+    tenderType: 'restricted' as const,
+    accessStatus: 'approved' as const
   }];
 
   // Sample priority actions

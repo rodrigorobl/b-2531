@@ -58,7 +58,8 @@ export default function DashboardConstruction() {
       project: 'Centre commercial Grand Place',
       status: 'open' as const,
       deadline: '15/05/2024',
-      estimatedValue: '120 000 €'
+      estimatedValue: '120 000 €',
+      tenderType: 'open' as const
     },
     {
       id: 'tender-002',
@@ -66,7 +67,9 @@ export default function DashboardConstruction() {
       project: 'Résidence Les Cerisiers',
       status: 'open' as const,
       deadline: '20/05/2024',
-      estimatedValue: '250 000 €'
+      estimatedValue: '250 000 €',
+      tenderType: 'restricted' as const,
+      accessStatus: 'pending' as const
     },
     {
       id: 'tender-003',
@@ -74,7 +77,8 @@ export default function DashboardConstruction() {
       project: 'Éco-quartier Les Saules',
       status: 'open' as const,
       deadline: '25/05/2024',
-      estimatedValue: '80 000 €'
+      estimatedValue: '80 000 €',
+      tenderType: 'open' as const
     }
   ];
 

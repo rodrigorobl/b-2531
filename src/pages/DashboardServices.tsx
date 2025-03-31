@@ -60,7 +60,8 @@ export default function DashboardServices() {
       project: 'Éco-quartier Confluence',
       status: 'open' as const,
       deadline: '15/05/2024',
-      estimatedValue: '75 000 €'
+      estimatedValue: '75 000 €',
+      tenderType: 'open' as const
     },
     {
       id: 'tender-002',
@@ -68,7 +69,9 @@ export default function DashboardServices() {
       project: 'Tour Alto La Défense',
       status: 'open' as const,
       deadline: '20/05/2024',
-      estimatedValue: '45 000 €'
+      estimatedValue: '45 000 €',
+      tenderType: 'restricted' as const,
+      accessStatus: 'approved' as const
     },
     {
       id: 'tender-003',
@@ -76,7 +79,8 @@ export default function DashboardServices() {
       project: 'Métro Grand Paris Express',
       status: 'open' as const,
       deadline: '25/05/2024',
-      estimatedValue: '110 000 €'
+      estimatedValue: '110 000 €',
+      tenderType: 'open' as const
     }
   ];
 

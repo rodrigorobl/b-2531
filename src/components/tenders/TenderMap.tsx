@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import { TenderSearchResult } from '@/pages/TenderSearch';
@@ -20,7 +19,6 @@ const containerStyle = {
   height: '100%'
 };
 
-// Coordonnées des villes françaises (exemples)
 const cityCoordinates: Record<string, { lat: number, lng: number }> = {
   'Paris': { lat: 48.8566, lng: 2.3522 },
   'Lyon': { lat: 45.7640, lng: 4.8357 },
@@ -47,10 +45,10 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return '#f59e0b'; // amber-500
-      case 'closed': return '#6b7280'; // gray-500
-      case 'assigned': return '#10b981'; // green-500
-      default: return '#6b7280'; // gray-500
+      case 'open': return '#f59e0b';
+      case 'closed': return '#6b7280';
+      case 'assigned': return '#10b981';
+      default: return '#6b7280';
     }
   };
 
@@ -67,7 +65,6 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
     setMapRef(map);
   };
 
-  // Fit bounds to contain all markers when tenders change or map loads
   useEffect(() => {
     if (mapRef && tenders.length > 0) {
       const bounds = new google.maps.LatLngBounds();
@@ -81,7 +78,6 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
     }
   }, [mapRef, tenders]);
 
-  // Center map on selected tender
   useEffect(() => {
     if (selectedTenderId && mapRef) {
       const selectedTender = tenders.find(tender => tender.id === selectedTenderId);
@@ -98,7 +94,6 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
 
   return (
     <div className="flex-1 rounded-lg shadow-sm mr-4 overflow-hidden flex flex-col">
-      {/* En-tête avec le sélecteur de vue et les filtres */}
       <div className="p-4 bg-white border-b flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
           {tenders.length} appels d'offres trouvés
@@ -119,7 +114,6 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
         </div>
       </div>
 
-      {/* Liste des tenders sur le côté */}
       <div className="h-1/3 overflow-auto p-3 border-b bg-white">
         <h3 className="text-sm font-medium mb-2">Résultats ({tenders.length})</h3>
         <div className="space-y-2">
@@ -161,12 +155,11 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
         </div>
       </div>
       
-      {/* Carte Google Maps */}
       <div className="h-2/3 relative">
         {isLoaded ? (
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={{ lat: 46.227638, lng: 2.213749 }} // Centre de la France
+            center={{ lat: 46.227638, lng: 2.213749 }}
             zoom={5}
             onLoad={onMapLoad}
             options={{
@@ -197,7 +190,7 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
                       strokeWeight: 2,
                     }}
                     animation={selectedTenderId === tender.id ? google.maps.Animation.BOUNCE : undefined}
-                    title={tender.projectName} // Tooltip quand on survole le marqueur
+                    title={tender.projectName}
                   />
                   
                   {(infoWindowOpen === tender.id || selectedTenderId === tender.id) && (
@@ -211,8 +204,6 @@ const TenderMap = ({ tenders, onSelectTender, selectedTenderId, onViewModeChange
                           <span>{tender.projectType}</span>
                           <span style={{ margin: '0 4px' }}>•</span>
                           <span>{tender.location}</span>
-                          <span style={{ margin: '0 4px' }}>•</span>
-                          <span>{tender.budget}</span>
                         </div>
                         <div style={{ fontSize: '11px', color: '#666', marginBottom: '6px' }}>
                           {tender.description.length > 100 

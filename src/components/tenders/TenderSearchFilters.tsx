@@ -13,8 +13,6 @@ import { DceKeywordsFilter } from './filters/DceKeywordsFilter';
 
 export default function TenderSearchFilters() {
   const [showFavorites, setShowFavorites] = useState(false);
-  const [budgetRange, setBudgetRange] = useState([0, 10000000]);
-  const [surfaceRange, setSurfaceRange] = useState([0, 30000]);
   
   return (
     <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm p-4 mr-4 overflow-auto">
@@ -23,8 +21,8 @@ export default function TenderSearchFilters() {
       <div className="space-y-6">
         <ProjectTypeFilter />
         <LocationFilter />
-        <BudgetFilter budgetRange={budgetRange} setBudgetRange={setBudgetRange} />
-        <SurfaceFilter surfaceRange={surfaceRange} setSurfaceRange={setSurfaceRange} />
+        <BudgetFilter />
+        <SurfaceFilter />
         <BatchFilter />
         <DceKeywordsFilter />
         <DateRangeFilter />
