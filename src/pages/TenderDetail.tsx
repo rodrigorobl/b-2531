@@ -311,7 +311,7 @@ export default function TenderDetail() {
             <TabsTrigger value="analysis">Analyse</TabsTrigger>
             <TabsTrigger value="messages">Messages ({tender.messages.length})</TabsTrigger>
             <TabsTrigger value="documents">Documents ({tender.documents.length})</TabsTrigger>
-            <TabsTrigger value="contacts">Contacts</TabsTrigger>
+            <TabsTrigger value="contacts">Intervenants</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
