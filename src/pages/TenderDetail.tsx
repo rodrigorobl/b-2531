@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -9,6 +10,7 @@ import { TenderMessagesTab } from '@/components/tenders/TenderMessagesTab';
 import { TenderDocumentsTab } from '@/components/tenders/TenderDocumentsTab';
 import { TenderContactsTab } from '@/components/tenders/TenderContactsTab';
 import { TenderTrackingTab } from '@/components/tenders/TenderTrackingTab';
+import { TenderAnalysisTab } from '@/components/tenders/TenderAnalysisTab';
 import { Button } from '@/components/ui/button';
 import { BarChart, FileText, Users } from 'lucide-react';
 
@@ -329,6 +331,7 @@ export default function TenderDetail() {
               Devis ({tender.categories.reduce((total, cat) => total + cat.quotes.length, 0)})
             </TabsTrigger>
             <TabsTrigger value="tracking">Suivi</TabsTrigger>
+            <TabsTrigger value="analysis">Analyse</TabsTrigger>
             <TabsTrigger value="messages">Messages ({tender.messages.length})</TabsTrigger>
             <TabsTrigger value="documents">Documents ({tender.documents.length})</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -360,6 +363,11 @@ export default function TenderDetail() {
           {/* Tracking Tab */}
           <TabsContent value="tracking">
             <TenderTrackingTab categories={tender.categories} />
+          </TabsContent>
+
+          {/* Analysis Tab */}
+          <TabsContent value="analysis">
+            <TenderAnalysisTab tenderId={tenderId || ''} />
           </TabsContent>
 
           {/* Messages Tab */}
