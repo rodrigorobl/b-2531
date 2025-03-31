@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Send, Save, Calendar, Edit, Copy } from 'lucide-react';
 import { DatePicker } from '@/components/ui/date-picker';
 import { toast } from 'sonner';
