@@ -1,13 +1,33 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { FileText, Calendar, Map, Building, Clock, Users, Star, ExternalLink, BarChart, Lock } from 'lucide-react';
+import { 
+  FileText, 
+  Calendar, 
+  Map, 
+  Building, 
+  Clock, 
+  Users, 
+  Star, 
+  ExternalLink, 
+  BarChart, 
+  Lock,
+  UserPlus,
+  Check
+} from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem
+} from '@/components/ui/dropdown-menu';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface TenderSearchDetailsProps {
   tender?: TenderSearchResult;
@@ -15,12 +35,22 @@ interface TenderSearchDetailsProps {
   projectUrlPath?: string;
 }
 
+// Mock data for team members
+const teamMembers = [
+  { id: 'user1', name: 'Sophie Martin' },
+  { id: 'user2', name: 'Thomas Durand' },
+  { id: 'user3', name: 'Emma Petit' },
+  { id: 'user4', name: 'Lucas Bernard' },
+  { id: 'user5', name: 'Camille Robert' },
+];
+
 export default function TenderSearchDetails({
   tender,
   projectButtonText = "Accéder à l'Appel d'offres",
   projectUrlPath = "/tender-specifications"
 }: TenderSearchDetailsProps) {
   const { activeProfile } = useProfile();
+  const [assignedTeamMembers, setAssignedTeamMembers] = useState<string[]>([]);
   
   if (!tender) {
     return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex items-center justify-center">
@@ -100,6 +130,16 @@ export default function TenderSearchDetails({
     }
     return <ExternalLink size={14} />;
   };
+
+  const toggleTeamMember = (userId: string) => {
+    setAssignedTeamMembers(current => {
+      if (current.includes(userId)) {
+        return current.filter(id => id !== userId);
+      } else {
+        return [...current, userId];
+      }
+    });
+  };
   
   return <div className="w-80 min-w-80 bg-white rounded-lg shadow-sm flex flex-col">
       <div className="p-4 border-b">
@@ -178,6 +218,57 @@ export default function TenderSearchDetails({
                   {lot}
                 </Badge>)}
             </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <UserPlus size={14} className="text-muted-foreground" />
+                <h4 className="text-xs font-medium">Affecter à</h4>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 text-xs">
+                    {assignedTeamMembers.length > 0 
+                      ? `${assignedTeamMembers.length} personne(s)`
+                      : 'Assigner'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-white">
+                  {teamMembers.map(member => (
+                    <DropdownMenuCheckboxItem
+                      key={member.id}
+                      checked={assignedTeamMembers.includes(member.id)}
+                      onCheckedChange={() => toggleTeamMember(member.id)}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        {member.name}
+                      </div>
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            
+            {assignedTeamMembers.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {assignedTeamMembers.map(userId => {
+                  const member = teamMembers.find(m => m.id === userId);
+                  return (
+                    <Badge key={userId} variant="secondary" className="flex items-center gap-1 py-1">
+                      <span>{member?.name}</span>
+                      <button 
+                        onClick={() => toggleTeamMember(userId)}
+                        className="ml-1 hover:bg-muted rounded-full p-0.5"
+                      >
+                        <Check className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
           </div>
           
           <Link to={getButtonDestination()} className="w-full">
