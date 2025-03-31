@@ -3,7 +3,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Button } from '@/components/ui/button';
-import { Building, MapPin, Calendar, Star, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Building, MapPin, Calendar, Star, ExternalLink, Lock } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
 import { Link } from 'react-router-dom';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -42,6 +43,47 @@ export default function TenderListView({
     // Use the tender ID to generate a consistent but seemingly random score
     const hash = tenderId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return Math.min(100, Math.max(25, (hash % 75) + 25)); // Score between 25-100
+  };
+
+  const getTenderTypeWithAccessBadge = (tender: TenderSearchResult) => {
+    if (tender.tenderType === 'open') {
+      return <Badge variant="outline" className="bg-green-50 font-normal">
+        Ouvert
+      </Badge>;
+    } else {
+      // For restricted tenders
+      let badgeClass = "bg-orange-50";
+      let statusText = "";
+      
+      switch (tender.accessRequestStatus) {
+        case 'pending':
+          statusText = "Demande en cours";
+          badgeClass = "bg-amber-50 text-amber-700";
+          break;
+        case 'approved':
+          statusText = "Accès accordé";
+          badgeClass = "bg-green-50 text-green-700";
+          break;
+        case 'rejected':
+          statusText = "Accès refusé";
+          badgeClass = "bg-red-50 text-red-700";
+          break;
+      }
+      
+      return (
+        <div className="flex flex-col gap-1">
+          <Badge variant="outline" className="bg-orange-50 font-normal flex items-center gap-1">
+            <Lock size={10} />
+            <span>Restreint</span>
+          </Badge>
+          {statusText && (
+            <Badge variant="outline" className={`${badgeClass} text-xs font-normal`}>
+              {statusText}
+            </Badge>
+          )}
+        </div>
+      );
+    }
   };
 
   return (
@@ -93,8 +135,8 @@ export default function TenderListView({
           </div>
           
           <div className="ml-4 flex items-center gap-3">
-            <div className="text-sm font-medium">
-              {tender.budget}
+            <div>
+              {getTenderTypeWithAccessBadge(tender)}
             </div>
             <Button variant="ghost" size="sm" className="text-primary" asChild>
               <Link to={getTenderUrl(tender.id)}>

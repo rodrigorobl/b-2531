@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, ArrowRight, FileText, ExternalLink } from 'lucide-react';
+import { Calendar, ArrowRight, FileText, ExternalLink, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,8 @@ interface TenderOffer {
   project: string;
   status: 'open' | 'closed' | 'assigned';
   deadline: string;
-  estimatedValue: string;
+  tenderType: 'open' | 'restricted';
+  accessStatus?: 'pending' | 'approved' | 'rejected';
 }
 
 interface TenderOffersListProps {
@@ -35,6 +36,36 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
     }
   };
   
+  const getTenderTypeBadge = (type: string, accessStatus?: string) => {
+    if (type === 'open') {
+      return <Badge variant="outline" className="bg-green-50 font-normal">Ouvert</Badge>;
+    } else {
+      // For restricted tenders
+      return (
+        <div className="flex items-center gap-1">
+          <Badge variant="outline" className="bg-orange-50 font-normal flex items-center gap-1">
+            <Lock size={10} />
+            <span>Restreint</span>
+          </Badge>
+          {accessStatus && getAccessStatusBadge(accessStatus)}
+        </div>
+      );
+    }
+  };
+  
+  const getAccessStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="outline" className="bg-amber-50 text-amber-700 text-xs font-normal">Demande en cours</Badge>;
+      case 'approved':
+        return <Badge variant="outline" className="bg-green-50 text-green-700 text-xs font-normal">Accès accordé</Badge>;
+      case 'rejected':
+        return <Badge variant="outline" className="bg-red-50 text-red-700 text-xs font-normal">Accès refusé</Badge>;
+      default:
+        return null;
+    }
+  };
+  
   const getDestinationUrl = (offerId: string) => {
     if (activeProfile === 'entreprise-construction') {
       return `/construction-tender-specifications?project=${offerId}`;
@@ -51,16 +82,16 @@ export default function TenderOffersList({ tenderOffers }: TenderOffersListProps
               <h3 className="font-medium line-clamp-1">{offer.title}</h3>
               <p className="text-sm text-muted-foreground">{offer.project}</p>
             </div>
-            {getStatusBadge(offer.status)}
+            <div className="flex gap-2">
+              {getStatusBadge(offer.status)}
+              {getTenderTypeBadge(offer.tenderType, offer.accessStatus)}
+            </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-2 mt-3 text-sm">
+          <div className="mt-3 text-sm">
             <div className="flex items-center">
               <Calendar size={14} className="mr-1.5 text-muted-foreground" />
               <span>Échéance: {offer.deadline}</span>
-            </div>
-            <div className="text-right font-medium">
-              {offer.estimatedValue}
             </div>
           </div>
           

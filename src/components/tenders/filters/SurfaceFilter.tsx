@@ -1,28 +1,8 @@
 
+// This component is being removed as surface information is no longer needed.
+// The component can be left empty to avoid breaking imports in case it's still referenced somewhere.
 import React from 'react';
-import { Maximize } from 'lucide-react';
-import { RangeSliderFilter } from './RangeSliderFilter';
 
-interface SurfaceFilterProps {
-  surfaceRange: number[];
-  setSurfaceRange: (value: number[]) => void;
-}
-
-export function SurfaceFilter({ surfaceRange, setSurfaceRange }: SurfaceFilterProps) {
-  const formatSurface = (value: number) => {
-    return `${value} m²`;
-  };
-
-  return (
-    <RangeSliderFilter
-      icon={Maximize}
-      label="Surface du projet"
-      value={surfaceRange}
-      min={0}
-      max={30000}
-      step={500}
-      onChange={setSurfaceRange}
-      formatValue={formatSurface}
-    />
-  );
+export function SurfaceFilter() {
+  return null;
 }

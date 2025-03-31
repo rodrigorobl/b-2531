@@ -1,32 +1,8 @@
 
+// This component is being removed as budget information is no longer needed.
+// The component can be left empty to avoid breaking imports in case it's still referenced somewhere.
 import React from 'react';
-import { Euro } from 'lucide-react';
-import { RangeSliderFilter } from './RangeSliderFilter';
 
-interface BudgetFilterProps {
-  budgetRange: number[];
-  setBudgetRange: (value: number[]) => void;
-}
-
-export function BudgetFilter({ budgetRange, setBudgetRange }: BudgetFilterProps) {
-  const formatBudget = (value: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
-  return (
-    <RangeSliderFilter
-      icon={Euro}
-      label="Budget estimé"
-      value={budgetRange}
-      min={0}
-      max={10000000}
-      step={100000}
-      onChange={setBudgetRange}
-      formatValue={formatBudget}
-    />
-  );
+export function BudgetFilter() {
+  return null;
 }

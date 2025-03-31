@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -10,15 +11,18 @@ import { Button } from '@/components/ui/button';
 import { BellRing } from 'lucide-react';
 
 export type TenderStatus = 'open' | 'closed' | 'assigned';
+export type TenderType = 'open' | 'restricted';
+export type AccessRequestStatus = 'pending' | 'approved' | 'rejected' | null;
+
 export interface TenderSearchResult {
   id: string;
   projectName: string;
   projectType: string;
   location: string;
-  budget: string;
-  surface: string;
   deadline: string;
   status: TenderStatus;
+  tenderType: TenderType;
+  accessRequestStatus: AccessRequestStatus;
   client: {
     name: string;
     logo?: string;
@@ -40,10 +44,10 @@ export default function TenderSearch() {
     projectName: "Centre Commercial Riviera",
     projectType: "Commercial",
     location: "Paris",
-    budget: "2 500 000 €",
-    surface: "15 000 m²",
     deadline: "30/08/2023",
     status: "open",
+    tenderType: "open",
+    accessRequestStatus: null,
     client: {
       name: "Unibail-Rodamco",
       logo: ""
@@ -57,10 +61,10 @@ export default function TenderSearch() {
     projectName: "Résidence Les Ormes",
     projectType: "Logement",
     location: "Lyon",
-    budget: "1 200 000 €",
-    surface: "3 500 m²",
     deadline: "15/09/2023",
     status: "open",
+    tenderType: "restricted",
+    accessRequestStatus: "pending",
     client: {
       name: "Nexity",
       logo: ""
@@ -74,10 +78,10 @@ export default function TenderSearch() {
     projectName: "Tour Horizon",
     projectType: "Tertiaire",
     location: "Nantes",
-    budget: "8 000 000 €",
-    surface: "25 000 m²",
     deadline: "10/08/2023",
     status: "closed",
+    tenderType: "restricted",
+    accessRequestStatus: "approved",
     client: {
       name: "BNP Paribas Real Estate",
       logo: ""
@@ -91,10 +95,10 @@ export default function TenderSearch() {
     projectName: "École Jean Jaurès",
     projectType: "Public",
     location: "Marseille",
-    budget: "950 000 €",
-    surface: "2 800 m²",
     deadline: "25/07/2023",
     status: "assigned",
+    tenderType: "restricted",
+    accessRequestStatus: "rejected",
     client: {
       name: "Ville de Marseille",
       logo: ""
@@ -108,10 +112,10 @@ export default function TenderSearch() {
     projectName: "Hôtel Bellevue",
     projectType: "Hôtellerie",
     location: "Nice",
-    budget: "3 500 000 €",
-    surface: "8 200 m²",
     deadline: "05/09/2023",
     status: "open",
+    tenderType: "open",
+    accessRequestStatus: null,
     client: {
       name: "Groupe Accor",
       logo: ""

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { FileText, Calendar, Map, Building, Clock, Users, Star, ExternalLink, BarChart } from 'lucide-react';
+import { FileText, Calendar, Map, Building, Clock, Users, Star, ExternalLink, BarChart, Lock } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 
 interface TenderSearchDetailsProps {
@@ -41,6 +41,49 @@ export default function TenderSearchDetails({
         return 'Attribué';
       default:
         return 'Inconnu';
+    }
+  };
+  
+  const getTenderTypeLabel = (tenderType: 'open' | 'restricted') => {
+    return tenderType === 'open' ? 'Ouvert' : 'Restreint';
+  };
+  
+  const getAccessStatusLabel = (status: 'pending' | 'approved' | 'rejected' | null) => {
+    if (status === null) return null;
+    
+    switch (status) {
+      case 'pending':
+        return 'Demande d\'accès en cours';
+      case 'approved':
+        return 'Demande d\'accès accordée';
+      case 'rejected':
+        return 'Demande d\'accès refusée';
+      default:
+        return null;
+    }
+  };
+  
+  const getTenderTypeWithAccessBadge = () => {
+    if (tender.tenderType === 'open') {
+      return <Badge variant="outline" className="font-normal">
+        {getTenderTypeLabel(tender.tenderType)}
+      </Badge>;
+    } else {
+      // For restricted tenders
+      const accessStatus = getAccessStatusLabel(tender.accessRequestStatus);
+      return (
+        <div className="space-y-1">
+          <Badge variant="outline" className="font-normal flex items-center gap-1">
+            <Lock size={12} />
+            {getTenderTypeLabel(tender.tenderType)}
+          </Badge>
+          {accessStatus && (
+            <Badge variant="secondary" className="font-normal text-xs block">
+              {accessStatus}
+            </Badge>
+          )}
+        </div>
+      );
     }
   };
   
@@ -117,6 +160,16 @@ export default function TenderSearchDetails({
           
           <div>
             <div className="flex items-center gap-1.5">
+              <Lock size={14} className="text-muted-foreground" />
+              <h4 className="text-xs font-medium">Type d'appel d'offres</h4>
+            </div>
+            <div className="mt-1">
+              {getTenderTypeWithAccessBadge()}
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex items-center gap-1.5">
               <Users size={14} className="text-muted-foreground" />
               <h4 className="text-xs font-medium">Lots concernés</h4>
             </div>
@@ -125,26 +178,6 @@ export default function TenderSearchDetails({
                   {lot}
                 </Badge>)}
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <Card>
-              <CardHeader className="p-3">
-                <CardTitle className="text-sm">Budget estimé</CardTitle>
-              </CardHeader>
-              <CardContent className="p-3 pt-0 font-medium">
-                {tender.budget}
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="p-3">
-                <CardTitle className="text-sm">Surface</CardTitle>
-              </CardHeader>
-              <CardContent className="p-3 pt-0 font-medium">
-                {tender.surface}
-              </CardContent>
-            </Card>
           </div>
           
           <Link to={getButtonDestination()} className="w-full">

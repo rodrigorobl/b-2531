@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { TenderSearchResult } from '@/pages/TenderSearch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building, MapPin, Calendar, Star, Eye, ArrowRight, ExternalLink } from 'lucide-react';
+import { Building, MapPin, Calendar, Star, Eye, ArrowRight, ExternalLink, Lock } from 'lucide-react';
 import { getStatusBadge } from './TenderUtils';
 import { Link } from 'react-router-dom';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -43,6 +43,47 @@ export default function TenderGridView({
     // Use the tender ID to generate a consistent but seemingly random score
     const hash = tenderId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return Math.min(100, Math.max(25, (hash % 75) + 25)); // Score between 25-100
+  };
+
+  const getTenderTypeWithAccessBadge = (tender: TenderSearchResult) => {
+    if (tender.tenderType === 'open') {
+      return <Badge variant="outline" className="bg-green-50 font-normal">
+        Ouvert
+      </Badge>;
+    } else {
+      // For restricted tenders
+      let badgeClass = "bg-orange-50";
+      let statusText = "";
+      
+      switch (tender.accessRequestStatus) {
+        case 'pending':
+          statusText = "Demande en cours";
+          badgeClass = "bg-amber-50 text-amber-700";
+          break;
+        case 'approved':
+          statusText = "Accès accordé";
+          badgeClass = "bg-green-50 text-green-700";
+          break;
+        case 'rejected':
+          statusText = "Accès refusé";
+          badgeClass = "bg-red-50 text-red-700";
+          break;
+      }
+      
+      return (
+        <div className="flex flex-col gap-1">
+          <Badge variant="outline" className="bg-orange-50 font-normal flex items-center gap-1">
+            <Lock size={10} />
+            <span>Restreint</span>
+          </Badge>
+          {statusText && (
+            <Badge variant="outline" className={`${badgeClass} text-xs font-normal`}>
+              {statusText}
+            </Badge>
+          )}
+        </div>
+      );
+    }
   };
 
   return (
@@ -85,13 +126,13 @@ export default function TenderGridView({
             </div>
           )}
           
-          <div className="flex items-center gap-4 mt-3">
+          <div className="flex items-center justify-between gap-2 mt-3">
             <div className="flex items-center gap-1 text-sm">
               <Calendar size={14} className="text-muted-foreground" />
               <span>Échéance: {tender.deadline}</span>
             </div>
-            <div className="text-sm font-medium">
-              {tender.budget}
+            <div>
+              {getTenderTypeWithAccessBadge(tender)}
             </div>
           </div>
           
