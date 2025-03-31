@@ -8,6 +8,7 @@ import { TenderQuotesTab } from '@/components/tenders/TenderQuotesTab';
 import { TenderMessagesTab } from '@/components/tenders/TenderMessagesTab';
 import { TenderDocumentsTab } from '@/components/tenders/TenderDocumentsTab';
 import { TenderContactsTab } from '@/components/tenders/TenderContactsTab';
+import { TenderTrackingTab } from '@/components/tenders/TenderTrackingTab';
 import { Button } from '@/components/ui/button';
 import { BarChart, FileText, Users } from 'lucide-react';
 
@@ -327,6 +328,7 @@ export default function TenderDetail() {
             <TabsTrigger value="quotes">
               Devis ({tender.categories.reduce((total, cat) => total + cat.quotes.length, 0)})
             </TabsTrigger>
+            <TabsTrigger value="tracking">Suivi</TabsTrigger>
             <TabsTrigger value="messages">Messages ({tender.messages.length})</TabsTrigger>
             <TabsTrigger value="documents">Documents ({tender.documents.length})</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -353,6 +355,11 @@ export default function TenderDetail() {
               tenderId={tenderId || ''}
               categories={tender.categories}
             />
+          </TabsContent>
+
+          {/* Tracking Tab */}
+          <TabsContent value="tracking">
+            <TenderTrackingTab categories={tender.categories} />
           </TabsContent>
 
           {/* Messages Tab */}
