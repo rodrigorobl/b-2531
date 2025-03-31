@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Sidebar from '@/components/Sidebar';
 import { TenderHeader } from '@/components/tenders/TenderHeader';
@@ -11,8 +10,6 @@ import { TenderDocumentsTab } from '@/components/tenders/TenderDocumentsTab';
 import { TenderContactsTab } from '@/components/tenders/TenderContactsTab';
 import { TenderTrackingTab } from '@/components/tenders/TenderTrackingTab';
 import { TenderAnalysisTab } from '@/components/tenders/TenderAnalysisTab';
-import { Button } from '@/components/ui/button';
-import { BarChart, FileText, Users } from 'lucide-react';
 
 // Types
 interface Tender {
@@ -255,10 +252,7 @@ export default function TenderDetail() {
   const [tender, setTender] = useState<Tender | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Fetch tender data
   useEffect(() => {
-    // In a real app, we would fetch the data based on tenderId
-    // For now, use mock data
     setTender(mockTender);
     if (mockTender.categories.length > 0) {
       setSelectedCategory(mockTender.categories[0].id);
@@ -278,7 +272,6 @@ export default function TenderDetail() {
     );
   }
 
-  // Calculate project progress
   const totalCategories = tender.categories.length;
   const assignedCategories = tender.categories.filter(
     cat => cat.quotes.some(quote => quote.status === 'approved')
@@ -287,7 +280,6 @@ export default function TenderDetail() {
     ? Math.round(assignedCategories / totalCategories * 100) 
     : 0;
 
-  // Calculate budget indicators
   const totalQuotesAmount = tender.categories.reduce((total, category) => {
     const lowestQuoteForCategory = category.quotes.length > 0 
       ? Math.min(...category.quotes.filter(q => q.isCompliant).map(q => q.price)) 
@@ -307,23 +299,8 @@ export default function TenderDetail() {
       <main className="flex-1 p-6">
         <div className="flex justify-between items-start mb-4">
           <TenderHeader tender={tender} />
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
-              <Link to={`/tender/${tenderId}/survey`}>
-                <Users className="h-4 w-4 mr-2" />
-                Suivi des entreprises
-              </Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link to={`/tender/${tenderId}/analysis`}>
-                <BarChart className="h-4 w-4 mr-2" />
-                Analyse des réponses
-              </Link>
-            </Button>
-          </div>
         </div>
 
-        {/* Main content with tabs */}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
@@ -337,7 +314,6 @@ export default function TenderDetail() {
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
           </TabsList>
 
-          {/* Overview Tab */}
           <TabsContent value="overview">
             <TenderOverviewTab 
               tender={tender}
@@ -352,7 +328,6 @@ export default function TenderDetail() {
             />
           </TabsContent>
 
-          {/* Quotes Tab */}
           <TabsContent value="quotes">
             <TenderQuotesTab 
               tenderId={tenderId || ''}
@@ -360,22 +335,18 @@ export default function TenderDetail() {
             />
           </TabsContent>
 
-          {/* Tracking Tab */}
           <TabsContent value="tracking">
             <TenderTrackingTab categories={tender.categories} />
           </TabsContent>
 
-          {/* Analysis Tab */}
           <TabsContent value="analysis">
             <TenderAnalysisTab tenderId={tenderId || ''} />
           </TabsContent>
 
-          {/* Messages Tab */}
           <TabsContent value="messages">
             <TenderMessagesTab messages={tender.messages} />
           </TabsContent>
 
-          {/* Documents Tab */}
           <TabsContent value="documents">
             <TenderDocumentsTab 
               documents={tender.documents}
@@ -383,7 +354,6 @@ export default function TenderDetail() {
             />
           </TabsContent>
 
-          {/* Contacts Tab */}
           <TabsContent value="contacts">
             <TenderContactsTab tenderId={tenderId || ''} />
           </TabsContent>
