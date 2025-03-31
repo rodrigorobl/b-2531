@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -214,10 +213,14 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
         selected: bid.id === bidId
       }))
     }));
+    
     toast.success('Lot attribué avec succès', {
       description: 'Le lot a été attribué à l\'entreprise sélectionnée.'
     });
+    
     setShowAssignDialog(false);
+    
+    navigate(`/tender/${tenderId}/lot/${lotId}/rejection-emails/${bidId}`);
   };
   
   const selectFavoriteBid = (bidId: string) => {

@@ -69,6 +69,7 @@ import ConstructionSubscriptionEstimation from './pages/ConstructionSubscription
 import ServicesSubscriptionEstimation from './pages/ServicesSubscriptionEstimation';
 import DCEDownload from './pages/DCEDownload';
 import IndustryPartners from "./pages/IndustryPartners";
+import RejectionEmailsPage from "./pages/RejectionEmailsPage";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,7 @@ function App() {
               <Route path="/opportunities-search" element={<OpportunitiesSearch />} />
               <Route path="/tender/:tenderId" element={<TenderDetail />} />
               <Route path="/tender/:tenderId/lot/:lotId" element={<LotAnalysis />} />
+              <Route path="/tender/:tenderId/lot/:lotId/rejection-emails/:winnerBidId" element={<RejectionEmailsPage />} />
               <Route path="/tender/:tenderId/analysis" element={<ProjectTenderAnalysis />} />
               <Route path="/tender/:tenderId/survey" element={<ProjectSurvey />} />
               <Route path="/project-tender-analysis" element={<ProjectTenderAnalysis />} />
