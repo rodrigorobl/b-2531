@@ -27,10 +27,10 @@ export function TenderHeader({ tender }: TenderHeaderProps) {
       </div>
 
       {/* Header with tender name and status */}
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="grid grid-cols-1 gap-4 mb-6">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">{tender.name}</h1>
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-3 mt-2">
             <Badge className={
               tender.status === 'open' ? 'bg-amber-500' : 
               tender.status === 'assigned' ? 'bg-green-600' : 'bg-gray-500'
@@ -48,7 +48,7 @@ export function TenderHeader({ tender }: TenderHeaderProps) {
             </span>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex mt-2">
           <Button variant="outline" asChild>
             <Link to={`/edit-tender/${tender.id}`} className="gap-2">
               <Pen className="h-4 w-4" />
