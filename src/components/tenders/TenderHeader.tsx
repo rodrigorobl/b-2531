@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Calendar, Building, Pen } from 'lucide-react';
+import { Calendar, Building, Pen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -18,14 +18,6 @@ interface TenderHeaderProps {
 export function TenderHeader({ tender }: TenderHeaderProps) {
   return (
     <>
-      {/* Back navigation */}
-      <div className="mb-6">
-        <Link to="/tenders" className="flex items-center text-sm text-muted-foreground hover:text-primary">
-          <ChevronLeft size={16} className="mr-1" />
-          Retour aux appels d'offres
-        </Link>
-      </div>
-
       {/* Header with tender name and status */}
       <div className="grid grid-cols-1 gap-4 mb-6">
         <div className="flex flex-col">
