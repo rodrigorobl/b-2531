@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -8,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { FileText, Wrench, Pencil, CalendarClock, Download, Send, Ruler, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-// Import the same components as ProjectSpecifications
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
 import ProjectHeader from '@/components/project-specifications/ProjectHeader';
 import ProjectOverview from '@/components/project-specifications/ProjectOverview';
@@ -23,8 +21,8 @@ export default function ConstructionTenderSpecifications() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project');
   const [activeTab, setActiveTab] = useState('overview');
+  const navigate = useNavigate();
 
-  // This would typically come from API based on the ID
   const projectData = {
     id: projectId || 'unknown',
     name: 'Centre Commercial Riviera',
@@ -52,7 +50,6 @@ export default function ConstructionTenderSpecifications() {
       { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours', offerId: 'AO-2023-042-03' },
       { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours', offerId: 'AO-2023-042-04' },
     ],
-    // Fixed offers data with appropriate status types
     offers: [
       {
         id: "offer-001",
@@ -73,7 +70,6 @@ export default function ConstructionTenderSpecifications() {
         amount: 325000
       }
     ],
-    // Étapes clés du chantier
     keyStages: [
       { id: 'stage-1', name: 'Installation de chantier', date: '01/09/2023', status: 'completed' },
       { id: 'stage-2', name: 'Terrassement', date: '15/09/2023 - 15/10/2023', status: 'completed' },
@@ -86,6 +82,10 @@ export default function ConstructionTenderSpecifications() {
     ]
   };
 
+  const handleDownloadDCE = () => {
+    navigate(`/dce-download?project=${projectId}`);
+  };
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -93,12 +93,10 @@ export default function ConstructionTenderSpecifications() {
         <div className="container py-6 space-y-6 max-w-7xl">
           
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Project Perspective Image */}
             <div className="md:w-1/3">
               <ProjectGallery images={projectData.perspectiveImages} />
             </div>
             
-            {/* Project Title & Info - Without the buttons */}
             <div className="md:w-2/3">
               <div className="flex justify-between items-start">
                 <div>
@@ -118,13 +116,15 @@ export default function ConstructionTenderSpecifications() {
             </div>
           </div>
 
-          {/* Actions principales - Boutons en évidence */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button className="h-auto py-3 bg-primary text-primary-foreground hover:bg-primary/90 flex flex-col items-center">
+            <Button 
+              className="h-auto py-3 bg-primary text-primary-foreground hover:bg-primary/90 flex flex-col items-center"
+              onClick={handleDownloadDCE}
+            >
               <Download className="h-8 w-8 mb-2" />
               <span>Télécharger le DCE</span>
             </Button>
-            <Link to={`/submit-quote/${projectData.id}`}>
+            <Link to={`/submit-quote/${projectData.id}`} className="w-full">
               <Button className="h-auto py-3 w-full bg-green-500 hover:bg-green-600 text-white flex flex-col items-center">
                 <Send className="h-8 w-8 mb-2" />
                 <span>Déposer une offre</span>
@@ -134,7 +134,7 @@ export default function ConstructionTenderSpecifications() {
               <FileText className="h-8 w-8 mb-2" />
               <span>Télécharger le DPGF</span>
             </Button>
-            <Link to={`/quantity-survey-request?project=${projectData.id}&lot=lot-1`}>
+            <Link to={`/quantity-survey-request?project=${projectData.id}&lot=lot-1`} className="w-full">
               <Button variant="outline" className="h-auto py-3 w-full flex flex-col items-center">
                 <Ruler className="h-8 w-8 mb-2" />
                 <span>Faire réaliser les métrés</span>
@@ -143,7 +143,6 @@ export default function ConstructionTenderSpecifications() {
             </Link>
           </div>
 
-          {/* Localisation du projet */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -180,9 +179,7 @@ export default function ConstructionTenderSpecifications() {
             <TabsContent value="overview" className="space-y-6">
               <ProjectOverview projectData={projectData} />
               
-              {/* Mettre côte à côte les étapes clés et le calendrier */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Étapes clés du chantier */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Étapes clés du chantier</CardTitle>
@@ -207,7 +204,6 @@ export default function ConstructionTenderSpecifications() {
                   </CardContent>
                 </Card>
                 
-                {/* Calendrier du projet */}
                 <ProjectTimeline />
               </div>
             </TabsContent>
@@ -313,7 +309,6 @@ export default function ConstructionTenderSpecifications() {
             </TabsContent>
           </Tabs>
           
-          {/* Section Mes Offres */}
           <Card>
             <CardHeader>
               <CardTitle>Mes offres</CardTitle>
