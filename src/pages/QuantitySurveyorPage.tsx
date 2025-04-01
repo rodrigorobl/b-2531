@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,6 @@ import { FileText, Ruler, MapPin, Download, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 
-// Import components
 import ProjectGallery from '@/components/project-specifications/ProjectGallery';
 import ProjectHeader from '@/components/project-specifications/ProjectHeader';
 import ProjectOverview from '@/components/project-specifications/ProjectOverview';
@@ -22,8 +20,8 @@ export default function QuantitySurveyorPage() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project');
   const [activeTab, setActiveTab] = useState('overview');
+  const navigate = useNavigate();
 
-  // This would typically come from API based on the ID
   const projectData = {
     id: projectId || 'unknown',
     name: 'Centre Commercial Riviera',
@@ -56,7 +54,6 @@ export default function QuantitySurveyorPage() {
       { id: 'lot-3', name: 'Électricité', budget: '350,000 €', deadline: '10/09/2023', minSurveyPrice: 1200, minSurveyDelivery: '4 jours' },
       { id: 'lot-4', name: 'CVC', budget: '420,000 €', deadline: '20/09/2023', minSurveyPrice: 1800, minSurveyDelivery: '6 jours' },
     ],
-    // Étapes clés du chantier
     keyStages: [
       { id: 'stage-1', name: 'Installation de chantier', date: '01/09/2023', status: 'completed' },
       { id: 'stage-2', name: 'Terrassement', date: '15/09/2023 - 15/10/2023', status: 'completed' },
@@ -70,7 +67,7 @@ export default function QuantitySurveyorPage() {
   };
 
   const handleDownloadDCE = () => {
-    toast.success("Téléchargement du DCE en cours...");
+    navigate(`/dce-download?project=${projectId}`);
   };
 
   return (
@@ -79,35 +76,26 @@ export default function QuantitySurveyorPage() {
       <div className="flex-1 flex flex-col overflow-y-auto">
         <div className="container py-6 space-y-6 max-w-7xl">
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Project Perspective Image */}
             <div className="md:w-1/3">
               <ProjectGallery images={projectData.perspectiveImages} />
             </div>
-            
-            {/* Project Title & Info - Remove deposit offer and download buttons */}
             <div className="md:w-2/3">
               <ProjectHeaderSurveyor projectData={projectData} />
             </div>
           </div>
-
-          {/* Télécharger le DCE button - Made larger and green */}
           <div className="flex justify-end">
             <Button onClick={handleDownloadDCE} className="py-6 px-8 text-lg bg-green-500 hover:bg-green-600">
               <Download size={20} className="mr-2" />
               Télécharger le DCE
             </Button>
           </div>
-
-          {/* Description du projet and Localisation du projet side by side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Project Overview Section */}
             <Card className="mb-0">
               <CardHeader>
                 <CardTitle>Description du projet</CardTitle>
               </CardHeader>
               <CardContent>
                 <p>{projectData.description}</p>
-                
                 <div className="grid grid-cols-2 gap-6 mt-6">
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground">Type de projet</h3>
@@ -128,8 +116,6 @@ export default function QuantitySurveyorPage() {
                 </div>
               </CardContent>
             </Card>
-            
-            {/* Localisation du projet */}
             <Card className="mb-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -156,15 +142,12 @@ export default function QuantitySurveyorPage() {
               </CardContent>
             </Card>
           </div>
-
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
-
             <TabsContent value="overview" className="space-y-6">
-              {/* Maître d'ouvrage Card - Without BET firms section */}
               <Card>
                 <CardHeader>
                   <CardTitle>Maître d'ouvrage</CardTitle>
@@ -200,8 +183,6 @@ export default function QuantitySurveyorPage() {
                   </div>
                 </CardContent>
               </Card>
-              
-              {/* Bureaux d'Études Impliqués - Now with Contact button */}
               <Card>
                 <CardHeader>
                   <CardTitle>Bureaux d'Études Impliqués</CardTitle>
@@ -227,14 +208,9 @@ export default function QuantitySurveyorPage() {
                   </div>
                 </CardContent>
               </Card>
-              
-              {/* Timeline Section */}
               <ProjectTimeline />
-              
-              {/* Lots Section */}
               <SurveyorProjectLots lots={projectData.lots} />
             </TabsContent>
-
             <TabsContent value="messages" className="space-y-6">
               <SurveyorMessages />
             </TabsContent>
@@ -245,7 +221,6 @@ export default function QuantitySurveyorPage() {
   );
 }
 
-// New simplified header component without the buttons
 function ProjectHeaderSurveyor({ projectData }: { projectData: any }) {
   return (
     <div>
