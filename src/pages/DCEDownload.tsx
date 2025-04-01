@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -21,15 +21,29 @@ export default function DCEDownload() {
   const projectId = searchParams.get('project');
   const [totalSelectedSize, setTotalSelectedSize] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   // This would typically come from API based on the ID
   const projectName = "Centre Commercial Riviera";
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <div className="container py-6 space-y-6 max-w-7xl">
+          <Button 
+            variant="outline" 
+            className="mb-4" 
+            onClick={handleGoBack}
+          >
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Retour
+          </Button>
+
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold">Téléchargement du DCE</h1>
             <p className="text-muted-foreground">
