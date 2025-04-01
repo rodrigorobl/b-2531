@@ -10,6 +10,7 @@ import { TenderDocumentsTab } from '@/components/tenders/TenderDocumentsTab';
 import { TenderContactsTab } from '@/components/tenders/TenderContactsTab';
 import { TenderTrackingTab } from '@/components/tenders/TenderTrackingTab';
 import { TenderAnalysisTab } from '@/components/tenders/TenderAnalysisTab';
+import { TenderAccessTab } from '@/components/tenders/TenderAccessTab';
 
 // Types
 interface Tender {
@@ -26,6 +27,7 @@ interface Tender {
   };
   projectType: string;
   tenderType: 'conception' | 'realisation' | 'services';
+  confidentiality?: 'open' | 'restricted';
   budget: number;
   categories: Category[];
   messages: Message[];
@@ -80,6 +82,7 @@ const mockTender: Tender = {
   },
   projectType: 'Résidentiel',
   tenderType: 'realisation',
+  confidentiality: 'restricted',
   budget: 3500000,
   categories: [{
     id: 'cat-001',
@@ -293,6 +296,12 @@ export default function TenderDetail() {
     ? Math.round(budgetDifference / tender.budget * 100) 
     : 0;
 
+  // Get category names and IDs for the access tab
+  const lotsList = tender.categories.map(cat => ({
+    id: cat.id,
+    name: cat.name
+  }));
+
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
@@ -312,6 +321,9 @@ export default function TenderDetail() {
             <TabsTrigger value="messages">Messages ({tender.messages.length})</TabsTrigger>
             <TabsTrigger value="documents">Documents ({tender.documents.length})</TabsTrigger>
             <TabsTrigger value="contacts">Intervenants</TabsTrigger>
+            {tender.confidentiality === 'restricted' && (
+              <TabsTrigger value="access">Accès</TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="overview">
@@ -357,6 +369,15 @@ export default function TenderDetail() {
           <TabsContent value="contacts">
             <TenderContactsTab tenderId={tenderId || ''} />
           </TabsContent>
+
+          {tender.confidentiality === 'restricted' && (
+            <TabsContent value="access">
+              <TenderAccessTab 
+                tenderId={tenderId || ''} 
+                lots={lotsList}
+              />
+            </TabsContent>
+          )}
         </Tabs>
       </main>
     </div>
