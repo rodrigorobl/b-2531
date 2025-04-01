@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,13 +15,12 @@ import TenderDCE from '@/components/tenders/create/TenderDCE';
 import TenderAdminDocuments from '@/components/tenders/create/TenderAdminDocuments';
 import TenderPublishOptions from '@/components/tenders/create/TenderPublishOptions';
 import TenderSummary from '@/components/tenders/create/TenderSummary';
-import { SaveIcon, ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
+import { SaveIcon, ArrowLeft, ArrowRight, ChevronDown, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { ServiceTenderFormValues } from '@/types/tender-forms';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 
 const serviceTenderSchema = z.object({
@@ -56,7 +54,6 @@ const formSchema = z.object({
   ).optional(),
 });
 
-// Liste de projets existants
 const existingProjects = [
   { id: "1", name: "Rénovation Centre Commercial", city: "Paris" },
   { id: "2", name: "Maintenance électrique bureaux", city: "Lyon" },
@@ -119,7 +116,6 @@ export default function CreateTenderServices() {
     }
   };
   
-  // Gestion du choix de projet
   const selectProject = (projectId: string) => {
     const project = existingProjects.find(p => p.id === projectId);
     if (project) {
@@ -195,45 +191,54 @@ export default function CreateTenderServices() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nom du projet</FormLabel>
-                          <div className="space-y-2">
-                            <Popover open={open} onOpenChange={setOpen}>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  aria-expanded={open}
-                                  className={cn(
-                                    "w-full justify-between",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value || "Sélectionnez un projet existant ou saisissez un nouveau"}
-                                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0" align="start">
-                                <Command>
-                                  <CommandInput placeholder="Rechercher un projet..." />
-                                  <CommandEmpty>Aucun projet trouvé.</CommandEmpty>
-                                  <CommandGroup>
-                                    {existingProjects.map((project) => (
-                                      <CommandItem
-                                        key={project.id}
-                                        value={project.id}
-                                        onSelect={() => selectProject(project.id)}
-                                      >
-                                        <div className="flex flex-col">
-                                          <span>{project.name}</span>
-                                          <span className="text-xs text-muted-foreground">
-                                            {project.city}
-                                          </span>
-                                        </div>
-                                      </CommandItem>
-                                    ))}
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
+                          <div className="space-y-4">
+                            <div className="relative">
+                              <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={open}
+                                    className={cn(
+                                      "w-full justify-between",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value || "Sélectionnez un projet existant"}
+                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-72 p-0" align="start">
+                                  <div className="overflow-hidden rounded-md border border-input bg-popover shadow-md">
+                                    <div className="flex items-center border-b px-3">
+                                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                                      <input
+                                        className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                        placeholder="Rechercher un projet..."
+                                      />
+                                    </div>
+                                    <div className="max-h-[300px] overflow-y-auto">
+                                      {existingProjects.length === 0 ? (
+                                        <div className="py-6 text-center text-sm">Aucun projet trouvé.</div>
+                                      ) : (
+                                        existingProjects.map((project) => (
+                                          <div
+                                            key={project.id}
+                                            className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                                            onClick={() => selectProject(project.id)}
+                                          >
+                                            <div className="flex flex-col">
+                                              <span>{project.name}</span>
+                                              <span className="text-xs text-muted-foreground">{project.city}</span>
+                                            </div>
+                                          </div>
+                                        ))
+                                      )}
+                                    </div>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
                             {!selectedProject && (
                               <Input
                                 {...field}
