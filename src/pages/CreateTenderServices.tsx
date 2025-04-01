@@ -198,22 +198,20 @@ export default function CreateTenderServices() {
                           <div className="space-y-2">
                             <Popover open={open} onOpenChange={setOpen}>
                               <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={open}
-                                    className={cn(
-                                      "w-full justify-between",
-                                      !field.value && "text-muted-foreground"
-                                    )}
-                                  >
-                                    {field.value || "Sélectionnez un projet existant ou saisissez un nouveau"}
-                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                  </Button>
-                                </FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className={cn(
+                                    "w-full justify-between",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value || "Sélectionnez un projet existant ou saisissez un nouveau"}
+                                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-full p-0">
+                              <PopoverContent className="w-full p-0" align="start">
                                 <Command>
                                   <CommandInput placeholder="Rechercher un projet..." />
                                   <CommandEmpty>Aucun projet trouvé.</CommandEmpty>
@@ -236,11 +234,12 @@ export default function CreateTenderServices() {
                                 </Command>
                               </PopoverContent>
                             </Popover>
-                            <Input
-                              {...field}
-                              placeholder="Ou saisissez le nom de votre projet ici"
-                              className={cn(selectedProject && "hidden")}
-                            />
+                            {!selectedProject && (
+                              <Input
+                                {...field}
+                                placeholder="Ou saisissez le nom de votre projet ici"
+                              />
+                            )}
                           </div>
                           <FormDescription>
                             Sélectionnez un projet existant ou saisissez un nouveau nom
