@@ -16,10 +16,14 @@ import TenderDCE from '@/components/tenders/create/TenderDCE';
 import TenderAdminDocuments from '@/components/tenders/create/TenderAdminDocuments';
 import TenderPublishOptions from '@/components/tenders/create/TenderPublishOptions';
 import TenderSummary from '@/components/tenders/create/TenderSummary';
-import { SaveIcon, ArrowLeft, ArrowRight } from 'lucide-react';
+import { SaveIcon, ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { ServiceTenderFormValues } from '@/types/tender-forms';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 const serviceTenderSchema = z.object({
   serviceScope: z.enum(['local', 'départemental', 'régional', 'national', 'international']),
@@ -52,10 +56,22 @@ const formSchema = z.object({
   ).optional(),
 });
 
+// Liste de projets existants
+const existingProjects = [
+  { id: "1", name: "Rénovation Centre Commercial", city: "Paris" },
+  { id: "2", name: "Maintenance électrique bureaux", city: "Lyon" },
+  { id: "3", name: "Entretien espaces verts", city: "Marseille" },
+  { id: "4", name: "Installation système sécurité", city: "Bordeaux" },
+  { id: "5", name: "Nettoyage façades", city: "Lille" },
+  { id: "6", name: "Audit énergétique", city: "Toulouse" },
+];
+
 export default function CreateTenderServices() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<string>("");
 
   const form = useForm<ServiceTenderFormValues>({
     resolver: zodResolver(formSchema),
@@ -100,6 +116,16 @@ export default function CreateTenderServices() {
   const goToNextStep = () => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
+    }
+  };
+  
+  // Gestion du choix de projet
+  const selectProject = (projectId: string) => {
+    const project = existingProjects.find(p => p.id === projectId);
+    if (project) {
+      form.setValue("projectName", project.name);
+      setSelectedProject(projectId);
+      setOpen(false);
     }
   };
 
@@ -169,11 +195,55 @@ export default function CreateTenderServices() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nom du projet</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Maintenance électrique" {...field} />
-                          </FormControl>
+                          <div className="space-y-2">
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={open}
+                                    className={cn(
+                                      "w-full justify-between",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value || "Sélectionnez un projet existant ou saisissez un nouveau"}
+                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Rechercher un projet..." />
+                                  <CommandEmpty>Aucun projet trouvé.</CommandEmpty>
+                                  <CommandGroup>
+                                    {existingProjects.map((project) => (
+                                      <CommandItem
+                                        key={project.id}
+                                        value={project.id}
+                                        onSelect={() => selectProject(project.id)}
+                                      >
+                                        <div className="flex flex-col">
+                                          <span>{project.name}</span>
+                                          <span className="text-xs text-muted-foreground">
+                                            {project.city}
+                                          </span>
+                                        </div>
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            <Input
+                              {...field}
+                              placeholder="Ou saisissez le nom de votre projet ici"
+                              className={cn(selectedProject && "hidden")}
+                            />
+                          </div>
                           <FormDescription>
-                            Quel est le nom de votre projet ?
+                            Sélectionnez un projet existant ou saisissez un nouveau nom
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
