@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, MapPin, Send } from 'lucide-react';
@@ -24,6 +23,8 @@ interface Category {
     comments: string;
     status: 'pending' | 'approved' | 'rejected';
   }[];
+  status?: 'en-cours' | 'cloture' | 'attribue';
+  statusDate?: string;
 }
 
 interface TenderOverviewTabProps {
@@ -93,6 +94,43 @@ export function TenderOverviewTab({
       Math.min(...category.quotes.filter(q => q.isCompliant).map(q => q.price)) : 0;
     return total + lowestQuote;
   }, 0);
+
+  // Render status badge for category
+  const renderStatusBadge = (category: Category) => {
+    if (category.status === 'attribue') {
+      return <Badge className="bg-green-600">Attribué</Badge>;
+    } else if (category.status === 'en-cours') {
+      return (
+        <div className="flex flex-col">
+          <Badge className="bg-amber-500">En cours</Badge>
+          <span className="text-xs text-muted-foreground mt-1">
+            fin: {category.statusDate}
+          </span>
+        </div>
+      );
+    } else if (category.status === 'cloture') {
+      return (
+        <div className="flex flex-col">
+          <Badge variant="outline" className="text-gray-600">
+            Cloturé le:
+          </Badge>
+          <span className="text-xs text-muted-foreground mt-1">
+            {category.statusDate}
+          </span>
+        </div>
+      );
+    } else {
+      // Default status based on quotes
+      const approvedQuote = category.quotes.find(q => q.status === 'approved');
+      if (approvedQuote) {
+        return <Badge className="bg-green-600">Attribué</Badge>;
+      } else if (category.quotes.length > 0) {
+        return <Badge className="bg-amber-500">En cours</Badge>;
+      } else {
+        return <Badge className="bg-red-500">Aucune offre</Badge>;
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -258,8 +296,6 @@ export function TenderOverviewTab({
                   ? Math.round((lowestPrice - budget) / budget * 100) 
                   : null;
                 
-                const approvedQuote = category.quotes.find(q => q.status === 'approved');
-                
                 return (
                   <TableRow key={category.id}>
                     <TableCell className="font-medium">{category.name}</TableCell>
@@ -281,12 +317,7 @@ export function TenderOverviewTab({
                       ) : '-'}
                     </TableCell>
                     <TableCell>
-                      {approvedQuote ? 
-                        <Badge className="bg-green-600">Attribué</Badge> : 
-                        quotesCount > 0 ? 
-                          <Badge className="bg-amber-500">En cours</Badge> : 
-                          <Badge className="bg-red-500">Aucune offre</Badge>
-                      }
+                      {renderStatusBadge(category)}
                     </TableCell>
                     
                     <TableCell className="text-right">

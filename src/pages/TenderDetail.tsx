@@ -39,6 +39,8 @@ interface Category {
   name: string;
   budget?: number;
   quotes: Quote[];
+  status?: 'en-cours' | 'cloture' | 'attribue';
+  statusDate?: string;
 }
 
 interface Quote {
@@ -88,6 +90,8 @@ const mockTender: Tender = {
     id: 'cat-001',
     name: 'Gros Œuvre',
     budget: 850000,
+    status: 'en-cours',
+    statusDate: '15/07/2024',
     quotes: [{
       id: 'quote-001',
       companyName: 'BTP Construction',
@@ -125,6 +129,7 @@ const mockTender: Tender = {
     id: 'cat-002',
     name: 'Charpente',
     budget: 320000,
+    status: 'attribue',
     quotes: [{
       id: 'quote-005',
       companyName: 'Charpentes Bernard',
@@ -132,7 +137,7 @@ const mockTender: Tender = {
       isCompliant: true,
       price: 320000,
       comments: 'Utilisation de bois locaux certifiés PEFC',
-      status: 'pending'
+      status: 'approved'
     }, {
       id: 'quote-006',
       companyName: 'Structures Bois',
@@ -151,6 +156,8 @@ const mockTender: Tender = {
     id: 'cat-004',
     name: 'Plomberie',
     budget: 280000,
+    status: 'cloture',
+    statusDate: '10/05/2024',
     quotes: [{
       id: 'quote-007',
       companyName: 'Plomberie Générale',
