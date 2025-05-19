@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, ArrowLeft } from 'lucide-react';
+import { CheckCircle, ArrowLeft, RefreshCcw } from 'lucide-react';
 
 // Components
 import { LotAnalysisHeader } from '@/components/lots/LotAnalysisHeader';
@@ -18,6 +18,7 @@ import { LotAnalysisTable } from '@/components/lots/LotAnalysisTable';
 import { LotComparisonCard } from '@/components/lots/LotComparisonCard';
 import { LotAnalysisChartView } from '@/components/lots/LotAnalysisChartView';
 import { LotMessages } from '@/components/lots/LotMessages';
+import { RelaunchTenderDialog } from '@/components/lots/RelaunchTenderDialog';
 
 // Types
 interface Bid {
@@ -37,7 +38,8 @@ interface Bid {
 interface Lot {
   id: string;
   name: string;
-  status: 'pending' | 'assigned' | 'in-progress' | 'completed';
+  status: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'closed';
+  statusDate?: string;
   projectId: string;
   projectName: string;
   estimatedBudget: number;
@@ -69,6 +71,9 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
     sdpSurface: 1500, // m²
     unitCount: 15 // number of units/logements
   };
+
+  // For relaunch tender dialog
+  const [showRelaunchDialog, setShowRelaunchDialog] = useState(false);
 
   // Mock data for demonstration
   const [lot, setLot] = useState<Lot>({
@@ -144,11 +149,25 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
     
     // Here you would typically fetch the lot data from an API
     // For now, we're just using the mock data and updating it with the route params
-    setLot(prevLot => ({
-      ...prevLot,
-      id: lotId || prevLot.id,
-      projectId: tenderId || prevLot.projectId
-    }));
+    setLot(prevLot => {
+      // For cat-005 specifically, set status to closed with a date
+      if (lotId === 'cat-005') {
+        return {
+          ...prevLot,
+          id: lotId,
+          name: 'Menuiseries',
+          projectId: tenderId || prevLot.projectId,
+          status: 'closed',
+          statusDate: '20/05/2024'
+        };
+      }
+      
+      return {
+        ...prevLot,
+        id: lotId || prevLot.id,
+        projectId: tenderId || prevLot.projectId
+      };
+    });
   }, [tenderId, lotId]);
 
   // Calculate budget ratios
@@ -240,10 +259,16 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
     setBidToAssign(bidId);
     setShowAssignDialog(true);
   };
+  
+  const openRelaunchDialog = () => {
+    setShowRelaunchDialog(true);
+  };
+  
   const openCommentDialog = (bidId: string) => {
     setCommentBidId(bidId);
     setShowCommentDialog(true);
   };
+  
   const addComment = () => {
     toast.success('Commentaire ajouté', {
       description: 'Votre commentaire a été enregistré avec succès.'
@@ -251,11 +276,13 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
     setShowCommentDialog(false);
     setCommentText('');
   };
+  
   const downloadSummary = (format: 'pdf' | 'excel') => {
     toast.success(`Téléchargement en cours (${format.toUpperCase()})`, {
       description: 'Le récapitulatif des offres sera téléchargé dans quelques instants.'
     });
   };
+  
   const getSolvencyBadge = (score: 'excellent' | 'average' | 'at-risk') => {
     switch (score) {
       case 'excellent':
@@ -268,11 +295,15 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
         return <Badge>Inconnu</Badge>;
     }
   };
+  
   const getAdministrativeScoreBadge = (score: number) => {
     let bgColor = '';
-    if (score >= 90) bgColor = 'bg-green-500';else if (score >= 75) bgColor = 'bg-amber-500';else bgColor = 'bg-red-500';
+    if (score >= 90) bgColor = 'bg-green-500';
+    else if (score >= 75) bgColor = 'bg-amber-500';
+    else bgColor = 'bg-red-500';
     return <Badge className={bgColor}>{score}%</Badge>;
   };
+  
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -280,21 +311,72 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
       maximumFractionDigits: 0
     }).format(amount);
   };
+  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR');
   };
+  
   const goBack = () => {
     navigate(-1);
   };
-  const selectedBidsData = selectedBids.map(bidId => lot.bids.find(b => b.id === bidId)).filter((bid): bid is Bid => bid !== undefined);
-  return <Layout>
+
+  const handleTenderRelaunch = (data: any) => {
+    toast.success('Appel d\'offre relancé', {
+      description: `Nouvel appel d'offre programmé jusqu'au ${data.closureDate}`
+    });
+    setShowRelaunchDialog(false);
+    
+    // Here we would typically update the lot status back to "pending"
+    setLot(prev => ({
+      ...prev,
+      status: 'pending',
+      statusDate: data.closureDate
+    }));
+  };
+  
+  const selectedBidsData = selectedBids.map(bidId => 
+    lot.bids.find(b => b.id === bidId)
+  ).filter((bid): bid is Bid => bid !== undefined);
+
+  // Status badge component
+  const LotStatusBadge = () => {
+    if (lot.status === 'assigned') {
+      return <Badge className="bg-green-600">Attribué</Badge>;
+    } else if (lot.status === 'closed') {
+      return (
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-gray-600">
+            Clôturé le: {lot.statusDate}
+          </Badge>
+          <Button 
+            onClick={openRelaunchDialog} 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-1 text-primary"
+          >
+            <RefreshCcw size={14} />
+            Relancer l'appel d'offre
+          </Button>
+        </div>
+      );
+    } else if (lot.status === 'pending') {
+      return <Badge className="bg-amber-500">En cours</Badge>;
+    } else {
+      return <Badge>Inconnu</Badge>;
+    }
+  };
+
+  return (
+    <Layout>
       <div className="container mx-auto py-6">
         <div className="flex items-center gap-2 mb-4">
           <Button variant="outline" size="sm" onClick={goBack}>
             <ArrowLeft className="mr-1 h-4 w-4" /> Retour
           </Button>
           
-          {lot.status !== 'assigned'}
+          <div className="ml-auto">
+            <LotStatusBadge />
+          </div>
         </div>
         
         <LotAnalysisHeader lotName={lot.name} projectName={lot.projectName} projectId={lot.projectId} onDownloadSummary={downloadSummary} />
@@ -314,7 +396,6 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
           <div className="flex justify-between items-center">
             <TabsList>
               <TabsTrigger value="table">Tableau</TabsTrigger>
-              
               <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
             
@@ -350,7 +431,7 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
             <Card>
               <CardContent className="p-0">
                 <LotAnalysisTable 
-                  bids={sortedBids} 
+                  bids={filteredBids} 
                   selectedBids={selectedBids} 
                   isAssigned={lot.status === 'assigned'} 
                   onToggleBidSelection={toggleBidSelection} 
@@ -438,5 +519,17 @@ export default function LotAnalysis({ tenderId: propTenderId, lotId: propLotId }
           </div>
         </DialogContent>
       </Dialog>
-    </Layout>;
+
+      {/* Relaunch Tender Dialog */}
+      <RelaunchTenderDialog 
+        open={showRelaunchDialog} 
+        onOpenChange={setShowRelaunchDialog} 
+        onSubmit={handleTenderRelaunch}
+        companies={lot.bids.map(bid => ({
+          id: bid.companyId,
+          name: bid.companyName
+        }))}
+      />
+    </Layout>
+  );
 }

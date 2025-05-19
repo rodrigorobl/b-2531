@@ -171,6 +171,8 @@ const mockTender: Tender = {
     id: 'cat-005',
     name: 'Menuiseries',
     budget: 420000,
+    status: 'cloture',
+    statusDate: '20/05/2024',
     quotes: [{
       id: 'quote-008',
       companyName: 'Menuiseries Durables',
